@@ -1,0 +1,45 @@
+{
+    "topic": "Grade 5 - Science - Journey of a River",
+    "short_answer": [
+        {
+            "question": "According to the text, what is the purpose of the Namami Gange programme?",
+            "answer": "The Namami Gange programme is helping to clean the Ganga river so it stays healthy for people, fish, and birds."
+        },
+        {
+            "question": "The text describes an experiment with sugar and oil in water. What does this experiment show us?",
+            "answer": "The experiment shows that some things, like sugar, dissolve in water and some things, like oil, do not."
+        }
+    ],
+    "mcq": [
+        {
+            "question": "The text says the Ganges river dolphin is blind. How does it find its way in the water?",
+            "options": {
+                "a": "It uses its sense of smell.",
+                "b": "It follows other fish.",
+                "c": "It uses sound.",
+                "d": "It feels the water currents."
+            },
+            "answer": "c"
+        },
+        {
+            "question": "Why does the hilsa (ilish) fish travel from the sea into rivers?",
+            "options": {
+                "a": "To find a warmer place to live.",
+                "b": "To lay eggs.",
+                "c": "To hide from people.",
+                "d": "To look for different food."
+            },
+            "answer": "b"
+        }
+    ],
+    "fill_in_the_blanks": [
+        {
+            "question": "The Ganges river dolphin is India’s national __________ animal.",
+            "answer": "aquatic"
+        },
+        {
+            "question": "The Hirakud dam in Odisha is described as one of the longest __________ dams in the world.",
+            "answer": "earthen"
+        }
+    ]
+}

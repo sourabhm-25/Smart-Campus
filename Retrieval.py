@@ -14,6 +14,8 @@ from langchain_google_genai import GoogleGenerativeAI
 import chromadb
 import os
 import pickle  # For loading BM25 retriever
+from dotenv import load_dotenv   # 👈 NEW
+
 
 # -----------------------------
 # FastAPI app
