@@ -3,43 +3,43 @@
     "short_answer": [
         {
             "question": "According to the text, what is the purpose of the Namami Gange programme?",
-            "answer": "The Namami Gange programme is helping to clean the Ganga river so it stays healthy for people, fish, and birds."
+            "answer": "The Namami Gange programme is helping to clean the Ganga river so that it stays healthy for people, fish, and birds."
         },
         {
-            "question": "The text describes an experiment with sugar and oil in water. What does this experiment show us?",
-            "answer": "The experiment shows that some things, like sugar, dissolve in water and some things, like oil, do not."
+            "question": "The text describes an experiment in Activity 3. What does this experiment show us about things mixed in water?",
+            "answer": "The experiment shows us that some things, like sugar, dissolve in water, while other things, like cooking oil, do not."
         }
     ],
     "mcq": [
         {
-            "question": "The text says the Ganges river dolphin is blind. How does it find its way in the water?",
+            "question": "The Ganges river dolphin is blind. How does it find its way in the water?",
             "options": {
-                "a": "It uses its sense of smell.",
-                "b": "It follows other fish.",
-                "c": "It uses sound.",
-                "d": "It feels the water currents."
+                "a": "By feeling the water currents",
+                "b": "By using its sense of smell",
+                "c": "By using sound",
+                "d": "By following other animals"
             },
             "answer": "c"
         },
         {
-            "question": "Why does the hilsa (ilish) fish travel from the sea into rivers?",
+            "question": "What is the natural wonder called when fish like the hilsa travel from the sea into rivers to lay eggs?",
             "options": {
-                "a": "To find a warmer place to live.",
-                "b": "To lay eggs.",
-                "c": "To hide from people.",
-                "d": "To look for different food."
+                "a": "Fish swimming",
+                "b": "Fish migration",
+                "c": "Fish vacation",
+                "d": "Fish marathon"
             },
             "answer": "b"
         }
     ],
     "fill_in_the_blanks": [
         {
-            "question": "The Ganges river dolphin is India’s national __________ animal.",
-            "answer": "aquatic"
+            "question": "The Hirakud dam in Odisha is one of the longest ________ dams in the world.",
+            "answer": "earthen"
         },
         {
-            "question": "The Hirakud dam in Odisha is described as one of the longest __________ dams in the world.",
-            "answer": "earthen"
+            "question": "India’s national aquatic animal is the ________ river dolphin.",
+            "answer": "Ganges"
         }
     ]
 }

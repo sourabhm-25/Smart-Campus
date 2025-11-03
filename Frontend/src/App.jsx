@@ -149,6 +149,7 @@
 // }
 import React, { useState } from "react";
 import axios from "axios";
+import TestImageSol from "./TestImageSol";
 
 export default function App() {
   const [grade, setGrade] = useState("");
@@ -195,6 +196,7 @@ export default function App() {
         <h1 className="text-4xl font-bold text-gray-800 text-center mb-6">
           Teacher Homework Generator
         </h1>
+        <TestImageSol/>
         <p className="text-center text-gray-600 mb-10">
           Select Grade, Subject, and Chapter to generate questions
         </p>
