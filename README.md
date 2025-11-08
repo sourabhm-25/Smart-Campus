@@ -25,7 +25,7 @@ pip install fastapi uvicorn chromadb sentence-transformers google-generativeai p
 Run this command from anywhere (as long as you reference the correct path to your `main_backend_hybrid_cloud.py`):
 
 ```bash
-uvicorn Retrieval:app --reload
+uvicorn main:app --reload
 ```
 
 The backend will be live at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
