@@ -306,6 +306,29 @@ const PillNav = ({
             ))}
           </ul>
         </div>
+            {/* ✅ Get Started Button on Right Side */}
+<div className="pill-getstarted desktop-only">
+  <Link
+    to="/get-started"
+    className="pill"
+    onMouseEnter={() => handleEnter(items.length)}
+    onMouseLeave={() => handleLeave(items.length)}
+  >
+    <span
+      className="hover-circle"
+      aria-hidden="true"
+      ref={(el) => {
+        circleRefs.current[items.length] = el;
+      }}
+    />
+    <span className="label-stack">
+      <span className="pill-label">Get Started</span>
+      <span className="pill-label-hover" aria-hidden="true">
+        Get Started
+      </span>
+    </span>
+  </Link>
+</div>
 
         <button
           className="mobile-menu-button mobile-only"

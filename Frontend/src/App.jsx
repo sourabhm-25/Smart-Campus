@@ -79,7 +79,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+      {/* <div className="max-w-4xl mx-auto"> */}
       <div className="flex justify-center">
         <PillNav
           logo={logo}
@@ -94,6 +94,6 @@ export default function App() {
           <Route path="/test" element={<TestImageSol />} />
         </Routes>
       </div>
-    </div>
+
   );
 }
