@@ -50,7 +50,7 @@ const Task = () => {
     <div>
     <div>
      
- <h1 className="text-5xl font-extrabold text-gray-800 mt-25 p-2">
+ <h1 className=" h-screen overflow-y-auto custom-scrollbar-hide text-5xl font-extrabold text-gray-800 mt-25 p-2">
             Teacher Homework Generator
            </h1>
            <p className="text-gray-600 text-lg">Generate interactive homework questions in seconds</p>

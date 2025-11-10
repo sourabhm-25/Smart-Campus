@@ -6,7 +6,7 @@ import logo from "../public/logo.png";
 
 const AssignTask = () => {
   return (
-    <div>
+    <div className='h-screen overflow-y-auto custom-scrollbar-hide'>
 
         <div className="flex justify-center">
         <PillNav

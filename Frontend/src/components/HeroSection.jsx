@@ -19,7 +19,7 @@ function HeroSection() {
   }, []);
 
   return (
-    <section className="flex flex-col md:flex-row items-center justify-between w-full h-[100vh] bg-gradient-to-r from-[#f5f6ff] to-[#ffffff] px-6 md:px-24 overflow-hidden transition-all duration-700 ease-in-out">
+    <section className="flex flex-col md:flex-row items-center justify-between w-full h-[100vh]  px-6 md:px-24 overflow-hidden transition-all duration-700 ease-in-out">
 
       {/* ==== LEFT SIDE (Text) ==== */}
       <div
