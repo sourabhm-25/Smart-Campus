@@ -1,15 +1,8 @@
-import React from 'react'
-import  { useState} from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
-
-
-
-const Task = () => {
-   
-
-      const [topic, setTopic] = useState(""); 
-    const [grade, setGrade] = useState("");
+export default function Task() {
+  const [grade, setGrade] = useState("");
   const [subject, setSubject] = useState("");
   const [chapter, setChapter] = useState("");
   const [questions, setQuestions] = useState(null);
@@ -46,36 +39,62 @@ const Task = () => {
       setLoading(false);
     }
   };
+
   return (
-    <div>
-    <div>
-     
- <h1 className=" h-screen overflow-y-auto custom-scrollbar-hide text-5xl font-extrabold text-gray-800 mt-25 p-2">
-            Teacher Homework Generator
-           </h1>
-           <p className="text-gray-600 text-lg">Generate interactive homework questions in seconds</p>
-         </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-800 text-center mb-6">
+          Teacher Homework Generator
+        </h1>
+        <p className="text-center text-gray-600 mb-10">
+          Select Grade, Subject, and Chapter to generate questions
+        </p>
 
         <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <form onSubmit={handleSubmit}>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Enter Topic:</label>
-            <div className="flex flex-col md:flex-row gap-3">
-              <input
-                type="text"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                className="flex-1 border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-3 rounded-lg transition-all outline-none"
-                placeholder="e.g., Journey of a River"
-                required
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="flex flex-col md:flex-row gap-4">
+              <select
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                className="flex-1 border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
               >
-                {loading ? "Generating..." : "Generate"}
-              </button>
+                <option value="">Select Grade</option>
+                {grades.map((g) => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
+
+              <select
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className="flex-1 border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+              >
+                <option value="">Select Subject</option>
+                {subjects.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+
+              <select
+                value={chapter}
+                onChange={(e) => setChapter(e.target.value)}
+                className="flex-1 border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                disabled={!subject}
+              >
+                <option value="">Select Chapter</option>
+                {subject && chapters[subject].map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
             </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+            >
+              {loading ? "Generating..." : "Generate Questions"}
+            </button>
           </form>
 
           {loading && (
@@ -94,28 +113,51 @@ const Task = () => {
 
         {questions && (
           <div className="space-y-6">
-            {renderSection("Short Answer Questions", questions.short_answer, {
-              bg: "bg-blue-50",
-              text: "text-blue-600",
-              bgLight: "bg-blue-100 text-blue-600",
-            })}
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">Generated Questions</h2>
 
-            {renderSection("Multiple Choice Questions", questions.mcq, {
-              bg: "bg-orange-50",
-              text: "text-orange-600",
-              bgLight: "bg-orange-100 text-orange-600",
-            })}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-blue-600 mb-4">Short Answer</h3>
+              <div className="space-y-4">
+                {questions.short_answer.map((q, i) => (
+                  <div key={i} className="border-l-4 border-blue-300 pl-4 py-2 bg-blue-50 rounded-r">
+                    <p className="font-semibold text-gray-800 mb-2">{q.question}</p>
+                    <p className="text-gray-700 font-medium">Answer: {q.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-            {renderSection("Fill in the Blanks", questions.fill_in_the_blanks, {
-              bg: "bg-teal-50",
-              text: "text-teal-600",
-              bgLight: "bg-teal-100 text-teal-600",
-            })}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-orange-600 mb-4">Multiple Choice Questions</h3>
+              <div className="space-y-4">
+                {questions.mcq.map((q, i) => (
+                  <div key={i} className="border-l-4 border-orange-300 pl-4 py-2 bg-orange-50 rounded-r">
+                    <p className="font-semibold text-gray-800 mb-2">{q.question}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+                      {Object.entries(q.options).map(([key, val]) => (
+                        <div key={key} className="bg-white px-3 py-2 rounded border border-gray-200">{key}: {val}</div>
+                      ))}
+                    </div>
+                    <p className="text-gray-700 font-medium">Answer: {q.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-teal-600 mb-4">Fill in the Blanks</h3>
+              <div className="space-y-4">
+                {questions.fill_in_the_blanks.map((q, i) => (
+                  <div key={i} className="border-l-4 border-teal-300 pl-4 py-2 bg-teal-50 rounded-r">
+                    <p className="font-semibold text-gray-800 mb-2">{q.question}</p>
+                    <p className="text-gray-700 font-medium">Answer: {q.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
-</div>
-   
-  )
+      </div>
+    </div>
+  );
 }
-
-export default Task

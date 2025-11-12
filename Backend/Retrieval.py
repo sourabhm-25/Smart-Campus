@@ -20,7 +20,12 @@ from dotenv import load_dotenv   # 👈 NEW
 # -----------------------------
 # FastAPI app
 # -----------------------------
-app = FastAPI(title="Hybrid Task Generator API (Chroma Cloud + BM25)")
+# -----------------------------
+# FastAPI Router
+# -----------------------------
+from fastapi import APIRouter
+
+router = APIRouter(tags=["retrieval"])  # ✅ replaces FastAPI() app
 
 # -----------------------------
 # Request schema
@@ -28,15 +33,15 @@ app = FastAPI(title="Hybrid Task Generator API (Chroma Cloud + BM25)")
 class TaskRequest(BaseModel):
     topic: str  # e.g., "The Water Cycle"
 
-from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["http://localhost:5173"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 
 # -----------------------------
@@ -136,7 +141,7 @@ import json
 # -----------------------------
 # 8️⃣ FastAPI endpoint
 # -----------------------------
-@app.post("/generate-task")
+@router.post("/generate-task")
 def generate_task(request: TaskRequest):
     topic = request.topic.strip()
 
