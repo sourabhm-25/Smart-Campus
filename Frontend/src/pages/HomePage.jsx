@@ -4,7 +4,7 @@ import ProcessSection from '../components/ProcessSection';
 
 const HomePage = () => {
   return (
-    <div >
+    <div  >
        <HeroSection />
       <ProcessSection />
     </div>
