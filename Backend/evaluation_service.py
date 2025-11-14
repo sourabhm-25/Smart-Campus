@@ -4,7 +4,7 @@ import httpx
 import base64
 import json
 
-# --- PASTE YOUR CLOUDFLARE URL HERE ---
+
 # Make sure to add "/api/chat" at the end!
 OLLAMA_URL = "https://nickeliferous-unchainable-ty.ngrok-free.dev/api/chat"
 # ----------------------------------------
