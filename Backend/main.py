@@ -5,7 +5,7 @@ from db import get_collection
 import re
 
 
-# --- IMPORT NEW LLM EVALUATION SERVICE ---
+# --- IMPORT  LLM EVALUATION SERVICE ---
 from evaluation_service import evaluate_handwriting
 
 # --- IMPORT RETRIEVAL ROUTER ---
