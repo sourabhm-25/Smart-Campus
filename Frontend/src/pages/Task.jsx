@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import Lottie from "lottie-react";
+import bookLoader from "../assets/Book_Loader.json";
+
 
 export default function Task() {
   const [grade, setGrade] = useState("");
@@ -98,11 +101,14 @@ export default function Task() {
           </form>
 
           {loading && (
-            <div className="mt-6 text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
-              <p className="mt-2 text-gray-600">Generating questions...</p>
+            <div className="mt-6 text-center flex flex-col items-center">
+              <div className="w-48">
+                <Lottie animationData={bookLoader} loop={true} />
+              </div>
+              <p className="mt-2 text-gray-600 font-medium">Generating questions...</p>
             </div>
           )}
+
 
           {error && (
             <div className="mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
