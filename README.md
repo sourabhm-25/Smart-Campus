@@ -4,6 +4,12 @@
 The primary aim of the **Smart Campus** project is to design and implement an AI-powered educational platform that enhances academic and administrative efficiency while providing personalized learning experiences. The system focuses on adaptive course recommendations, skill-aligned assessments, productivity enhancement, and real-time analytics to support students, faculty, and administrators in a data-driven and intelligent environment.
 
 ---
+Install this
+```bash
+npm install lottie-react
+```
+---
+
 
 ## 🚀 How to Run the Project (CMD Instructions)
 
