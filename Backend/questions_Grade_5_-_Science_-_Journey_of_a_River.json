@@ -2,44 +2,44 @@
     "topic": "Grade 5 - Science - Journey of a River",
     "short_answer": [
         {
-            "question": "In the experiment from Activity 3, what did you observe after stirring sugar into one glass of water and cooking oil into another?",
-            "answer": "The sugar dissolved in the water and the glass appeared clear, while the cooking oil did not dissolve in the water."
+            "question": "According to the text, what is the purpose of the Namami Gange programme?",
+            "answer": "The Namami Gange programme is helping to clean the Ganga river so that it stays healthy for people, fish, and birds."
         },
         {
-            "question": "According to Activity 2, who or what would be harmed if things from a waste bin were thrown into a river?",
-            "answer": "The animals, plants, and people who live nearby and use the water would be harmed."
+            "question": "The Ganges river dolphin is blind. How does it find its way in the water?",
+            "answer": "It uses sound to find its way in the water."
         }
     ],
     "mcq": [
         {
-            "question": "What is the main lesson from the experiment in Activity 3?",
+            "question": "Why does the hilsa (ilish) fish travel from the sea into rivers?",
             "options": {
-                "a": "Sugar is sweeter than oil.",
-                "b": "Some things dissolve in water and some do not.",
-                "c": "Water should always be stirred well.",
-                "d": "Oil and water are both clear liquids."
+                "a": "To find a new home",
+                "b": "To lay eggs",
+                "c": "To look for food",
+                "d": "To clean itself"
             },
             "answer": "b"
         },
         {
-            "question": "Which of these two items from the experiment would make the water appear clear after stirring?",
+            "question": "The Hirakud dam, described as one of the longest earthen dams in the world, is located in which state?",
             "options": {
-                "a": "Cooking oil",
-                "b": "Both sugar and oil",
-                "c": "Neither sugar nor oil",
-                "d": "Sugar"
+                "a": "Ganga",
+                "b": "Namami",
+                "c": "Odisha",
+                "d": "Hilsa"
             },
-            "answer": "d"
+            "answer": "c"
         }
     ],
     "fill_in_the_blanks": [
         {
-            "question": "The experiment with two glasses of water shows that some things _________ in water and some do not.",
-            "answer": "dissolve"
+            "question": "The Ganges river dolphin is India’s national __________ animal.",
+            "answer": "aquatic"
         },
         {
-            "question": "Throwing waste into a river can _________ the animals and plants that depend on the water.",
-            "answer": "harm"
+            "question": "The experiment in Activity 3 shows that some things, like sugar, ___________ in water, while others, like oil, do not.",
+            "answer": "dissolve"
         }
     ]
 }

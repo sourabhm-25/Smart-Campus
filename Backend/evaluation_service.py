@@ -49,17 +49,25 @@ async def evaluate_handwriting(image_bytes: bytes, correct_answer: str, max_mark
     prompt_text = create_evaluation_prompt(correct_answer, max_marks)
     
     payload = {
-        "model": MODEL_NAME,
-        "format": "json", # Ask Ollama to guarantee JSON output
-        "stream": False,
-        "messages": [
-            {
-                "role": "user",
-                "content": prompt_text,
-                "images": [encoded_image] # Attach the image here
-            }
-        ]
+    "model": MODEL_NAME,
+    "format": "json",
+    "stream": False,
+    "options": {
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "repeat_penalty": 1,
+        "seed": 42      # ensures identical output every time
+    },
+    "messages": [
+        {
+            "role": "user",
+            "content": prompt_text,
+            "images": [encoded_image]
+        }
+      ]
     }
+
     
     try:
         # Set a long timeout (e.g., 60 seconds) because LLaVA can be slow

@@ -7,6 +7,7 @@ The primary aim of the **Smart Campus** project is to design and implement an AI
 Install this before RUNNING your Project
 ```bash
 npm install lottie-react
+pip install -U langchain langchain-classic
 ```
 ---
 

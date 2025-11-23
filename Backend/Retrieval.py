@@ -3,18 +3,23 @@
 # -----------------------------
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.retrievers import BM25Retriever
-from langchain.retrievers import EnsembleRetriever
-from langchain.prompts import PromptTemplate
-from langchain.schema.runnable import RunnablePassthrough
-from langchain.schema.output_parser import StrOutputParser
+from langchain_classic.retrievers import EnsembleRetriever
+
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+
 from langchain_google_genai import GoogleGenerativeAI
+
 import chromadb
 import os
-import pickle  # For loading BM25 retriever
-from dotenv import load_dotenv   # 👈 NEW
+import pickle
+from dotenv import load_dotenv
+
 
 
 # -----------------------------
@@ -146,14 +151,14 @@ def generate_task(request: TaskRequest):
     topic = request.topic.strip()
 
     try:
-        # 1️⃣ Retrieve relevant chunks
-        relevant_docs = hybrid_retriever.get_relevant_documents(topic)
+        # 1️⃣ Retrieve relevant chunks (UPDATED HERE)
+        # relevant_docs = hybrid_retriever.get_relevant_documents(topic)  <-- OLD/BROKEN
+        relevant_docs = hybrid_retriever.invoke(topic)                  # <-- NEW/FIXED
+        
         print(f"\n📄 {len(relevant_docs)} chunks retrieved for topic: {topic}\n")
-        for i, doc in enumerate(relevant_docs):
-            print(f"--- Chunk {i+1} ---")
-            print(doc.page_content[:300], "...\n")  # first 300 chars
-
-
+        
+        # ... rest of your code ...
+        
         context_text = " ".join([doc.page_content for doc in relevant_docs])
 
         # 2️⃣ Build RAG chain
