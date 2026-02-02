@@ -4,8 +4,8 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
 from langchain_community.retrievers import BM25Retriever
 from langchain_classic.retrievers import EnsembleRetriever
 
@@ -14,6 +14,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
 from langchain_google_genai import GoogleGenerativeAI
+
 
 import chromadb
 import os
@@ -53,8 +54,9 @@ class TaskRequest(BaseModel):
 # 1️⃣ Setup embeddings
 # -----------------------------
 MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-embedding_function = HuggingFaceEmbeddings(model_name=MODEL_NAME)
-
+embedding_function = HuggingFaceEmbeddings(
+    model_name=MODEL_NAME
+)
 # -----------------------------
 # 2️⃣ Connect to Chroma Cloud
 # -----------------------------
