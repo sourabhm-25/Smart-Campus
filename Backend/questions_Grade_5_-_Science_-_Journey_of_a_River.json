@@ -2,44 +2,44 @@
     "topic": "Grade 5 - Science - Journey of a River",
     "short_answer": [
         {
-            "question": "According to the text, what is the purpose of the Namami Gange programme?",
-            "answer": "The Namami Gange programme is helping to clean the Ganga river so that it stays healthy for people, fish, and birds."
+            "question": "According to Activity 2, what would happen to animals, plants, and people if waste was thrown into a river or pond?",
+            "answer": "It would harm them."
         },
         {
-            "question": "The Ganges river dolphin is blind. How does it find its way in the water?",
-            "answer": "It uses sound to find its way in the water."
+            "question": "Why is it a great problem for people when a river runs dry?",
+            "answer": "Because they would have no water for bathing, drinking, cooking, or cleaning. Families might also have to leave their homes."
         }
     ],
     "mcq": [
         {
-            "question": "Why does the hilsa (ilish) fish travel from the sea into rivers?",
+            "question": "What does the experiment with sugar and cooking oil in water show us?",
             "options": {
-                "a": "To find a new home",
-                "b": "To lay eggs",
-                "c": "To look for food",
-                "d": "To clean itself"
+                "a": "All things dissolve in water.",
+                "b": "Some things dissolve in water and some do not.",
+                "c": "Cooking oil dissolves better than sugar.",
+                "d": "Water always stays clear."
             },
             "answer": "b"
         },
         {
-            "question": "The Hirakud dam, described as one of the longest earthen dams in the world, is located in which state?",
+            "question": "What is one important reason people built houses and cities near rivers in the past?",
             "options": {
-                "a": "Ganga",
-                "b": "Namami",
-                "c": "Odisha",
-                "d": "Hilsa"
+                "a": "Rivers were good for playing games.",
+                "b": "Rivers provided a source of water.",
+                "c": "Rivers were always flooding.",
+                "d": "Rivers had many blind dolphins."
             },
-            "answer": "c"
+            "answer": "b"
         }
     ],
     "fill_in_the_blanks": [
         {
-            "question": "The Ganges river dolphin is India’s national __________ animal.",
-            "answer": "aquatic"
+            "question": "When there is no availability of water for a very long time, families may have to leave their homes and move to places where water is __________.",
+            "answer": "available"
         },
         {
-            "question": "The experiment in Activity 3 shows that some things, like sugar, ___________ in water, while others, like oil, do not.",
-            "answer": "dissolve"
+            "question": "The Namami Gange programme is helping clean the Ganga river so that it stays healthy for people, fish, and __________.",
+            "answer": "birds"
         }
     ]
 }

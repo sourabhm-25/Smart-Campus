@@ -96,9 +96,9 @@ hybrid_retriever = EnsembleRetriever(
 # -----------------------------
 # 6️⃣ Setup Gemini LLM
 # -----------------------------
-GEMINI_API_KEY = "AIzaSyDiKW_9EKdrufqeVfpoMjqGiuK58hMAKN0"
+GEMINI_API_KEY = "AIzaSyBzB85xCD836_SSyQ0xRXLbl_MDgAMoC5s"
 os.environ['GOOGLE_API_KEY'] = GEMINI_API_KEY
-llm = GoogleGenerativeAI(model="models/gemini-2.5-pro", temperature=0.3)
+llm = GoogleGenerativeAI(model="models/gemini-2.5-flash", temperature=0.3)
 
 # -----------------------------
 # 7️⃣ Prompt Template
@@ -141,7 +141,18 @@ JSON_OUTPUT:
     input_variables=["context", "question"]
 )
 
+import re
+import json
 
+def extract_json(text: str) -> dict:
+    """
+    Extract the first JSON object from LLM output.
+    """
+    match = re.search(r"\{.*\}", text, re.DOTALL)
+    if not match:
+        raise ValueError("No JSON object found in LLM output")
+
+    return json.loads(match.group())
 
 import json
 
@@ -173,12 +184,16 @@ def generate_task(request: TaskRequest):
 
         # 3️⃣ Invoke chain
         raw_output = rag_chain.invoke({"context": context_text, "question": topic})
+        raw_output = rag_chain.invoke(
+        {"context": context_text, "question": topic}
+        )
 
-        # 4️⃣ Clean LLM output (remove ```json fences)
-        json_string = raw_output.replace("```json", "").replace("```", "").strip()
+        print("\n🧠 RAW LLM OUTPUT START ----------------")
+        print(raw_output)
+        print("🧠 RAW LLM OUTPUT END ------------------\n")
 
-        # 5️⃣ Parse to proper JSON
-        questions_data = json.loads(json_string)
+        # 4️⃣ Extract valid JSON from LLM output
+        questions_data = extract_json(raw_output)
 
         # 6️⃣ Save JSON to file (auto-generated filename)
         safe_topic = topic.replace(" ", "_")
@@ -192,4 +207,9 @@ def generate_task(request: TaskRequest):
         return {"topic": topic, "questions_json": questions_data, "saved_file": filename}
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"{type(e).__name__}: {str(e)}"
+        )
