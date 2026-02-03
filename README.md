@@ -10,6 +10,9 @@ Install this before RUNNING your Project
 npm install lottie-react
 #install in Backend Folder 
 pip install -U langchain langchain-classic
+pip install -U langchain-huggingface
+pip install -U langchain-chroma
+
 ```
 ---
 
