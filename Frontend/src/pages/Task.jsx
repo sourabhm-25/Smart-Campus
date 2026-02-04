@@ -11,6 +11,8 @@ export default function Task() {
   const [questions, setQuestions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saveResult, setSaveResult] = useState(null);
 
   const grades = ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5"];
   const subjects = ["Science", "Math", "English", "Social Science"];
@@ -28,6 +30,7 @@ export default function Task() {
     setLoading(true);
     setError(null);
     setQuestions(null);
+    setSaveResult(null);
 
     try {
       const topic = `${grade} - ${subject} - ${chapter}`;
@@ -40,6 +43,27 @@ export default function Task() {
       setError("Failed to generate questions. Check your server.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveQuestions = async () => {
+    if (!questions) return;
+
+    setSaving(true);
+    setSaveResult(null);
+
+    try {
+      const topic = `${grade} - ${subject} - ${chapter}`;
+      const response = await axios.post("http://127.0.0.1:8000/save-questions", {
+        topic,
+        questions_json: questions,
+      });
+      setSaveResult({ success: true, message: response.data.message });
+    } catch (err) {
+      console.error(err);
+      setSaveResult({ success: false, message: "Failed to save questions to database." });
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -159,6 +183,59 @@ export default function Task() {
                     <p className="text-gray-700 font-medium">Answer: {q.answer}</p>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Confirmation Button Section */}
+            <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
+              <div className="flex flex-col items-center space-y-4">
+                <p className="text-gray-600 text-center">
+                  Review the questions above. If everything looks correct, click the button below to save them to the database.
+                </p>
+
+                <button
+                  onClick={handleSaveQuestions}
+                  disabled={saving || saveResult?.success}
+                  className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg active:scale-95 disabled:cursor-not-allowed ${saveResult?.success
+                      ? "bg-green-500 text-white"
+                      : "bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400"
+                    }`}
+                >
+                  {saving ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Saving...
+                    </>
+                  ) : saveResult?.success ? (
+                    <>
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      Saved to Database
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      Confirm & Save to Database
+                    </>
+                  )}
+                </button>
+
+                {saveResult && (
+                  <div className={`p-4 rounded-lg w-full ${saveResult.success
+                      ? "bg-green-50 border-l-4 border-green-500"
+                      : "bg-red-50 border-l-4 border-red-500"
+                    }`}>
+                    <p className={`font-medium ${saveResult.success ? "text-green-700" : "text-red-700"}`}>
+                      {saveResult.message}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

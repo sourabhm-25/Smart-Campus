@@ -2,44 +2,44 @@
     "topic": "Grade 5 - Science - Journey of a River",
     "short_answer": [
         {
-            "question": "According to Activity 2, what would happen to animals, plants, and people if waste was thrown into a river or pond?",
-            "answer": "It would harm them."
+            "question": "According to Activity 2, how would throwing waste into a river or pond harm animals, plants, and people?",
+            "answer": "Throwing waste into a river or pond would harm the animals, plants, and people who live nearby and use the water."
         },
         {
-            "question": "Why is it a great problem for people when a river runs dry?",
-            "answer": "Because they would have no water for bathing, drinking, cooking, or cleaning. Families might also have to leave their homes."
+            "question": "What is the name of the programme mentioned in the text that is helping to clean the Ganga river?",
+            "answer": "The Namami Gange programme."
         }
     ],
     "mcq": [
         {
             "question": "What does the experiment with sugar and cooking oil in water show us?",
-            "options": {
-                "a": "All things dissolve in water.",
-                "b": "Some things dissolve in water and some do not.",
-                "c": "Cooking oil dissolves better than sugar.",
-                "d": "Water always stays clear."
-            },
-            "answer": "b"
+            "options": [
+                "a) All things dissolve in water.",
+                "b) Some things dissolve in water and some do not.",
+                "c) Cooking oil dissolves better than sugar.",
+                "d) Water always stays clear."
+            ],
+            "answer": "b) Some things dissolve in water and some do not."
         },
         {
-            "question": "What is one important reason people built houses and cities near rivers in the past?",
-            "options": {
-                "a": "Rivers were good for playing games.",
-                "b": "Rivers provided a source of water.",
-                "c": "Rivers were always flooding.",
-                "d": "Rivers had many blind dolphins."
-            },
-            "answer": "b"
+            "question": "Why is the Namami Gange programme helping to clean the Ganga river?",
+            "options": [
+                "a) To make the river flood less often.",
+                "b) So that it stays healthy for people, fish, and birds.",
+                "c) To help fish travel from the sea.",
+                "d) To build more dams on the river."
+            ],
+            "answer": "b) So that it stays healthy for people, fish, and birds."
         }
     ],
     "fill_in_the_blanks": [
         {
-            "question": "When there is no availability of water for a very long time, families may have to leave their homes and move to places where water is __________.",
-            "answer": "available"
+            "question": "If waste is thrown into a river or a pond, it would harm the _____, plants, and people who live nearby.",
+            "answer": "animals"
         },
         {
-            "question": "The Namami Gange programme is helping clean the Ganga river so that it stays healthy for people, fish, and __________.",
-            "answer": "birds"
+            "question": "Every small step you take helps a river stay fresh and full of _____.",
+            "answer": "life"
         }
     ]
 }

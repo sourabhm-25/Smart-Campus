@@ -213,3 +213,51 @@ def generate_task(request: TaskRequest):
             status_code=500,
             detail=f"{type(e).__name__}: {str(e)}"
         )
+
+# -----------------------------
+# 9️⃣ Save Questions Endpoint
+# -----------------------------
+class SaveQuestionsRequest(BaseModel):
+    topic: str
+    questions_json: dict
+
+@router.post("/save-questions")
+def save_questions(request: SaveQuestionsRequest):
+    """Save confirmed questions to MongoDB database."""
+    from db import get_collection
+    
+    try:
+        coll = get_collection("questions")
+        docs = []
+        
+        # Transform JSON to individual question documents
+        for qtype in ["short_answer", "mcq", "fill_in_the_blanks"]:
+            for q in request.questions_json.get(qtype, []):
+                docs.append({
+                    "topic": request.topic,
+                    "type": qtype,
+                    "question": q["question"],
+                    "answer": q.get("answer"),
+                    "options": q.get("options")
+                })
+        
+        if not docs:
+            raise HTTPException(status_code=400, detail="No questions to save")
+        
+        result = coll.insert_many(docs)
+        print(f"✅ Saved {len(result.inserted_ids)} questions for topic: {request.topic}")
+        
+        return {
+            "success": True,
+            "message": f"Successfully saved {len(docs)} questions to database",
+            "inserted_count": len(result.inserted_ids)
+        }
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to save questions: {str(e)}"
+        )
+
