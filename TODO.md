@@ -15,6 +15,7 @@ This document outlines the development roadmap for the Smart Campus project. Fol
 7. [ ] Add student ranking system
 8. [ ] Expand vision capabilities for other subjects and add more subjects
 9. [ ] Change/upgrade AI models
+10. [ ] How to convert a web app into a mobile app
 
 > **Note:** If more points need to be added, update this section accordingly.
 
