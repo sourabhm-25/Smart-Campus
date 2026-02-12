@@ -1,4 +1,8 @@
 import { Routes, Route } from "react-router-dom";
+
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+
 import TeacherLayout from "./layouts/TeacherLayout";
 
 // Teacher pages
@@ -7,13 +11,19 @@ import Task from "./pages/teacher/Task";
 import Kanban from "./pages/teacher/Kanban";
 import TestImageSol from "./TestImageSol";
 
-// Student & Parent placeholders
+// Student & Parent
 import StudentDashboard from "./pages/student/studentDashboard";
 import ParentDashboard from "./pages/parent/parentDashboard";
 
 export default function App() {
   return (
     <Routes>
+
+      {/* Landing Page */}
+      <Route path="/" element={<Home />} />
+
+      {/* Login Page */}
+      <Route path="/login" element={<Login />} />
 
       {/* Teacher Routes */}
       <Route path="/teacher" element={<TeacherLayout />}>
