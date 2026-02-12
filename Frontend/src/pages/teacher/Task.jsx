@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Lottie from "lottie-react";
-import bookLoader from "../assets/Book_Loader.json";
+import bookLoader from "../../assets/Book_Loader.json";
 
 
 export default function Task() {

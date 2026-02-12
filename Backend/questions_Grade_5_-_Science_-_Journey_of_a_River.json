@@ -2,44 +2,44 @@
     "topic": "Grade 5 - Science - Journey of a River",
     "short_answer": [
         {
-            "question": "According to Activity 2, how would throwing waste into a river or pond harm animals, plants, and people?",
-            "answer": "Throwing waste into a river or pond would harm the animals, plants, and people who live nearby and use the water."
+            "question": "According to Activity 2, how can throwing waste into a river or pond harm animals, plants, and people?",
+            "answer": "Throwing waste into a river or pond can harm animals, plants, and people who live nearby and use the water."
         },
         {
-            "question": "What is the name of the programme mentioned in the text that is helping to clean the Ganga river?",
-            "answer": "The Namami Gange programme."
+            "question": "What is one program mentioned in the text that helps clean the Ganga river?",
+            "answer": "The Namami Gange programme is helping clean the Ganga river."
         }
     ],
     "mcq": [
         {
-            "question": "What does the experiment with sugar and cooking oil in water show us?",
+            "question": "Which of these items, when added to water in Activity 3, is shown to dissolve and make the water appear clear?",
             "options": [
-                "a) All things dissolve in water.",
-                "b) Some things dissolve in water and some do not.",
-                "c) Cooking oil dissolves better than sugar.",
-                "d) Water always stays clear."
+                "a) Cooking oil",
+                "b) Sugar",
+                "c) Sand",
+                "d) Small stones"
             ],
-            "answer": "b) Some things dissolve in water and some do not."
+            "answer": "b) Sugar"
         },
         {
-            "question": "Why is the Namami Gange programme helping to clean the Ganga river?",
+            "question": "What is a major problem for people when a river runs dry?",
             "options": [
-                "a) To make the river flood less often.",
-                "b) So that it stays healthy for people, fish, and birds.",
-                "c) To help fish travel from the sea.",
-                "d) To build more dams on the river."
+                "a) Fish can travel more easily.",
+                "b) People will have no water for drinking, bathing, cooking, or cleaning.",
+                "c) Dams will become longer.",
+                "d) Animals will find new homes quickly."
             ],
-            "answer": "b) So that it stays healthy for people, fish, and birds."
+            "answer": "b) People will have no water for drinking, bathing, cooking, or cleaning."
         }
     ],
     "fill_in_the_blanks": [
         {
-            "question": "If waste is thrown into a river or a pond, it would harm the _____, plants, and people who live nearby.",
-            "answer": "animals"
+            "question": "Activity 3 shows us that some things ______ in water and some do not.",
+            "answer": "dissolve"
         },
         {
-            "question": "Every small step you take helps a river stay fresh and full of _____.",
-            "answer": "life"
+            "question": "Families may have to leave their homes and move to places where water is available when there is no availability of water for a very ______ time.",
+            "answer": "long"
         }
     ]
 }

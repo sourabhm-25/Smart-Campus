@@ -1,5 +1,5 @@
 import React from 'react'
-import PillNav from '../components/PillNav';
+import PillNav from '../../components/PillNav';
 
 
 import logo from "../public/logo.png";
