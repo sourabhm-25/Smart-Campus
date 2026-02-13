@@ -9,7 +9,7 @@ import re
 from evaluation_service import evaluate_handwriting
 
 # --- IMPORT RETRIEVAL ROUTER ---
-from Retrieval import router as retrieval_router  # 👈 Import the router from Retrieval.py
+from pinecone_retriever import router as retrieval_router  # 👈 Import the router from pinecone_retriever.py
 
 # ------------------------------------------------
 # Initialize FastAPI App
