@@ -7,25 +7,19 @@ import bookLoader from "../../assets/Book_Loader.json";
 export default function Task() {
   const [grade, setGrade] = useState("");
   const [subject, setSubject] = useState("");
-  const [chapter, setChapter] = useState("");
+  const [topic, setTopic] = useState("");
   const [questions, setQuestions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveResult, setSaveResult] = useState(null);
 
-  const grades = ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5"];
+  const grades = ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10"];
   const subjects = ["Science", "Math", "English", "Social Science"];
-  const chapters = {
-    Science: ["Water Cycle", "Journey of a River", "Plant Life", "Electricity"],
-    Math: ["Addition", "Subtraction", "Fractions", "Geometry"],
-    English: ["Grammar", "Comprehension", "Vocabulary"],
-    "Social Science": ["History", "Geography", "Civics"],
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!grade || !subject || !chapter) return;
+    if (!grade || !subject || !topic.trim()) return;
 
     setLoading(true);
     setError(null);
@@ -33,10 +27,18 @@ export default function Task() {
     setSaveResult(null);
 
     try {
-      const topic = `${grade} - ${subject} - ${chapter}`;
+      const fullTopic = `${grade} - ${subject} - ${topic.trim()}`;
       const response = await axios.post("http://127.0.0.1:8000/generate-task", {
-        topic,
+        topic: fullTopic,
       });
+
+      // Log retrieved Pinecone chunks to console for debugging
+      if (response.data.retrieval_info?.chunks) {
+        console.log("📄 Retrieved Pinecone Chunks:", response.data.retrieval_info.chunks);
+        console.log(`📊 Total chunks: ${response.data.retrieval_info.chunks_retrieved}`);
+        console.log(`📚 Headings covered:`, response.data.retrieval_info.headings_covered);
+      }
+
       setQuestions(response.data.questions_json);
     } catch (err) {
       console.error(err);
@@ -53,9 +55,9 @@ export default function Task() {
     setSaveResult(null);
 
     try {
-      const topic = `${grade} - ${subject} - ${chapter}`;
+      const fullTopic = `${grade} - ${subject} - ${topic.trim()}`;
       const response = await axios.post("http://127.0.0.1:8000/save-questions", {
-        topic,
+        topic: fullTopic,
         questions_json: questions,
       });
       setSaveResult({ success: true, message: response.data.message });
@@ -102,17 +104,13 @@ export default function Task() {
                 ))}
               </select>
 
-              <select
-                value={chapter}
-                onChange={(e) => setChapter(e.target.value)}
+              <input
+                type="text"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="Enter topic (e.g., Water Cycle, Fractions)"
                 className="flex-1 border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-                disabled={!subject}
-              >
-                <option value="">Select Chapter</option>
-                {subject && chapters[subject].map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
+              />
             </div>
 
             <button
@@ -197,8 +195,8 @@ export default function Task() {
                   onClick={handleSaveQuestions}
                   disabled={saving || saveResult?.success}
                   className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg active:scale-95 disabled:cursor-not-allowed ${saveResult?.success
-                      ? "bg-green-500 text-white"
-                      : "bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400"
+                    ? "bg-green-500 text-white"
+                    : "bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400"
                     }`}
                 >
                   {saving ? (
@@ -228,8 +226,8 @@ export default function Task() {
 
                 {saveResult && (
                   <div className={`p-4 rounded-lg w-full ${saveResult.success
-                      ? "bg-green-50 border-l-4 border-green-500"
-                      : "bg-red-50 border-l-4 border-red-500"
+                    ? "bg-green-50 border-l-4 border-green-500"
+                    : "bg-red-50 border-l-4 border-red-500"
                     }`}>
                     <p className={`font-medium ${saveResult.success ? "text-green-700" : "text-red-700"}`}>
                       {saveResult.message}

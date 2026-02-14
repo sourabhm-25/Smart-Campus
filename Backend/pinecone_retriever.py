@@ -478,6 +478,15 @@ def generate_task(request: TaskRequest):
             "retrieval_info": {
                 "chunks_retrieved": len(chunks),
                 "headings_covered": output_data["retrieval_info"]["headings_covered"],
+                "chunks": [
+                    {
+                        "text": c["text"][:500],
+                        "score": round(c["score"], 4),
+                        "heading_path": c["metadata"].get("heading_path", ""),
+                        "content_type": c["metadata"].get("content_type", ""),
+                    }
+                    for c in chunks
+                ],
             },
             "saved_file": filename
         }
