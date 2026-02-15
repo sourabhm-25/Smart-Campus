@@ -1,0 +1,25 @@
+{
+    "topic": "Grade 8 - Math - Algebra",
+    "questions": {
+        "short_answer": [
+            {
+                "question": "Solve for x: 2x + 4 = 10",
+                "answer": "x = 3",
+                "max_marks": 5,
+                "explanation": "Subtract 4 from both sides: 2x = 6, then divide by 2: x = 3"
+            },
+            {
+                "question": "What is the cube root of 27?",
+                "answer": "3",
+                "max_marks": 3,
+                "explanation": "3 × 3 × 3 = 27, so ∛27 = 3"
+            },
+            {
+                "question": "Calculate: 5² + 3²",
+                "answer": "34",
+                "max_marks": 4,
+                "explanation": "5² = 25, 3² = 9, so 25 + 9 = 34"
+            }
+        ]
+    }
+}

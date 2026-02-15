@@ -64,7 +64,14 @@ async def evaluate_answer(question_text: str = Form(...), file: UploadFile = For
         image_bytes = await file.read()
 
         # 3️⃣ Evaluate handwriting via LLaVA (custom service)
-        evaluation = await evaluate_handwriting(image_bytes, correct_answer, max_marks)
+        # Pass the full question text and topic for better context
+        evaluation = await evaluate_handwriting(
+            image_bytes, 
+            db_question.get("question", question_text), 
+            correct_answer, 
+            max_marks,
+            db_question.get("topic", "")
+        )
 
         if "error" in evaluation:
             return evaluation

@@ -1,0 +1,25 @@
+{
+    "topic": "Grade 7 - Science - Biology",
+    "questions": {
+        "short_answer": [
+            {
+                "question": "Draw and label the parts of a plant cell.",
+                "answer": "Diagram should include: Cell wall, Cell membrane, Nucleus, Cytoplasm, Chloroplast, Vacuole, Mitochondria. All parts should be clearly labeled.",
+                "max_marks": 10,
+                "explanation": "A complete plant cell diagram with all major organelles labeled correctly"
+            },
+            {
+                "question": "Draw the water cycle and label the processes.",
+                "answer": "Diagram should show: Evaporation (from water bodies), Condensation (cloud formation), Precipitation (rain/snow), Collection (water returning to water bodies). Arrows showing the cycle direction.",
+                "max_marks": 8,
+                "explanation": "Complete water cycle with all four main processes labeled"
+            },
+            {
+                "question": "What is photosynthesis? Explain in 2-3 sentences.",
+                "answer": "Photosynthesis is the process by which green plants make their own food using sunlight, carbon dioxide, and water. Chlorophyll in the leaves captures sunlight energy. The plant produces glucose (food) and releases oxygen as a byproduct.",
+                "max_marks": 5,
+                "explanation": "Should mention: sunlight, CO2, water, chlorophyll, glucose, oxygen"
+            }
+        ]
+    }
+}

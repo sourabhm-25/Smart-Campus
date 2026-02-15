@@ -12,32 +12,52 @@ OLLAMA_URL = "https://nickeliferous-unchainable-ty.ngrok-free.dev/api/chat"
 # The model you pulled (llava:latest)
 MODEL_NAME = "llava" 
 
-def create_evaluation_prompt(correct_answer: str, max_marks: int) -> str:
-    """Creates a standardized prompt for the AI."""
+def create_evaluation_prompt(question_text: str, correct_answer: str, max_marks: int, topic: str = "") -> str:
+    """Creates a standardized prompt for the AI with subject-specific instructions."""
+    
+    subject_instruction = ""
+    if "math" in topic.lower() or "maths" in topic.lower():
+        subject_instruction = """
+        - For MATH questions: 
+          1. Check if the final answer matches exactly.
+          2. Check the steps/method if visible strings exist.
+          3. If the final answer is correct but steps are missing/wrong, deduct partial marks.
+        """
+    elif "science" in topic.lower():
+        subject_instruction = """
+        - For SCIENCE questions:
+          1. Check for key scientific keywords in the student's answer.
+          2. If a chemical equation is required, check for correct subscripts/superscripts and balancing.
+          3. For diagrams, check if the student has drawn the correct components and labeled them if required.
+        """
     
     return f"""
-    You are a strict but fair teacher grading a student's handwritten answer.
-
-    Here is the correct model answer for your reference:
+    You are a strict but fair teacher grading a student's answer.
+    
+    QUESTION: "{question_text}"
+    TOPIC: "{topic}"
+    
+    MODEL ANSWER:
     "{correct_answer}"
 
-    A photo of the student's handwritten answer is provided.
-    First, transcribe the student's handwritten answer *exactly* as you see it.
-    Second, compare the student's transcribed answer to the model answer.
-    Third, provide a score from 0 to {max_marks}. The score must be an integer.
-    Fourth, provide 2-3 lines of constructive feedback.
+    MAX MARKS: {max_marks}
 
-    Respond *only* with a valid JSON object in this exact format.
-    Do not add any text before or after the JSON.
-
+    INSTRUCTIONS:
+    1. Transcribe the student's handwritten answer *exactly* as you see it.
+    2. Compare the student's answer to the MODEL ANSWER.
+    3. Evaluate based on the context of the question and the max marks.{subject_instruction}
+    4. Provide a score from 0 to {max_marks} (integer only).
+    5. Provide 2-3 lines of constructive feedback explaining the score.
+    
+    OUTPUT FORMAT (Strict JSON only):
     {{
-      "transcription": "<your_transcription_of_the_handwriting>",
+      "transcription": "<your_transcription>",
       "score": <integer_score>,
       "feedback": "<your_feedback>"
     }}
     """
 
-async def evaluate_handwriting(image_bytes: bytes, correct_answer: str, max_marks: int = 5):
+async def evaluate_handwriting(image_bytes: bytes, question_text: str, correct_answer: str, max_marks: int = 5, topic: str = ""):
     """
     Sends the handwritten image and prompt to Ollama (via the tunnel) 
     for both OCR and Evaluation.
@@ -46,7 +66,7 @@ async def evaluate_handwriting(image_bytes: bytes, correct_answer: str, max_mark
     # Convert image bytes to Base64
     encoded_image = base64.b64encode(image_bytes).decode('utf-8')
     
-    prompt_text = create_evaluation_prompt(correct_answer, max_marks)
+    prompt_text = create_evaluation_prompt(question_text, correct_answer, max_marks, topic)
     
     payload = {
     "model": MODEL_NAME,

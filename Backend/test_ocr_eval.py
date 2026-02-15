@@ -1,4 +1,4 @@
-# test_ocr_eval.py (replaces test_vision_eval.py)
+# test_ocr_eval.py 
 
 from db import get_collection
 from ocr_service import extract_text_from_image # <-- Uses new Tesseract service
