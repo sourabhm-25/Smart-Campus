@@ -82,6 +82,7 @@ async def evaluate_answer(question_text: str = Form(...), file: UploadFile = For
             "student_answer": evaluation.get("transcription", "(AI failed to transcribe)"),
             "correct_answer": correct_answer,
             "score": evaluation.get("score", 0),
+            "max_marks": max_marks,
             "feedback": evaluation.get("feedback", "No feedback provided by AI."),
         }
 
