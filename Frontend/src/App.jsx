@@ -12,8 +12,14 @@ import Kanban from "./pages/teacher/Kanban";
 import TestImageSol from "./TestImageSol";
 
 // Student & Parent
+import StudentLayout from "./layouts/StudentLayout";
 import StudentDashboard from "./pages/student/studentDashboard";
 import ParentDashboard from "./pages/parent/parentDashboard";
+import TasksAssigned from "./pages/student/TasksAssigned";
+import TasksSubmitted from "./pages/student/TasksSubmitted";
+import KanbanBoard from "./pages/student/KanbanBoard";
+import Notifications from "./pages/student/Notifications";
+import Profile from "./pages/student/Profile";
 
 export default function App() {
   return (
@@ -34,7 +40,14 @@ export default function App() {
       </Route>
 
       {/* Student Route */}
-      <Route path="/student" element={<StudentDashboard />} />
+      <Route path="/student" element={<StudentLayout />}>
+        <Route index element={<StudentDashboard />} />
+        <Route path="tasks" element={<TasksAssigned />} />
+        <Route path="submitted" element={<TasksSubmitted />} />
+        <Route path="kanban" element={<KanbanBoard />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
 
       {/* Parent Route */}
       <Route path="/parent" element={<ParentDashboard />} />
