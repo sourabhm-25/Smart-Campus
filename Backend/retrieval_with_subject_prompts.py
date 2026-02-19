@@ -139,6 +139,7 @@ class SubjectPrompts:
             return PromptTemplate(
                 template="""
 You are a Mathematics teacher creating homework questions for students.
+
 Based ONLY on the context provided below, create:
 
 - 2 short-answer questions (requiring calculation or proof)
@@ -147,22 +148,32 @@ Based ONLY on the context provided below, create:
 
 The questions should:
 
-1. Be **directly based on the provided mathematical content**.
-2. Test **conceptual understanding, calculation skills, and problem-solving**.
-3. Include **step-by-step solutions** where applicable.
-4. Use **proper mathematical notation and symbols**.
-5. Progress from **basic to advanced difficulty**.
-6. Include **real-world application problems** when relevant.
-7. For formulas, ensure students understand **when and how to apply them**.
+1. Be directly based on the provided mathematical content.
+2. Test conceptual understanding, calculation skills, and problem-solving.
+3. Include step-by-step solutions where applicable.
+4. Progress from basic to advanced difficulty.
+5. Include real-world application problems when relevant.
+6. For formulas, ensure students understand when and how to apply them.
 
-IMPORTANT FOR MATH:
-- Include numerical problems that require calculation
-- Test formula application, not just memorization
-- Provide clear, step-by-step solutions
-- Use proper mathematical symbols (×, ÷, =, ≠, ≥, ≤, etc.)
+IMPORTANT FOR MATH (STRICT RULES):
 
-Return the result as a **JSON object** with three keys: `"short_answer"`, `"mcq"`, `"fill_in_the_blanks"`.
-For short-answer, include detailed `"solution_steps"` array.
+- DO NOT use LaTeX.
+- DO NOT use backslashes (\).
+- DO NOT use $ symbols.
+- Use plain Unicode mathematical symbols only.
+- Use:
+  × for multiplication
+  ÷ for division
+  ^ for exponents (example: 5^2)
+  sqrt() for square roots (example: sqrt(16))
+- Write equations in plain readable format.
+- Ensure the output is valid JSON with no markdown formatting.
+- Do NOT wrap output in ```json code blocks.
+
+Return the result as a JSON object with three keys:
+"short_answer", "mcq", "fill_in_the_blanks".
+
+For short-answer, include detailed "solution_steps" array.
 
 CONTEXT:
 {context}
