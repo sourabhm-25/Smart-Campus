@@ -672,16 +672,15 @@ if __name__ == "__main__":
     
     pipeline = TextbookProcessingPipeline(
         pinecone_api_key=os.getenv("PINECONE_API_KEY"),
-        index_name="maths",
+        index_name="grade-5",
         embedding_model='BAAI/bge-base-en-v1.5',  # Open-source, high quality
         target_chunk_size=512,
         chunk_overlap=50
     )
     
     result = pipeline.process_and_store(
-        markdown_file="./markdown/maths_8.md",
-        document_id="math_grade8_chapter1",
-        namespace="grade8_math"
-    )
+        markdown_file="./markdown/grade_5_parsed_chapters/chapter_15_Data_Through_Picture.md",
+        document_id="math_grade5_chapter1",
+        namespace="grade5_math")
     
     print(f"Result: {result}")
