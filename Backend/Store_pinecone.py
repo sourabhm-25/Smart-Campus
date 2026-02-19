@@ -440,7 +440,7 @@ class OpenSourceEmbeddingGenerator:
         'multilingual': 'paraphrase-multilingual-mpnet-base-v2',  # 768 dim
     }
     
-    def __init__(self, model_name: str = 'BAAI/bge-base-en-v1.5', device: str = 'cpu'):
+    def __init__(self, model_name: str = 'BAAI/bge-base-en-v1.5', device: str = 'cuda'):
         """
         Initialize embedding model
         
@@ -608,7 +608,7 @@ class TextbookProcessingPipeline:
         embedding_model: str = 'BAAI/bge-base-en-v1.5',
         target_chunk_size: int = 512,
         chunk_overlap: int = 50,
-        device: str = 'cpu'
+        device: str = 'cuda'
     ):
         # Initialize components
         self.chunker = StructureAwareChunker(

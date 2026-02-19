@@ -15,7 +15,7 @@ export default function Task() {
   const [saveResult, setSaveResult] = useState(null);
 
   const grades = ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10"];
-  const subjects = ["Science", "Math", "English", "Social Science"];
+  const subjects = ["Science", "Mathematics", "English", "Social Science"];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,9 +27,10 @@ export default function Task() {
     setSaveResult(null);
 
     try {
-      const fullTopic = `${grade} - ${subject} - ${topic.trim()}`;
       const response = await axios.post("http://127.0.0.1:8000/generate-task", {
-        topic: fullTopic,
+        topic: topic.trim(),
+        grade: grade,
+        subject: subject
       });
 
       // Log retrieved Pinecone chunks to console for debugging
@@ -55,9 +56,10 @@ export default function Task() {
     setSaveResult(null);
 
     try {
-      const fullTopic = `${grade} - ${subject} - ${topic.trim()}`;
       const response = await axios.post("http://127.0.0.1:8000/save-questions", {
-        topic: fullTopic,
+        topic: topic.trim(),
+        grade: grade,
+        subject: subject,
         questions_json: questions,
       });
       setSaveResult({ success: true, message: response.data.message });

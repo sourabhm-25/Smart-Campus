@@ -1,0 +1,80 @@
+{
+  "topic": "fractions",
+  "subject": "Mathematics",
+  "grade": "Grade 5",
+  "retrieval_info": {
+    "chunks_used": 5,
+    "headings_covered": [
+      "Let Us Solve > B.",
+      "Division Using Place Value",
+      "Let Us Solve > A."
+    ]
+  },
+  "questions": {
+    "short_answer": [
+      {
+        "question": "A school has 340 students and wants to divide them equally into groups of 17 students for a field trip. How many groups can be formed? Show your calculation.",
+        "solution_steps": [
+          "Identify the total number of students: 340.",
+          "Identify the number of students per group: 17.",
+          "To find the number of groups, divide the total number of students by the number of students per group: $340 \\div 17$.",
+          "Perform the division: $340 \\div 17 = 20$.",
+          "State the final answer: 20 groups can be formed."
+        ]
+      },
+      {
+        "question": "Complete the long division for $2,874 \\div 14$ by filling in the blanks in the provided structure. Show all intermediate steps and the final remainder.",
+        "solution_steps": [
+          "**Step 1: Divide the hundreds.** Divide 28 (from 2,874) by 14. $28 \\div 14 = 2$. Write '2' in the hundreds place of the quotient. Multiply $14 \\times 2 = 28$. Subtract $28 - 28 = 0$. Bring down the next digit, 7.",
+          "**Step 2: Divide the tens.** The current number is 07. Divide 07 by 14. $07 \\div 14 = 0$. Write '0' in the tens place of the quotient. Multiply $14 \\times 0 = 0$. Subtract $07 - 0 = 7$. Bring down the next digit, 4.",
+          "**Step 3: Divide the ones.** The current number is 74. Divide 74 by 14. $74 \\div 14 = 5$ with a remainder. Write '5' in the ones place of the quotient. Multiply $14 \\times 5 = 70$. Subtract $74 - 70 = 4$.",
+          "**Final Answer:** The quotient is 205 with a remainder of 4. The completed structure is:",
+          "```",
+          "14) 2,874 ( 2 0 5 R 4",
+          "-28 ↓",
+          "-------",
+          "  07  (Tens)",
+          "- 0 ↓",
+          "-------",
+          "  74  (Ones)",
+          "- 70",
+          "-------",
+          "   4",
+          "```"
+        ]
+      }
+    ],
+    "mcq": [
+      {
+        "question": "What is the result of $680 \\div 17$?",
+        "options": {
+          "a": "10",
+          "b": "20",
+          "c": "30",
+          "d": "40"
+        },
+        "answer": "d"
+      },
+      {
+        "question": "You are given that $192 \\div 4 = 48$. Without performing full division, what is the value of $192 \\div 8$?",
+        "options": {
+          "a": "12",
+          "b": "24",
+          "c": "48",
+          "d": "96"
+        },
+        "answer": "b"
+      }
+    ],
+    "fill_in_the_blanks": [
+      {
+        "question": "Complete the partial quotients division for $3,005 \\div 5$ by filling in the blanks.\n```\n5) 3,005 ( ____ + ____\n-3,000\n-------\n      5\n- ____\n-------\n      0\n```",
+        "answer": "The first blank should be '600', the second blank should be '1', and the third blank should be '5'.\nCompleted:\n```\n5) 3,005 ( 600 + 1\n-3,000\n-------\n      5\n- 5\n-------\n      0\n```"
+      },
+      {
+        "question": "In the long division problem $7,032 \\div 6$, the number 7,032 is called the __________, and the number 6 is called the __________.",
+        "answer": "dividend, divisor"
+      }
+    ]
+  }
+}
