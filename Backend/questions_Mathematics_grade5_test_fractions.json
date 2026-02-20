@@ -1,0 +1,68 @@
+{
+  "topic": "fractions",
+  "subject": "Mathematics",
+  "grade": "5",
+  "task_type": "test",
+  "question_config": {
+    "short_answer": null,
+    "mcq": null,
+    "fill_in_the_blanks": null,
+    "true_false": null,
+    "matching": null
+  },
+  "retrieval_info": {
+    "chunks_used": 5,
+    "namespace": "grade5_math",
+    "index": "grade-5"
+  },
+  "questions": {
+    "short_answer": [
+      {
+        "question": "Look at the multiplication puzzle (f). Fill in the missing numbers to make the multiplication correct. Explain how you found the numbers.\n\n  [ ] [ ] [ ]\n  ×         5\n  -----------\n  1 [ ] [ ] 0",
+        "answer": "The completed puzzle is:\n  2 0 0\n  ×     5\n  -------\n  1 0 0 0\n\nExplanation:\n1.  The product (1 [ ] [ ] 0) ends in 0. When a number is multiplied by 5, its last digit must be 0 or 5. Since the product ends in 0, the 'Ones' digit of the top number ([ ] [ ] [0]) must be 0 (because 5 × 0 = 0).\n2.  The product starts with 1, meaning it is in the thousands (1000 or more). This tells us the 'Hundreds' digit of the top number must be 2. (If it were 1, 100 × 5 = 500, which is too small. If it were 3, 300 × 5 = 1500, which also works, but 2 is the smallest possible digit that makes the product start with 1).\n3.  For the simplest solution, we can assume the 'Tens' digit of the top number is 0.\n4.  So, the top number is 200. Let's check: 200 × 5 = 1000.\n5.  This fits the pattern 1 [ ] [ ] 0 perfectly.",
+        "marks": 8
+      },
+      {
+        "question": "Look at the estimation table. Choose one of the multiplication problems (e.g., 25 × 31 or 132 × 19) and explain step-by-step how you would estimate its product. You do not need to find the exact answer, just explain the estimation process.",
+        "answer": "Example for 132 × 19:\nTo estimate the product of 132 × 19, I would follow these steps:\n1.  Round each number to the nearest ten to make them easier to multiply.\n    *   132 rounds down to 130.\n    *   19 rounds up to 20.\n2.  Now, multiply the rounded numbers: 130 × 20.\n3.  To multiply 130 × 20, I can first multiply the non-zero digits: 13 × 2 = 26.\n4.  Then, I count the total number of zeros in the rounded numbers (one zero in 130 and one zero in 20, so two zeros in total).\n5.  I add these two zeros to the product of 13 × 2. So, 26 becomes 2,600.\nTherefore, the estimated product of 132 × 19 is 2,600.",
+        "marks": 10
+      }
+    ],
+    "mcq": [
+      {
+        "question": "Based on the division fact: 340 ÷ 34 = 10. What is the answer to 340 ÷ 17?",
+        "options": [
+          "a) 10",
+          "b) 20",
+          "c) 30",
+          "d) 40"
+        ],
+        "answer": "b",
+        "marks": 5
+      },
+      {
+        "question": "Which of these estimations is the best match for 248 × 49?",
+        "options": [
+          "a) 300",
+          "b) 750",
+          "c) 2,600",
+          "d) 12,500"
+        ],
+        "answer": "d",
+        "marks": 6
+      }
+    ],
+    "fill_in_the_blanks": [
+      {
+        "question": "Complete the division fact: If 192 ÷ 4 = 48, then 192 ÷ 8 = _____.",
+        "answer": "24",
+        "marks": 4
+      },
+      {
+        "question": "Look at the long division example for 3,005 ÷ 5. Fill in the missing numbers to complete the calculation.\n\n5) 3,005 ( ____ + ____\n-3,000\n-------\n      5\n-     ____\n-------\n      0",
+        "answer": "600, 1, 5",
+        "marks": 7
+      }
+    ]
+  }
+}

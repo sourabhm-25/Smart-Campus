@@ -1,0 +1,68 @@
+{
+  "topic": "Division Using Place Value",
+  "subject": "Mathematics",
+  "grade": "5",
+  "task_type": "homework",
+  "question_config": {
+    "short_answer": null,
+    "mcq": null,
+    "fill_in_the_blanks": null,
+    "true_false": null,
+    "matching": null
+  },
+  "retrieval_info": {
+    "chunks_used": 5,
+    "namespace": "grade5_math",
+    "index": "grade-5"
+  },
+  "questions": {
+    "short_answer": [
+      {
+        "question": "Explain how you would estimate the product of 132 × 19. Describe the rounding you would use and the estimated result.",
+        "answer": "To estimate 132 × 19, I would round 132 to the nearest ten, which is 130. I would round 19 to the nearest ten, which is 20. Then, I would multiply these rounded numbers: 130 × 20. This calculation gives an estimated product of 2,600. This method helps to quickly find an approximate answer.",
+        "marks": 4
+      },
+      {
+        "question": "The context describes 'place-value based division' and the 'partial quotients method'. Explain the main difference between these two division methods. Use 7,032 ÷ 6 as an example for your explanation.",
+        "answer": "Place-value based division, also known as long division, divides each digit's place value (thousands, hundreds, etc.) one at a time. For 7,032 ÷ 6, you first divide 7 thousands by 6. The partial quotients method subtracts large multiples of the divisor from the dividend. For 7,032 ÷ 6, you might subtract 1,000 × 6, then 100 × 6, and so on, adding the parts of the quotient later.",
+        "marks": 5
+      }
+    ],
+    "mcq": [
+      {
+        "question": "Which of the following products is correctly matched to its best estimate, based on rounding to the nearest ten or hundred?",
+        "options": [
+          "a) 25 × 31 ≈ 300",
+          "b) 132 × 19 ≈ 2,600",
+          "c) 101 × 11 ≈ 750",
+          "d) 12 × 25 ≈ 12,500"
+        ],
+        "answer": "b",
+        "marks": 3
+      },
+      {
+        "question": "What is the correct quotient for 3,005 ÷ 5, as shown in the partial quotients example?",
+        "options": [
+          "a) 61",
+          "b) 601",
+          "c) 605",
+          "d) 650"
+        ],
+        "answer": "b",
+        "marks": 3
+      }
+    ],
+    "fill_in_the_blanks": [
+      {
+        "question": "The method of division that involves subtracting large multiples of the divisor from the dividend is called the _________ method.",
+        "answer": "partial quotients",
+        "marks": 2
+      },
+      {
+        "question": "In multiplication puzzle (f), where `[ ] [ ] [ ] × 5 = 1 [ ] [ ] 0`, the missing three-digit number that is being multiplied by 5 is _________.",
+        "answer": "200",
+        "marks": 2
+      }
+    ]
+  }
+}

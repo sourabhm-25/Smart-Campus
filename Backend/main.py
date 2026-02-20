@@ -9,7 +9,7 @@ import re
 from evaluation_service import evaluate_handwriting
 
 # --- IMPORT RETRIEVAL ROUTER ---
-from retrieval_with_subject_prompts import router as retrieval_router  # 👈 Import the router from retrieval_with_subject_prompts.py (with subject-specific prompts)
+from Retrieval_modular import router as retrieval_router  # 👈 Import the router from Retrieval_modular.py (modular prompts with task types & custom counts)
 
 # ------------------------------------------------
 # Initialize FastAPI App
