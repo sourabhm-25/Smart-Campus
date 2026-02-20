@@ -82,6 +82,46 @@ function Orb({ size, top, left, color, duration, delay }) {
 }
 
 /* ── MAIN ── */
+//export default function StudentDashboard() {
+//const navigate = useNavigate();
+
+// 🔹 State from mock (so later we can replace with DB)
+//const [subjects, setSubjects] = useState(mockSubjects);
+//const [recentNotifs, setRecentNotifs] = useState(mockRecentNotifs);
+
+/*
+===================================================
+🔥 FUTURE DATABASE INTEGRATION (DO NOT DELETE)
+===================================================
+
+When backend is ready:
+
+useEffect(() => {
+  const student = JSON.parse(localStorage.getItem("student"));
+  const studentId = student?.id;
+
+  if (!studentId) return;
+
+  fetch(`/api/student/${studentId}/dashboard`)
+    .then(res => res.json())
+    .then(data => {
+      setSubjects(data.subjects);
+      setRecentNotifs(data.recentNotifications);
+    })
+    .catch(err => console.error("Dashboard fetch error:", err));
+
+}, []);
+
+Expected response:
+
+{
+  subjects: [...],
+  recentNotifications: [...]
+}
+
+===================================================
+*/
+
 export default function StudentDashboard() {
   const navigate = useNavigate();
 

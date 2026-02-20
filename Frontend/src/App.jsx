@@ -20,6 +20,7 @@ import TasksSubmitted from "./pages/student/TasksSubmitted";
 import KanbanBoard from "./pages/student/KanbanBoard";
 import Notifications from "./pages/student/Notifications";
 import Profile from "./pages/student/Profile";
+import SubjectTasks from "./pages/student/SubjectTasks";
 
 export default function App() {
   return (
@@ -42,7 +43,10 @@ export default function App() {
       {/* Student Route */}
       <Route path="/student" element={<StudentLayout />}>
         <Route index element={<StudentDashboard />} />
+
         <Route path="tasks" element={<TasksAssigned />} />
+        <Route path="tasks/:subjectId" element={<SubjectTasks />} />
+
         <Route path="submitted" element={<TasksSubmitted />} />
         <Route path="kanban" element={<KanbanBoard />} />
         <Route path="notifications" element={<Notifications />} />
