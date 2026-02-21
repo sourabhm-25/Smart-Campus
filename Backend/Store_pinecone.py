@@ -12,6 +12,7 @@ from datetime import datetime
 import logging
 from pathlib import Path
 
+import torch
 from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone, ServerlessSpec
 import tiktoken
@@ -440,19 +441,19 @@ class OpenSourceEmbeddingGenerator:
         'multilingual': 'paraphrase-multilingual-mpnet-base-v2',  # 768 dim
     }
     
-    def __init__(self, model_name: str = 'BAAI/bge-base-en-v1.5', device: str = 'cuda'):
+    def __init__(self, model_name: str = 'BAAI/bge-base-en-v1.5', device: str = None):
         """
         Initialize embedding model
         
         Args:
             model_name: Name of sentence-transformers model
-            device: 'cpu' or 'cuda'
+            device: 'cpu' or 'cuda' (auto-detected if None)
         """
         self.model_name = model_name
-        self.device = device
+        self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         
-        logger.info(f"Loading embedding model: {model_name}")
-        self.model = SentenceTransformer(model_name, device=device)
+        logger.info(f"Loading embedding model: {model_name} on device: {self.device}")
+        self.model = SentenceTransformer(model_name, device=self.device)
         self.dimension = self.model.get_sentence_embedding_dimension()
         
         logger.info(f"Model loaded. Embedding dimension: {self.dimension}")
@@ -608,7 +609,7 @@ class TextbookProcessingPipeline:
         embedding_model: str = 'BAAI/bge-base-en-v1.5',
         target_chunk_size: int = 512,
         chunk_overlap: int = 50,
-        device: str = 'cuda'
+        device: str = None
     ):
         # Initialize components
         self.chunker = StructureAwareChunker(
@@ -679,8 +680,8 @@ if __name__ == "__main__":
     )
     
     result = pipeline.process_and_store(
-        markdown_file="./markdown/grade_5_parsed_chapters_english/chapter_9_vocation.md",
-        document_id="english_grade5_chapter1",
-        namespace="grade5_english")
+        markdown_file="./markdown/grade_5_sci_parsed/grade_5_sci_chapter_10_Earth_Our_Shared_Home.md",
+        document_id="science_grade5",
+        namespace="grade5_science")
     
     print(f"Result: {result}")
