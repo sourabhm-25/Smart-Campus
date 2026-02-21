@@ -3,7 +3,7 @@ from fastapi import FastAPI, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from db import get_collection
 import re
-
+from routers import student_router
 
 # --- IMPORT  LLM EVALUATION SERVICE ---
 from evaluation_service import evaluate_handwriting
@@ -99,3 +99,9 @@ def read_root():
         "message": "Unified AI Backend is running 🚀",
         "routes": ["/evaluate", "/generate-task"]
     }
+
+from routers.auth_router import router as auth_router
+
+app.include_router(auth_router)
+
+app.include_router(student_router.router)
