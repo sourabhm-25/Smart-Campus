@@ -19,7 +19,7 @@ pip install -U langchain-chroma
 
 ## 🚀 How to Run the Project (CMD Instructions)
 
-### 1️⃣ Anyone cloning your project should run:
+### 1️⃣ How to run backend of project :
 
 ```bash
 python -m venv venv
