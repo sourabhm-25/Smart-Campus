@@ -19,18 +19,15 @@ pip install -U langchain-chroma
 
 ## 🚀 How to Run the Project (CMD Instructions)
 
-### 1️⃣ Install Backend Dependencies Globally
-
-Open **Command Prompt (CMD)** and run:
+### 1️⃣ Anyone cloning your project should run:
 
 ```bash
-pip install langchain langchain-community
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
 ```
 
-```bash
-pip install fastapi uvicorn chromadb sentence-transformers google-generativeai pickle5
-```
----
+And their environment will be recreated perfectl y.
 
 ### 2️⃣ Start the Backend
 
