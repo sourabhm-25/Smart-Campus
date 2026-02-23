@@ -1,0 +1,49 @@
+# --- Core Framework ---
+fastapi
+uvicorn
+pydantic[email]
+python-multipart
+
+# --- Environment & Config ---
+python-dotenv
+
+# --- Database ---
+pymongo
+
+# --- Auth & Security ---
+passlib[bcrypt]
+python-jose[cryptography]
+
+# --- HTTP Client ---
+httpx
+
+# --- AI / LLM ---
+openai
+langchain
+langchain-core
+langchain-community
+langchain-google-genai
+langchain-huggingface
+
+# --- Embeddings & Vectors ---
+sentence-transformers
+transformers
+torch
+pinecone
+tiktoken
+
+# --- Document Parsing ---
+beautifulsoup4
+lxml
+llama-index-core
+llama-index-embeddings-openai
+llama-index-llms-openai
+llama-parse
+llama-cloud
+
+# --- ChromaDB (used in Retrieval.py & science.py) ---
+chromadb
+langchain-chroma
+
+# --- Other ---
+requests
