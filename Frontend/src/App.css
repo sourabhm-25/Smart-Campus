@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #256af4;
+  --color-background-dark: #101622;
+  --color-scholar-blue: #3b82f6;
+  --color-mentorship-purple: #8b5cf6;
+  --color-support-teal: #14b8a6;
+}
+
+.glass-panel {
+  background: rgba(27, 31, 39, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 
 .custom-scrollbar-hide::-webkit-scrollbar {
   display: none;

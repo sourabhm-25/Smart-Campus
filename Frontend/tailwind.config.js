@@ -6,7 +6,17 @@ export default {
   ],
   theme: {
     extend: {
-      
+      colors: {
+        "primary": "#256af4",
+        "background-dark": "#101622",
+        "scholar-blue": "#3b82f6",
+        "mentorship-purple": "#8b5cf6",
+        "support-teal": "#14b8a6",
+      },
+      fontFamily: {
+        "display": ["Inter", "sans-serif"],
+      },
+
       keyframes: {
         slideInLeft: {
           '0%': { transform: 'translateX(-100%)', opacity: '0' },
