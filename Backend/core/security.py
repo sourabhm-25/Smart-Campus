@@ -119,6 +119,44 @@ from bson import ObjectId
 import hashlib
 import os
 
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+
+# ------------------------------------------------
+# Google OAuth Config
+# ------------------------------------------------
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+
+
+def verify_google_token(token: str) -> dict:
+    """
+    Verify the Google ID token received from the frontend.
+    Returns the decoded user info (email, name, picture, etc.)
+    Raises HTTPException if verification fails.
+    """
+    try:
+        id_info = id_token.verify_oauth2_token(
+            token,
+            google_requests.Request(),
+            GOOGLE_CLIENT_ID
+        )
+
+        # Verify the issuer
+        if id_info["iss"] not in ["accounts.google.com", "https://accounts.google.com"]:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token issuer"
+            )
+
+        return id_info
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid Google token: {str(e)}"
+        )
+
 # ------------------------------------------------
 # Password Hashing Config
 # ------------------------------------------------

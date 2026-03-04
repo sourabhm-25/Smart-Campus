@@ -13,6 +13,8 @@ pymongo
 # --- Auth & Security ---
 passlib[bcrypt]
 python-jose[cryptography]
+google-auth
+google-auth-httplib2
 
 # --- HTTP Client ---
 httpx

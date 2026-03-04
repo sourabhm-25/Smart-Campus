@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import googleIcon from "../assets/google-icon.svg";
 
 const API_BASE = "http://127.0.0.1:8000";
+const GOOGLE_CLIENT_ID = "943401305975-ptt23gauoh47c3lcn22usn3orrmfrnhh.apps.googleusercontent.com";
 
 const roles = [
   {
@@ -81,8 +83,114 @@ export default function Login() {
 
   // UI state
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // Ref to track isRegister inside Google callback (avoids stale closure)
+  const isRegisterRef = useRef(isRegister);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    isRegisterRef.current = isRegister;
+  }, [isRegister]);
+
+  // --- Google OAuth Handler ---
+  const handleGoogleResponse = useCallback(async (response) => {
+    setError("");
+    setSuccess("");
+    setGoogleLoading(true);
+
+    const currentIsRegister = isRegisterRef.current;
+    const endpoint = currentIsRegister
+      ? `${API_BASE}/auth/google/register`
+      : `${API_BASE}/auth/google/login`;
+
+    try {
+      const res = await axios.post(endpoint, {
+        credential: response.credential,
+        role: role,
+      });
+
+      const { access_token, role: userRole, name: userName, email: userEmail } = res.data;
+
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("role", userRole);
+      localStorage.setItem("userEmail", userEmail);
+      if (userName) localStorage.setItem("userName", userName);
+
+      if (currentIsRegister) {
+        setSuccess("Account created with Google! Redirecting...");
+      } else {
+        setSuccess("Logged in with Google! Redirecting...");
+      }
+
+      setTimeout(() => {
+        navigate(`/${userRole}`);
+      }, 800);
+    } catch (err) {
+      const msg =
+        err.response?.data?.detail || "Google authentication failed. Please try again.";
+      setError(msg);
+    } finally {
+      setGoogleLoading(false);
+    }
+  }, [role, navigate]);
+
+  // --- Initialize Google Identity Services (once GSI script loads) ---
+  const googleInitializedRef = useRef(false);
+
+  useEffect(() => {
+    if (step !== 2 || !role) return;
+
+    const initGSI = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleResponse,
+        });
+        googleInitializedRef.current = true;
+      }
+    };
+
+    if (window.google) {
+      initGSI();
+    } else {
+      const interval = setInterval(() => {
+        if (window.google) {
+          initGSI();
+          clearInterval(interval);
+        }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [step, role, handleGoogleResponse]);
+
+  // --- Handle custom Google button click ---
+  const handleGoogleClick = () => {
+    if (!window.google || !googleInitializedRef.current) {
+      setError("Google Sign-In is still loading. Please try again in a moment.");
+      return;
+    }
+    // Re-initialize to pick up the latest callback ref
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleResponse,
+    });
+    window.google.accounts.id.prompt((notification) => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        // One Tap not available — fallback: open Google OAuth popup manually
+        const redirectUri = window.location.origin;
+        const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${GOOGLE_CLIENT_ID}` +
+          `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+          `&response_type=id_token` +
+          `&scope=openid%20email%20profile` +
+          `&nonce=${Math.random().toString(36).substring(2)}`;
+        window.location.href = googleAuthUrl;
+      }
+    });
+  };
 
   // --- Handlers ---
   const handleContinue = () => {
@@ -508,7 +616,7 @@ export default function Login() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || googleLoading}
                     className={`
                       w-full py-4 font-bold rounded-xl shadow-lg transition-all duration-300
                       ${loading
@@ -549,40 +657,70 @@ export default function Login() {
                 </form>
 
                 {/* Divider */}
-                {!isRegister && (
-                  <>
-                    <div className="relative py-2">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-slate-800"></div>
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-[#1b1f27] px-2 text-slate-500">
-                          Or continue with
-                        </span>
-                      </div>
-                    </div>
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-800"></div>
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-[#1b1f27] px-2 text-slate-500">
+                      {isRegister ? "Or register with" : "Or login with"}
+                    </span>
+                  </div>
+                </div>
 
-                    {/* Social Login */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <button className="flex items-center justify-center gap-2 py-3 px-4 border border-slate-800 rounded-xl hover:bg-slate-800 transition-colors">
-                        <span className="material-symbols-outlined text-xl">
-                          g_mobiledata
-                        </span>
-                        <span className="text-sm font-medium text-slate-300">
-                          Google
-                        </span>
-                      </button>
-                      <button className="flex items-center justify-center gap-2 py-3 px-4 border border-slate-800 rounded-xl hover:bg-slate-800 transition-colors">
-                        <span className="material-symbols-outlined text-xl text-white">
-                          ios
-                        </span>
-                        <span className="text-sm font-medium text-slate-300">
-                          Apple
-                        </span>
-                      </button>
-                    </div>
-                  </>
-                )}
+                {/* Custom Google Button */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  type="button"
+                  onClick={handleGoogleClick}
+                  disabled={googleLoading || loading}
+                  className={`
+                    w-full flex items-center justify-center gap-3 py-3.5 px-6
+                    rounded-xl border border-slate-700/80 bg-slate-800/60
+                    hover:bg-slate-700/70 hover:border-slate-600
+                    transition-all duration-200 group
+                    ${googleLoading ? "cursor-wait opacity-70" : "cursor-pointer"}
+                  `}
+                >
+                  {googleLoading ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 text-slate-400"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          fill="none"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                        />
+                      </svg>
+                      <span className="text-sm font-medium text-slate-400">
+                        Authenticating with Google...
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <img
+                        src={googleIcon}
+                        alt="Google"
+                        className="w-5 h-5"
+                      />
+                      <span className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">
+                        {isRegister ? "Register with Google" : "Login with Google"}
+                      </span>
+                    </>
+                  )}
+                </motion.button>
               </div>
 
               {/* Toggle text */}
