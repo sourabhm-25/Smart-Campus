@@ -2,7 +2,7 @@
 UPDATED RETRIEVAL SYSTEM WITH MODULAR PROMPTS
 ==============================================
 Supports:
-- Homework vs Test modes
+- Homework vs Test modesS
 - Grade-specific defaults
 - Teacher customization
 - Subject-specific instructions

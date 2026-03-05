@@ -6,70 +6,73 @@
     "chunks_used": 5,
     "headings_covered": [
       "Let Us Solve > A.",
-      "Division Using Place Value",
-      "Let Us Solve > B."
+      "Let Us Solve > B.",
+      "Division Using Place Value"
     ]
   },
   "questions": {
     "short_answer": [
       {
-        "question": "Perform the long division for 9,805 ÷ 32. State the quotient and the remainder.",
+        "question": "Perform the long division for 3,005 ÷ 5, showing all steps as demonstrated in the context's decomposition method.",
         "solution_steps": [
-          "Set up the long division: 32 ) 9,805.",
-          "Divide the first part of the dividend (98) by the divisor (32). 98 ÷ 32 = 3 with a remainder. (32 × 3 = 96).",
-          "Write 3 in the hundreds place of the quotient. Subtract 96 from 98, which leaves 2.",
-          "Bring down the next digit, 0, to form 20.",
-          "Divide 20 by 32. Since 20 is less than 32, the quotient digit is 0. (32 × 0 = 0).",
-          "Write 0 in the tens place of the quotient. Subtract 0 from 20, which leaves 20.",
-          "Bring down the next digit, 5, to form 205.",
-          "Divide 205 by 32. 205 ÷ 32 = 6 with a remainder. (32 × 6 = 192).",
-          "Write 6 in the ones place of the quotient. Subtract 192 from 205, which leaves 13.",
-          "The division is complete. The quotient is 306 and the remainder is 13."
+          "Step 1: Decompose the dividend 3,005 into parts that are easily divisible by 5. We can write 3,005 as 3,000 + 5.",
+          "Step 2: Divide the first part by the divisor: 3,000 ÷ 5.",
+          "3,000 ÷ 5 = 600.",
+          "Step 3: Divide the second part by the divisor: 5 ÷ 5.",
+          "5 ÷ 5 = 1.",
+          "Step 4: Add the quotients from each part to find the total quotient.",
+          "600 + 1 = 601.",
+          "Therefore, 3,005 ÷ 5 = 601."
         ]
       },
       {
-        "question": "Use the decomposition method, as shown in the context, to divide 3,005 by 5. Show your steps.",
+        "question": "Given that 340 ÷ 34 = 10, calculate 680 ÷ 17 without performing long division, explaining your reasoning.",
         "solution_steps": [
-          "Decompose 3,005 into parts that are easily divisible by 5. Based on the context, we can decompose 3,005 into 3,000 and 5.",
-          "Divide the first part by 5: 3,000 ÷ 5 = 600.",
-          "Divide the second part by 5: 5 ÷ 5 = 1.",
-          "Add the results from the individual divisions: 600 + 1 = 601.",
-          "Therefore, 3,005 ÷ 5 = 601."
+          "Step 1: Analyze the relationship between the given numbers and the target numbers.",
+          "We are given 340 ÷ 34 = 10.",
+          "We need to find 680 ÷ 17.",
+          "Step 2: Observe how 680 relates to 340. 680 is double 340 (680 = 2 × 340).",
+          "Step 3: Observe how 17 relates to 34. 17 is half of 34 (17 = 34 ÷ 2).",
+          "Step 4: Substitute these relationships into the division problem 680 ÷ 17.",
+          "680 ÷ 17 = (2 × 340) ÷ (34 ÷ 2).",
+          "Step 5: Rearrange the terms to simplify the expression. Dividing by a half is equivalent to multiplying by 2.",
+          "So, (2 × 340) ÷ (34 ÷ 2) = (2 × 340 ÷ 34) × 2.",
+          "Step 6: Use the given fact (340 ÷ 34 = 10) to solve.",
+          "(2 × 10) × 2 = 20 × 2 = 40.",
+          "Therefore, 680 ÷ 17 = 40."
         ]
       }
     ],
     "mcq": [
       {
-        "question": "Given that 340 ÷ 34 = 10, what is the result of 340 ÷ 17?",
+        "question": "In the long division of 7,032 ÷ 6, after subtracting 6 from 7 (in the thousands place), we bring down 0 from the hundreds place to get 10. What place value does this '10' represent in the context of the original number?",
         "options": {
-          "a": "5",
-          "b": "10",
-          "c": "20",
-          "d": "30"
+          "a": "10 Thousands",
+          "b": "10 Hundreds",
+          "c": "10 Tens",
+          "d": "10 Ones"
         },
-        "correct_option": "c",
-        "explanation": "Since 17 is half of 34 (34 ÷ 2 = 17), dividing 340 by 17 will yield a result that is double the result of dividing by 34. So, 10 × 2 = 20."
+        "answer": "b"
       },
       {
-        "question": "In the long division of 7,032 by 6, what is the number formed after the first subtraction and bringing down the next digit?",
+        "question": "If 192 ÷ 4 = 48, what is the value of 384 ÷ 8?",
         "options": {
-          "a": "1",
-          "b": "10",
-          "c": "7",
-          "d": "43"
+          "a": "24",
+          "b": "48",
+          "c": "96",
+          "d": "192"
         },
-        "correct_option": "b",
-        "explanation": "First, 7 ÷ 6 = 1 with a remainder of 1. After bringing down the next digit, 0, the number formed is 10."
+        "answer": "b"
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "Complete the decomposition for 2,874 ÷ 14: 2,874 ÷ 14 = (____ ÷ 14) + (____ ÷ 14)",
-        "answer": "2,800, 74"
+        "question": "Complete the division: 340 ÷ 17 = ____.",
+        "answer": "20"
       },
       {
-        "question": "When 7,032 is divided by 6, the quotient is ____ and the remainder is ____.",
-        "answer": "1,172, 0"
+        "question": "In the decomposition method for 3,005 ÷ 5, if the first step is to divide 3,000 by 5, what number should be subtracted from the remaining 5 to complete the division?",
+        "answer": "5"
       }
     ]
   }
