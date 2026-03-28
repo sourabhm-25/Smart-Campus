@@ -1,9 +1,75 @@
 @import "tailwindcss";
 
+@theme {
+  /* Stitch Design System Colors */
+  --color-sc-bg: #0b1326;
+  --color-sc-surface: #0b1326;
+  --color-sc-surface-bright: #31394d;
+  --color-sc-surface-ctr: #171f33;
+  --color-sc-surface-ctr-low: #131b2e;
+  --color-sc-surface-ctr-high: #222a3d;
+  --color-sc-surface-ctr-highest: #2d3449;
+  --color-sc-surface-ctr-lowest: #060e20;
+  --color-sc-surface-variant: #2d3449;
+  --color-sc-surface-tint: #c0c1ff;
+
+  --color-sc-on-bg: #dae2fd;
+  --color-sc-on-surface: #dae2fd;
+  --color-sc-on-surface-var: #c7c4d8;
+
+  --color-sc-pri: #c0c1ff;
+  --color-sc-pri-ctr: #4b4dd8;
+  --color-sc-pri-fixed: #e1e0ff;
+  --color-sc-on-pri: #1000a9;
+  --color-sc-on-pri-ctr: #d9d8ff;
+
+  --color-sc-sec: #89ceff;
+  --color-sc-sec-ctr: #00a2e6;
+  --color-sc-on-sec: #00344d;
+
+  --color-sc-ter: #ddb7ff;
+  --color-sc-ter-ctr: #862dd4;
+  --color-sc-on-ter: #490080;
+  --color-sc-on-ter-ctr: #ebd2ff;
+
+  --color-sc-outline: #918fa1;
+  --color-sc-outline-var: #464555;
+
+  --color-sc-err: #ffb4ab;
+
+  /* Fonts */
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+  --font-display: "Inter", sans-serif;
+
+  /* Legacy colors for other pages */
+  --color-primary: #256af4;
+  --color-background-dark: #101622;
+  --color-scholar-blue: #3b82f6;
+  --color-mentorship-purple: #8b5cf6;
+  --color-support-teal: #14b8a6;
+}
+
 .custom-scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 .custom-scrollbar-hide {
-  -ms-overflow-style: none;  
-  scrollbar-width: none;    
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Stitch Design System - Glass & Ghost effects */
+.glass-panel {
+  background: rgba(45, 52, 73, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.ghost-border {
+  outline: 1px solid rgba(145, 143, 161, 0.15);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
