@@ -20,3 +20,8 @@ parents_collection = db["parents"]
 assignments_collection = db["assignments"]
 submissions_collection = db["submissions"]
 reports_collection = db["reports"]
+
+# ── Classroom Connection System ──
+classes_collection = db["classes"]       # Central model: connects teacher + students + parents
+homework_collection = db["homework"]     # Subject-based homework assigned by teachers
+enrollment_requests_collection = db["enrollment_requests"]  # Student join requests (pending/accepted/rejected)

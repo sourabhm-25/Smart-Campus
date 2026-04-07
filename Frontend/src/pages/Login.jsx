@@ -7,6 +7,16 @@ import googleIcon from "../assets/google-icon.svg";
 const API_BASE = "http://127.0.0.1:8000";
 const GOOGLE_CLIENT_ID = "943401305975-ptt23gauoh47c3lcn22usn3orrmfrnhh.apps.googleusercontent.com";
 
+const AVAILABLE_SUBJECTS = [
+  "Mathematics", "Science", "English", "Hindi", "History",
+  "Geography", "Computer Science", "Art & Design", "Physical Education",
+  "Social Studies", "Physics", "Chemistry", "Biology",
+];
+
+const GRADES = [
+  "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th",
+];
+
 const roles = [
   {
     id: "student",
@@ -81,6 +91,17 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Role-specific registration fields
+  const [school, setSchool] = useState("");
+  const [grade, setGrade] = useState("");
+  const [selectedGrades, setSelectedGrades] = useState([]);  // Teacher multi-grade
+  const [subjects, setSubjects] = useState([]);
+  const [childEmail, setChildEmail] = useState("");
+
+  // Picker toggles
+  const [showSubjectPicker, setShowSubjectPicker] = useState(false);
+  const [showGradePicker, setShowGradePicker] = useState(false);
+
   // UI state
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -107,17 +128,33 @@ export default function Login() {
       : `${API_BASE}/auth/google/login`;
 
     try {
-      const res = await axios.post(endpoint, {
+      const payload = {
         credential: response.credential,
         role: role,
-      });
+      };
 
-      const { access_token, role: userRole, name: userName, email: userEmail } = res.data;
+      // Include role-specific fields for Google registration
+      if (currentIsRegister) {
+        if (role === "student" || role === "teacher") payload.school = school;
+        if (role === "student") payload.grade = grade;
+        if (role === "teacher") {
+          payload.subjects = subjects;
+          payload.grades = selectedGrades;
+        }
+        if (role === "parent") payload.child_email = childEmail;
+      }
+
+      const res = await axios.post(endpoint, payload);
+
+      const { access_token, role: userRole, user } = res.data;
 
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("role", userRole);
-      localStorage.setItem("userEmail", userEmail);
-      if (userName) localStorage.setItem("userName", userName);
+      if (user) {
+        localStorage.setItem("userEmail", user.email || "");
+        localStorage.setItem("userName", user.name || "");
+        localStorage.setItem("user", JSON.stringify(user));
+      }
 
       if (currentIsRegister) {
         setSuccess("Account created with Google! Redirecting...");
@@ -208,6 +245,13 @@ export default function Login() {
     setName("");
     setEmail("");
     setPassword("");
+    setSchool("");
+    setGrade("");
+    setSelectedGrades([]);
+    setSubjects([]);
+    setChildEmail("");
+    setShowGradePicker(false);
+    setShowSubjectPicker(false);
   };
 
   const handleSubmit = async (e) => {
@@ -218,19 +262,42 @@ export default function Login() {
 
     try {
       if (isRegister) {
-        await axios.post(`${API_BASE}/auth/register`, {
+        const registerPayload = {
           name,
           email,
           password,
           role,
-        });
+        };
 
-        setSuccess("Account created successfully! You can now log in.");
+        // Add role-specific fields
+        if (role === "student" || role === "teacher") registerPayload.school = school;
+        if (role === "student") registerPayload.grade = grade;
+        if (role === "teacher") {
+          registerPayload.subjects = subjects;
+          registerPayload.grades = selectedGrades;
+        }
+        if (role === "parent" && childEmail) registerPayload.child_email = childEmail;
+
+        const registerRes = await axios.post(`${API_BASE}/auth/register`, registerPayload);
+
+        // Store token and user data from registration too
+        if (registerRes.data.access_token) {
+          localStorage.setItem("access_token", registerRes.data.access_token);
+          localStorage.setItem("role", registerRes.data.role);
+          if (registerRes.data.user) {
+            localStorage.setItem("userName", registerRes.data.user.name || "");
+            localStorage.setItem("userEmail", registerRes.data.user.email || "");
+            localStorage.setItem("user", JSON.stringify(registerRes.data.user));
+          }
+        }
+
+        if (role === "student") {
+          setSuccess("Account created! Your enrollment request has been sent to the teachers. Redirecting...");
+        } else {
+          setSuccess("Account created successfully! Redirecting...");
+        }
         setTimeout(() => {
-          setIsRegister(false);
-          setSuccess("");
-          setName("");
-          setPassword("");
+          navigate(`/${role}`);
         }, 1500);
       } else {
         const res = await axios.post(`${API_BASE}/auth/login`, {
@@ -238,11 +305,15 @@ export default function Login() {
           password,
         });
 
-        const { access_token, role: userRole } = res.data;
+        const { access_token, role: userRole, user } = res.data;
 
         localStorage.setItem("access_token", access_token);
         localStorage.setItem("role", userRole);
         localStorage.setItem("userEmail", email);
+        if (user) {
+          localStorage.setItem("userName", user.name || "");
+          localStorage.setItem("user", JSON.stringify(user));
+        }
 
         navigate(`/${userRole}`);
       }
@@ -261,6 +332,29 @@ export default function Login() {
     setSuccess("");
     setName("");
     setPassword("");
+    setSchool("");
+    setGrade("");
+    setSelectedGrades([]);
+    setSubjects([]);
+    setChildEmail("");
+    setShowGradePicker(false);
+    setShowSubjectPicker(false);
+  };
+
+  const toggleSubject = (subj) => {
+    setSubjects((prev) =>
+      prev.includes(subj)
+        ? prev.filter((s) => s !== subj)
+        : [...prev, subj]
+    );
+  };
+
+  const toggleGrade = (g) => {
+    setSelectedGrades((prev) =>
+      prev.includes(g)
+        ? prev.filter((x) => x !== g)
+        : [...prev, g]
+    );
   };
 
   // --- Animations ---
@@ -589,6 +683,247 @@ export default function Login() {
                       </button>
                     </div>
                   </div>
+
+                  {/* ══════ ROLE-SPECIFIC FIELDS (Register Only) ══════ */}
+                  <AnimatePresence>
+                    {isRegister && (role === "student" || role === "teacher") && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-4 pt-1"
+                      >
+                        {/* Section label */}
+                        <div className="flex items-center gap-2 pt-2">
+                          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+                          <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                            {role === "teacher" ? "Teacher Details" : "Student Details"}
+                          </span>
+                          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+                        </div>
+
+                        {/* School Name */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-slate-300 ml-1">
+                            School Name
+                          </label>
+                          <div className="relative">
+                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">
+                              apartment
+                            </span>
+                            <input
+                              type="text"
+                              value={school}
+                              onChange={(e) => setSchool(e.target.value)}
+                              required
+                              placeholder="e.g. ABC International School"
+                              className="w-full pl-12 pr-4 py-3.5 bg-slate-800 border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl transition-all text-white placeholder-slate-500"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Grade (Student only) */}
+                        {role === "student" && (
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-300 ml-1">
+                              Grade / Class
+                            </label>
+                            <div className="relative">
+                              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">
+                                class
+                              </span>
+                              <select
+                                value={grade}
+                                onChange={(e) => setGrade(e.target.value)}
+                                required
+                                className="w-full pl-12 pr-4 py-3.5 bg-slate-800 border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl transition-all text-white appearance-none cursor-pointer"
+                              >
+                                <option value="" disabled>Select your grade</option>
+                                {GRADES.map((g) => (
+                                  <option key={g} value={g}>{g} Grade</option>
+                                ))}
+                              </select>
+                              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none">
+                                expand_more
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Grades (Teacher only — multi-select) */}
+                        {role === "teacher" && (
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-300 ml-1">
+                              Grades You Teach
+                              {selectedGrades.length > 0 && (
+                                <span className="ml-2 text-primary font-bold">({selectedGrades.length} selected)</span>
+                              )}
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => setShowGradePicker(!showGradePicker)}
+                              className="w-full flex items-center justify-between pl-12 pr-4 py-3.5 bg-slate-800 rounded-xl text-left transition-all hover:bg-slate-700/80 border border-transparent focus:border-primary relative"
+                            >
+                              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">
+                                class
+                              </span>
+                              <span className={selectedGrades.length > 0 ? "text-white" : "text-slate-500"}>
+                                {selectedGrades.length > 0
+                                  ? selectedGrades.join(", ")
+                                  : "Select grades..."}
+                              </span>
+                              <span className="material-symbols-outlined text-slate-400 text-lg">
+                                {showGradePicker ? "expand_less" : "expand_more"}
+                              </span>
+                            </button>
+
+                            <AnimatePresence>
+                              {showGradePicker && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="flex flex-wrap gap-2 pt-2"
+                                >
+                                  {GRADES.map((g) => {
+                                    const isSelected = selectedGrades.includes(g);
+                                    return (
+                                      <motion.button
+                                        key={g}
+                                        type="button"
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => toggleGrade(g)}
+                                        className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 border ${
+                                          isSelected
+                                            ? "bg-mentorship-purple/20 border-mentorship-purple/50 text-mentorship-purple shadow-sm shadow-mentorship-purple/10"
+                                            : "bg-slate-800/60 border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200"
+                                        }`}
+                                      >
+                                        {isSelected && (
+                                          <span className="material-symbols-outlined text-xs mr-1 align-middle" style={{ fontSize: '14px' }}>
+                                            check
+                                          </span>
+                                        )}
+                                        {g} Grade
+                                      </motion.button>
+                                    );
+                                  })}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        )}
+
+                        {/* Subjects (Teacher only) */}
+                        {role === "teacher" && (
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-300 ml-1">
+                              Subjects You Teach
+                              {subjects.length > 0 && (
+                                <span className="ml-2 text-primary font-bold">({subjects.length} selected)</span>
+                              )}
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => setShowSubjectPicker(!showSubjectPicker)}
+                              className="w-full flex items-center justify-between pl-12 pr-4 py-3.5 bg-slate-800 rounded-xl text-left transition-all hover:bg-slate-700/80 border border-transparent focus:border-primary relative"
+                            >
+                              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">
+                                menu_book
+                              </span>
+                              <span className={subjects.length > 0 ? "text-white" : "text-slate-500"}>
+                                {subjects.length > 0
+                                  ? subjects.join(", ")
+                                  : "Select subjects..."}
+                              </span>
+                              <span className="material-symbols-outlined text-slate-400 text-lg">
+                                {showSubjectPicker ? "expand_less" : "expand_more"}
+                              </span>
+                            </button>
+
+                            <AnimatePresence>
+                              {showSubjectPicker && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="flex flex-wrap gap-2 pt-2"
+                                >
+                                  {AVAILABLE_SUBJECTS.map((subj) => {
+                                    const isSelected = subjects.includes(subj);
+                                    return (
+                                      <motion.button
+                                        key={subj}
+                                        type="button"
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => toggleSubject(subj)}
+                                        className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 border ${
+                                          isSelected
+                                            ? "bg-primary/20 border-primary/50 text-primary shadow-sm shadow-primary/10"
+                                            : "bg-slate-800/60 border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200"
+                                        }`}
+                                      >
+                                        {isSelected && (
+                                          <span className="material-symbols-outlined text-xs mr-1 align-middle" style={{ fontSize: '14px' }}>
+                                            check
+                                          </span>
+                                        )}
+                                        {subj}
+                                      </motion.button>
+                                    );
+                                  })}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Parent — Child's Email */}
+                  <AnimatePresence>
+                    {isRegister && role === "parent" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-2 pt-1"
+                      >
+                        <div className="flex items-center gap-2 pt-2">
+                          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+                          <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                            Link Your Child
+                          </span>
+                          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+                        </div>
+                        <label className="text-sm font-medium text-slate-300 ml-1">
+                          Child's Email <span className="text-slate-500">(registered as student)</span>
+                        </label>
+                        <div className="relative">
+                          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">
+                            child_care
+                          </span>
+                          <input
+                            type="email"
+                            value={childEmail}
+                            onChange={(e) => setChildEmail(e.target.value)}
+                            placeholder="child@school.com"
+                            className="w-full pl-12 pr-4 py-3.5 bg-slate-800 border-transparent focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl transition-all text-white placeholder-slate-500"
+                          />
+                        </div>
+                        <p className="text-xs text-slate-500 ml-1">
+                          Optional — you can link later. Your child must be registered first.
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   {/* Remember me + Forgot password (login only) */}
                   {!isRegister && (

@@ -3,13 +3,19 @@ from fastapi import FastAPI, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
 from db import get_collection
 import re
-from routers import student_router
 
 # --- IMPORT  LLM EVALUATION SERVICE ---
 from evaluation_service import evaluate_handwriting
 
 # --- IMPORT RETRIEVAL ROUTER ---
 from Retrieval_modular import router as retrieval_router  # 👈 Import the router from Retrieval_modular.py (modular prompts with task types & custom counts)
+
+# ── IMPORT ROUTERS ──
+from routers.auth_router import router as auth_router
+from routers import student_router
+from routers.class_router import router as class_router
+from routers.teacher_router import router as teacher_router
+from routers.parent_router import router as parent_router
 
 # ------------------------------------------------
 # Initialize FastAPI App
@@ -27,12 +33,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(retrieval_router)  # 👈 add router here
+# ── Include All Routers ──
+app.include_router(retrieval_router)        # AI question generation
+app.include_router(auth_router)             # Auth (register, login, Google OAuth)
+app.include_router(student_router.router)   # Student endpoints
+app.include_router(class_router)            # Classroom management (central hub)
+app.include_router(teacher_router)          # Teacher endpoints
+app.include_router(parent_router)           # Parent endpoints
 
-
-# ------------------------------------------------
-# Include the Retrieval Router
-# ------------------------------------------------
 
 # ------------------------------------------------
 # Evaluation Endpoint
@@ -97,11 +105,13 @@ async def evaluate_answer(question_text: str = Form(...), file: UploadFile = For
 def read_root():
     return {
         "message": "Unified AI Backend is running 🚀",
-        "routes": ["/evaluate", "/generate-task"]
+        "routes": [
+            "/evaluate",
+            "/generate-task",
+            "/auth/*",
+            "/class/*",
+            "/student/*",
+            "/teacher/*",
+            "/parent/*",
+        ]
     }
-
-from routers.auth_router import router as auth_router
-
-app.include_router(auth_router)
-
-app.include_router(student_router.router)
