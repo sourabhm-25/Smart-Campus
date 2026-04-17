@@ -1,7 +1,8 @@
 # Backend/main.py
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, Form
 from fastapi.middleware.cors import CORSMiddleware
-from db import get_collection
+from core.database import questions_collection
 import re
 
 # --- IMPORT  LLM EVALUATION SERVICE ---
@@ -16,18 +17,38 @@ from routers import student_router
 from routers.class_router import router as class_router
 from routers.teacher_router import router as teacher_router
 from routers.parent_router import router as parent_router
+from routers.notification_router import router as notification_router
+
+# ── IMPORT SCHEDULER ──
+from services.deadline_scheduler import start_scheduler, stop_scheduler
+
+
+# ------------------------------------------------
+# Lifespan — startup / shutdown
+# ------------------------------------------------
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    start_scheduler()
+    yield
+    # Shutdown
+    stop_scheduler()
+
 
 # ------------------------------------------------
 # Initialize FastAPI App
 # ------------------------------------------------
-app = FastAPI(title="Unified AI Backend (Evaluation + Retrieval)")
+app = FastAPI(
+    title="Unified AI Backend (Evaluation + Retrieval)",
+    lifespan=lifespan,
+)
 
 # ------------------------------------------------
 # Middleware (CORS)
 # ------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # or ["http://localhost:5173"] for security
+    allow_origins=["*"],  # TODO: lock to your frontend domain before production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,6 +61,7 @@ app.include_router(student_router.router)   # Student endpoints
 app.include_router(class_router)            # Classroom management (central hub)
 app.include_router(teacher_router)          # Teacher endpoints
 app.include_router(parent_router)           # Parent endpoints
+app.include_router(notification_router)     # In-app notifications
 
 
 # ------------------------------------------------
@@ -52,8 +74,7 @@ async def evaluate_answer(question_text: str = Form(...), file: UploadFile = For
 
     # 1️⃣ Find question in MongoDB
     cleaned_question_text = question_text.rstrip('.?')
-    coll = get_collection("questions")
-    db_question = coll.find_one({
+    db_question = questions_collection.find_one({
         "question": {
             "$regex": f"^{re.escape(cleaned_question_text)}[.?]?$",
             "$options": "i"
@@ -72,11 +93,10 @@ async def evaluate_answer(question_text: str = Form(...), file: UploadFile = For
         image_bytes = await file.read()
 
         # 3️⃣ Evaluate handwriting via LLaVA (custom service)
-        # Pass the full question text and topic for better context
         evaluation = await evaluate_handwriting(
-            image_bytes, 
-            db_question.get("question", question_text), 
-            correct_answer, 
+            image_bytes,
+            db_question.get("question", question_text),
+            correct_answer,
             max_marks,
             db_question.get("topic", "")
         )
@@ -111,7 +131,16 @@ def read_root():
             "/auth/*",
             "/class/*",
             "/student/*",
+            "/student/submit",
+            "/student/submissions",
+            "/student/progress",
             "/teacher/*",
+            "/teacher/homework/{id}/submissions",
+            "/teacher/submissions/{id}/grade",
+            "/teacher/class/{id}/analytics",
             "/parent/*",
+            "/parent/child/{id}/submissions",
+            "/parent/child/{id}/progress",
+            "/notifications",
         ]
     }

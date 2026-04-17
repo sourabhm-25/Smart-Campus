@@ -1,19 +1,6 @@
-# db.py
-import os
-from pymongo import MongoClient
-from dotenv import load_dotenv
+# db.py — compatibility shim
+# All collections now live in core/database.py (single MongoClient).
+# This file is kept so existing imports (e.g. Retrieval_modular.py) don't break
+# until they're updated to import from core.database directly.
 
-# Load environment variables
-load_dotenv()
-
-# Read from .env
-MONGO_URI = os.getenv("MONGO_URI")
-MONGO_DB = os.getenv("MONGO_DB", "smart_campus")
-
-# Connect to MongoDB
-client = MongoClient(MONGO_URI)
-db = client[MONGO_DB]
-
-def get_collection(name: str):
-    """Helper function to get a specific collection."""
-    return db[name]
+from core.database import get_collection, db  # noqa: F401

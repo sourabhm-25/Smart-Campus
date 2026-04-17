@@ -3,6 +3,7 @@ fastapi
 uvicorn
 pydantic[email]
 python-multipart
+apscheduler
 
 # --- Environment & Config ---
 python-dotenv

@@ -61,22 +61,59 @@ class SaveQuestionsRequest(BaseModel):
 # 1️⃣ Initialize Pinecone
 # -----------------------------
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+_DEFAULT_INDEX = os.getenv("INDEX_NAME", "grade-5")
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
 _index_cache: Dict[str, Any] = {}
 
 def get_pinecone_index(index_name: str):
-    if index_name not in _index_cache:
-        _index_cache[index_name] = pc.Index(index_name)
+    """
+    Return a connected Pinecone Index object.
+    If the requested index doesn't exist, falls back to the default INDEX_NAME.
+    Raises HTTPException(422) with a clear message when even the default is missing.
+    """
+    if index_name in _index_cache:
+        return _index_cache[index_name]
+
+    try:
+        idx = pc.Index(index_name)
+        _index_cache[index_name] = idx
         print(f"✅ Connected to Pinecone index: {index_name}")
-    return _index_cache[index_name]
+        return idx
+    except Exception as primary_err:
+        # index_name doesn't exist — try the default
+        if index_name == _DEFAULT_INDEX:
+            # Even the default is missing — hard fail
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    f"Pinecone index '{index_name}' not found. "
+                    f"Please create it in your Pinecone project or update INDEX_NAME in .env."
+                )
+            )
+
+        print(f"⚠️  Index '{index_name}' not found ({primary_err}). Falling back to '{_DEFAULT_INDEX}'.")
+        try:
+            idx = pc.Index(_DEFAULT_INDEX)
+            _index_cache[index_name] = idx   # cache under original name to avoid re-hitting Pinecone
+            print(f"✅ Using fallback index: {_DEFAULT_INDEX}")
+            return idx
+        except Exception as fallback_err:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    f"Index '{index_name}' not found and fallback '{_DEFAULT_INDEX}' also failed. "
+                    f"Check your Pinecone project. Error: {fallback_err}"
+                )
+            )
+
 
 def derive_index_name(grade: str) -> str:
     import re as _re
     match = _re.search(r'(\d+)', str(grade))
     if match:
         return f"grade-{match.group(1)}"
-    return os.getenv("INDEX_NAME", "grade-5")
+    return _DEFAULT_INDEX
 
 def derive_namespace(grade: str, subject: str) -> str:
     if not grade or not subject:
@@ -113,7 +150,11 @@ print(f"✅ Loaded embedding model: {EMBEDDING_MODEL}")
 # -----------------------------
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 os.environ['GOOGLE_API_KEY'] = GEMINI_API_KEY
-llm = GoogleGenerativeAI(model="models/gemini-2.5-flash", temperature=0.3)
+# llm = GoogleGenerativeAI(model="models/gemini-2.5-flash", temperature=0.3)
+llm = GoogleGenerativeAI(
+    model="models/gemma-4-31b-it",
+    model_kwargs={"thinking_config": {"thinking_level": "high"}}
+)
 
 print("✅ Initialized Gemini LLM")
 
@@ -241,8 +282,11 @@ def generate_task(request: TaskRequest):
         
         print(f"{'='*80}\n")
         
-        # 1️⃣ Get Pinecone index
+        # 1️⃣ Get Pinecone index (falls back to default if grade-specific one missing)
         pinecone_index = get_pinecone_index(index_name)
+        # Warn in logs when falling back so teacher knows content may be from wrong grade
+        if index_name not in pc.list_indexes().names():
+            print(f"   ⚠️  Using fallback index '{_DEFAULT_INDEX}' — content may not match grade {request.grade}")
         
         # 2️⃣ Build prompt using modular system
         print("🔨 Building modular prompt...")
@@ -511,9 +555,7 @@ def list_task_types():
 def save_questions(request: SaveQuestionsRequest):
     """Save questions to MongoDB."""
     try:
-        from db import get_collection
-        
-        coll = get_collection("questions")
+        from core.database import questions_collection as coll
         docs = []
         
         for qtype in ["short_answer", "mcq", "fill_in_the_blanks", "true_false", "matching"]:

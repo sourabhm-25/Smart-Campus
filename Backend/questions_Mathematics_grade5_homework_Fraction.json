@@ -1,0 +1,68 @@
+{
+  "topic": "Fraction",
+  "subject": "Mathematics",
+  "grade": "5",
+  "task_type": "homework",
+  "question_config": {
+    "short_answer": null,
+    "mcq": null,
+    "fill_in_the_blanks": null,
+    "true_false": null,
+    "matching": null
+  },
+  "retrieval_info": {
+    "chunks_used": 5,
+    "namespace": "grade5_math",
+    "index": "grade-5"
+  },
+  "questions": {
+    "short_answer": [
+      {
+        "question": "Explain how to estimate the product of 248 × 49. Name the concept and provide the result.",
+        "answer": "The concept is estimation through rounding. I round 248 to 250 and 49 to 50. The estimated product is 12,500.",
+        "marks": 3
+      },
+      {
+        "question": "Describe the concept of related facts using the division examples provided.",
+        "answer": "Related facts show how changing a number in a problem affects the quotient. For example, if 340 ÷ 17 = 20, then 680 ÷ 17 = 40.",
+        "marks": 3
+      }
+    ],
+    "mcq": [
+      {
+        "question": "Based on the related facts provided, what is the result of 680 ÷ 34?",
+        "options": [
+          "a) 10",
+          "b) 20",
+          "c) 40",
+          "d) 60"
+        ],
+        "answer": "b",
+        "marks": 2
+      },
+      {
+        "question": "Which value is the best estimate for the product of 101 × 11?",
+        "options": [
+          "a) 300",
+          "b) 750",
+          "c) 1,000",
+          "d) 2,600"
+        ],
+        "answer": "c",
+        "marks": 2
+      }
+    ],
+    "fill_in_the_blanks": [
+      {
+        "question": "In the division problem 3,005 ÷ 5, the quotient is ____.",
+        "answer": "601",
+        "marks": 2
+      },
+      {
+        "question": "In the division problem 2,874 ÷ 14, the first partial quotient subtracted is 2,800, which represents 14 × ____.",
+        "answer": "200",
+        "marks": 2
+      }
+    ]
+  }
+}

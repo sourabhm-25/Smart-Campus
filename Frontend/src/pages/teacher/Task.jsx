@@ -15,6 +15,11 @@ export default function Task() {
   const [saving, setSaving] = useState(false);
   const [saveResult, setSaveResult] = useState(null);
 
+  // New states for Assigning Homework
+  const [teacherClasses, setTeacherClasses] = useState([]);
+  const [selectedClassId, setSelectedClassId] = useState("");
+  const [deadline, setDeadline] = useState("");
+
   // Default question counts (fetched per grade)
   const [defaults, setDefaults] = useState(null);
 
@@ -29,6 +34,23 @@ export default function Task() {
 
   const grades = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   const subjects = ["Mathematics", "Science", "English", "History", "Geography"];
+
+  // Fetch teacher's classes on mount
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) return;
+        const response = await axios.get("http://127.0.0.1:8000/teacher/my-classes", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setTeacherClasses(response.data.classes || []);
+      } catch (err) {
+        console.error("Failed to fetch teacher classes:", err);
+      }
+    };
+    fetchClasses();
+  }, []);
 
   // Fetch defaults when grade changes
   useEffect(() => {
@@ -93,21 +115,39 @@ export default function Task() {
     }
   };
 
-  const handleSaveQuestions = async () => {
+  const handleAssignHomework = async () => {
     if (!questions) return;
+    if (!selectedClassId) {
+      setSaveResult({ success: false, message: "Please select a class to assign." });
+      return;
+    }
+    if (!deadline) {
+      setSaveResult({ success: false, message: "Please provide a deadline." });
+      return;
+    }
 
     setSaving(true);
     setSaveResult(null);
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/save-questions", {
-        topic: topic.trim(),
-        questions_json: questions,
-      });
+      const token = localStorage.getItem("access_token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+      const payload = {
+        class_id: selectedClassId,
+        subject: subject,
+        title: topic.trim(),
+        description: `Task generated for ${topic}`,
+        questions: questions,
+        deadline: deadline + "T23:59:00", // setting time to end of day
+        task_type: taskType
+      };
+
+      const response = await axios.post("http://127.0.0.1:8000/teacher/assign-homework", payload, { headers });
       setSaveResult({ success: true, message: response.data.message });
     } catch (err) {
       console.error(err);
-      setSaveResult({ success: false, message: "Failed to save questions to database." });
+      setSaveResult({ success: false, message: err.response?.data?.detail || "Failed to assign homework." });
     } finally {
       setSaving(false);
     }
@@ -374,52 +414,84 @@ export default function Task() {
               </div>
             )}
 
-            {/* Confirmation Button Section */}
+            {/* Send to Students Button Section */}
             <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
-              <div className="flex flex-col items-center space-y-4">
-                <p className="text-gray-600 text-center">
-                  Review the questions above. If everything looks correct, click the button below to save them to the database.
-                </p>
+              <div className="flex flex-col space-y-6">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">Assign to Students</h3>
+                  <p className="text-gray-600">Review the questions above, then select a class and deadline to assign this task.</p>
+                </div>
+                
+                <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
+                  <div className="w-full md:w-1/3">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Select Class</label>
+                    <select
+                      value={selectedClassId}
+                      onChange={(e) => setSelectedClassId(e.target.value)}
+                      className="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                    >
+                      <option value="">-- Choose Class --</option>
+                      {teacherClasses && teacherClasses.map((cls) => (
+                         // only show classes where the teacher has the current subject?
+                         // better to just show all and let endpoint validate
+                        <option key={cls.id} value={cls.id}>
+                          {cls.school} - Grade {cls.grade} (Students: {cls.student_count})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="w-full md:w-1/3">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Deadline Date</label>
+                    <input
+                      type="date"
+                      value={deadline}
+                      onChange={(e) => setDeadline(e.target.value)}
+                      className="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                    />
+                  </div>
+                </div>
 
-                <button
-                  onClick={handleSaveQuestions}
-                  disabled={saving || saveResult?.success}
-                  className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg active:scale-95 disabled:cursor-not-allowed ${saveResult?.success
-                    ? "bg-green-500 text-white"
-                    : "bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400"
-                    }`}
-                >
-                  {saving ? (
-                    <>
-                      <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Saving...
-                    </>
-                  ) : saveResult?.success ? (
-                    <>
-                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                      Saved to Database
-                    </>
-                  ) : (
-                    <>
-                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                      </svg>
-                      Confirm & Save to Database
-                    </>
-                  )}
-                </button>
+                <div className="flex justify-center mt-4">
+                  <button
+                    onClick={handleAssignHomework}
+                    disabled={saving || saveResult?.success}
+                    className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg active:scale-95 disabled:cursor-not-allowed ${saveResult?.success
+                      ? "bg-green-500 text-white"
+                      : "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400"
+                      }`}
+                  >
+                    {saving ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Assigning...
+                      </>
+                    ) : saveResult?.success ? (
+                      <>
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Homework Assigned Successfully
+                      </>
+                    ) : (
+                      <>
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                        Send to Students
+                      </>
+                    )}
+                  </button>
+                </div>
 
                 {saveResult && (
                   <div className={`p-4 rounded-lg w-full ${saveResult.success
                     ? "bg-green-50 border-l-4 border-green-500"
                     : "bg-red-50 border-l-4 border-red-500"
                     }`}>
-                    <p className={`font-medium ${saveResult.success ? "text-green-700" : "text-red-700"}`}>
+                    <p className={`font-medium text-center ${saveResult.success ? "text-green-700" : "text-red-700"}`}>
                       {saveResult.message}
                     </p>
                   </div>

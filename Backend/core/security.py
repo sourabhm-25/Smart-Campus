@@ -230,6 +230,10 @@ def create_access_token(data: dict) -> str:
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Security(security)
 ):
+    import os
+    with open("security_debug.log", "a") as f:
+        f.write("get_current_user init\n")
+        
     token = credentials.credentials
 
     try:
@@ -237,6 +241,8 @@ def get_current_user(
         user_id: str = payload.get("sub")
 
         if not user_id:
+            with open("security_debug.log", "a") as f:
+                f.write("get_current_user: no user_id in token\n")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid token"
@@ -245,14 +251,21 @@ def get_current_user(
         user = users_collection.find_one({"_id": ObjectId(user_id)})
 
         if not user:
+            with open("security_debug.log", "a") as f:
+                f.write("get_current_user: user not found in DB\n")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User not found"
             )
+            
+        with open("security_debug.log", "a") as f:
+            f.write(f"get_current_user returning user: {user.get('email')}\n")
 
         return user
 
-    except JWTError:
+    except JWTError as e:
+        with open("security_debug.log", "a") as f:
+            f.write(f"get_current_user JWTError: {e}\n")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token"
@@ -265,10 +278,14 @@ def get_current_user(
 
 def require_role(required_role: str):
     def role_checker(user: dict = Security(get_current_user)):
+        import os
+        with open("security_debug.log", "a") as f:
+            f.write(f"role_checker called. Required: {required_role}, User: {user.get('email')} Role: {user.get('role')}\n")
+        
         if user.get("role") != required_role:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Access forbidden: insufficient permissions"
+                detail=f"Access forbidden: insufficient permissions. Your role is '{user.get('role')}'. Required: '{required_role}'"
             )
         return user
 
