@@ -1,0 +1,7 @@
+on_http_request:
+  - actions:
+      - type: add-headers
+        config:
+          headers:
+            host: localhost
+#ngrok http 11434 --traffic-policy-file ngrok_policy.yaml
