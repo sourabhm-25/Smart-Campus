@@ -90,8 +90,8 @@ async def evaluate_handwriting(image_bytes: bytes, question_text: str, correct_a
 
     
     try:
-        # Set a long timeout (e.g., 60 seconds) because LLaVA can be slow
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        # Set a very long timeout (e.g., 300 seconds) because LLaVA on CPU can be very slow
+        async with httpx.AsyncClient(timeout=300.0) as client:
             response = await client.post(OLLAMA_URL, json=payload)
             response.raise_for_status() # Raise an error for bad responses
 

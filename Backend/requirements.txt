@@ -12,7 +12,7 @@ python-dotenv
 pymongo
 
 # --- Auth & Security ---
-passlib[bcrypt]
+bcrypt
 python-jose[cryptography]
 google-auth
 google-auth-httplib2

@@ -109,7 +109,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-from passlib.context import CryptContext
+import bcrypt
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from fastapi import HTTPException, Security, status
@@ -161,10 +161,7 @@ def verify_google_token(token: str) -> dict:
 # Password Hashing Config
 # ------------------------------------------------
 
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto"
-)
+# Native bcrypt is used directly to dodge passlib incompatibility
 
 # ------------------------------------------------
 # JWT Config
@@ -192,16 +189,17 @@ def hash_password(password: str) -> str:
     Hash password safely.
     Uses SHA256 pre-hashing to avoid bcrypt 72-byte limit.
     """
-    sha256_hash = hashlib.sha256(password.encode()).hexdigest()
-    return pwd_context.hash(sha256_hash)
+    sha256_hash = hashlib.sha256(password.encode()).hexdigest().encode('utf-8')
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(sha256_hash, salt).decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     Verify password against stored hash.
     """
-    sha256_hash = hashlib.sha256(plain_password.encode()).hexdigest()
-    return pwd_context.verify(sha256_hash, hashed_password)
+    sha256_hash = hashlib.sha256(plain_password.encode()).hexdigest().encode('utf-8')
+    return bcrypt.checkpw(sha256_hash, hashed_password.encode('utf-8'))
 
 
 # ------------------------------------------------
