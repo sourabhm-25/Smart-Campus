@@ -18,49 +18,49 @@
   "questions": {
     "short_answer": [
       {
-        "question": "Explain how to estimate the product of 248 × 49. Name the concept and provide the result.",
-        "answer": "The concept is estimation through rounding. I round 248 to 250 and 49 to 50. The estimated product is 12,500.",
+        "question": "Explain how to estimate the product of 25 × 31 to match it with 750. Name the concept used.",
+        "answer": "The concept used is estimation. Round 31 down to 30 to make the calculation easier. Then, 25 × 30 = 750.",
         "marks": 3
       },
       {
-        "question": "Describe the concept of related facts using the division examples provided.",
-        "answer": "Related facts show how changing a number in a problem affects the quotient. For example, if 340 ÷ 17 = 20, then 680 ÷ 17 = 40.",
+        "question": "Using the fact 340 ÷ 34 = 10, determine the answer for 680 ÷ 34. Explain your reasoning.",
+        "answer": "The answer is 20. This uses the concept of related facts. Since 680 is double 340, the quotient must also double.",
         "marks": 3
       }
     ],
     "mcq": [
       {
-        "question": "Based on the related facts provided, what is the result of 680 ÷ 34?",
+        "question": "Based on the estimation table, which value is the best estimate for 132 × 19?",
         "options": [
-          "a) 10",
-          "b) 20",
-          "c) 40",
-          "d) 60"
+          "a) 300",
+          "b) 2,600",
+          "c) 12,500",
+          "d) 1,000"
         ],
         "answer": "b",
         "marks": 2
       },
       {
-        "question": "Which value is the best estimate for the product of 101 × 11?",
+        "question": "What is the quotient of 3,005 ÷ 5?",
         "options": [
-          "a) 300",
-          "b) 750",
-          "c) 1,000",
-          "d) 2,600"
+          "a) 600",
+          "b) 601",
+          "c) 610",
+          "d) 501"
         ],
-        "answer": "c",
+        "answer": "b",
         "marks": 2
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "In the division problem 3,005 ÷ 5, the quotient is ____.",
-        "answer": "601",
+        "question": "In the division problem 2,874 ÷ 14, the number 2,874 is known as the ________.",
+        "answer": "dividend",
         "marks": 2
       },
       {
-        "question": "In the division problem 2,874 ÷ 14, the first partial quotient subtracted is 2,800, which represents 14 × ____.",
-        "answer": "200",
+        "question": "If 170 ÷ 17 = 10, then the quotient of 340 ÷ 17 is ________.",
+        "answer": "20",
         "marks": 2
       }
     ]

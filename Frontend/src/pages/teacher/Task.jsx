@@ -3,9 +3,257 @@ import axios from "axios";
 import Lottie from "lottie-react";
 import bookLoader from "../../assets/Book_Loader.json";
 
+/* ─── inline styles (no Tailwind dependency for custom tokens) ─── */
+const css = `
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&display=swap');
+
+  .task-root {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f4ff 0%, #fafafa 50%, #f5f0ff 100%);
+    font-family: 'DM Sans', sans-serif;
+    padding: 48px 16px 80px;
+  }
+
+  .task-container { max-width: 860px; margin: 0 auto; }
+
+  /* ── header ── */
+  .task-header { text-align: center; margin-bottom: 40px; }
+  .task-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff; font-size: 12px; font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 100px; margin-bottom: 16px;
+  }
+  .task-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 800; color: #0f0f1a;
+    letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 10px;
+  }
+  .task-subtitle { color: #64748b; font-size: 15px; }
+
+  /* ── card ── */
+  .card {
+    background: #ffffff;
+    border: 1px solid rgba(99,102,241,0.1);
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 32px rgba(99,102,241,0.06);
+    padding: 32px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .card.delay-1 { animation-delay: 0.05s; }
+  .card.delay-2 { animation-delay: 0.10s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #94a3b8; margin-bottom: 20px;
+  }
+
+  /* ── form controls ── */
+  .field-label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: #374151; margin-bottom: 6px;
+  }
+  .field-input, .field-select {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid #e5e7eb; border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: #111827;
+    background: #fafafa;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    outline: none; box-sizing: border-box;
+  }
+  .field-input:focus, .field-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+    background: #fff;
+  }
+  .field-select { cursor: pointer; }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) {
+    .row-2, .row-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── defaults pill strip ── */
+  .defaults-bar {
+    background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+    border: 1px solid rgba(99,102,241,0.15);
+    border-radius: 12px; padding: 14px 18px;
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+  }
+  .defaults-label { font-size: 12px; font-weight: 700; color: #6366f1; margin-right: 4px; }
+  .pill {
+    font-size: 12px; font-weight: 600; padding: 4px 12px;
+    border-radius: 100px; letter-spacing: 0.02em;
+  }
+  .pill-blue   { background:#dbeafe; color:#1d4ed8; }
+  .pill-orange { background:#ffedd5; color:#c2410c; }
+  .pill-teal   { background:#ccfbf1; color:#0f766e; }
+  .pill-purple { background:#ede9fe; color:#7c3aed; }
+
+  /* ── custom section ── */
+  .custom-toggle {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 16px; background: #f8fafc;
+    border: 1.5px solid #e5e7eb; border-radius: 12px;
+    font-size: 13px; font-weight: 600; color: #475569; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s; text-align: left;
+  }
+  .custom-toggle:hover { background:#f1f5ff; border-color: #c7d2fe; }
+  .custom-toggle.open  { border-color:#6366f1; background:#f5f3ff; color:#6366f1; border-radius: 12px 12px 0 0; }
+  .custom-body {
+    background: #fafafa; border: 1.5px solid #e5e7eb;
+    border-top: none; border-radius: 0 0 12px 12px;
+    padding: 20px; animation: fadeUp 0.25s ease both;
+  }
+
+  /* ── generate button ── */
+  .btn-generate {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 32px; border-radius: 12px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; font-weight: 700; letter-spacing: 0.02em;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff; border: none; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+    transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s, opacity 0.2s;
+  }
+  .btn-generate:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(99,102,241,0.45); }
+  .btn-generate:active:not(:disabled) { transform: translateY(0); }
+  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── loader ── */
+  .loader-wrap { display: flex; flex-direction: column; align-items: center; padding: 24px 0; gap: 8px; }
+  .loader-text { font-size: 14px; color: #64748b; font-weight: 500; }
+
+  /* ── error banner ── */
+  .error-banner {
+    background: #fef2f2; border-left: 4px solid #ef4444;
+    border-radius: 8px; padding: 14px 18px; font-size: 14px; color: #b91c1c; font-weight: 500;
+  }
+
+  /* ── questions section ── */
+  .section-heading {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(1.3rem, 3vw, 1.6rem); font-weight: 800;
+    color: #0f0f1a; letter-spacing: -0.02em; margin-bottom: 20px;
+  }
+
+  .q-card {
+    border-radius: 14px; padding: 20px 22px; margin-bottom: 12px;
+    border-left: 4px solid transparent;
+  }
+  .q-card.blue   { background:#eff6ff; border-color:#3b82f6; }
+  .q-card.orange { background:#fff7ed; border-color:#f97316; }
+  .q-card.teal   { background:#f0fdfa; border-color:#14b8a6; }
+  .q-card.purple { background:#faf5ff; border-color:#a855f7; }
+
+  .q-question { font-weight: 600; color: #1e293b; font-size: 14px; margin-bottom: 10px; line-height: 1.55; }
+  .q-options   { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .q-option    { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px 12px; font-size:13px; color:#374151; }
+  .q-answer    { font-size: 13px; color: #475569; font-weight: 600; }
+  .q-answer span { color: #059669; }
+
+  /* ── assign panel ── */
+  .assign-panel {
+    background: linear-gradient(135deg, #0f0f1a 0%, #1e1b4b 100%);
+    border-radius: 20px; padding: 36px 32px;
+    box-shadow: 0 20px 60px rgba(99,102,241,0.25);
+    animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 0.15s both;
+  }
+  .assign-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 22px; font-weight: 800; color: #fff;
+    margin-bottom: 6px; letter-spacing: -0.02em;
+  }
+  .assign-sub { color: #94a3b8; font-size: 14px; margin-bottom: 28px; }
+
+  .assign-target {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px; padding: 14px 18px; margin-bottom: 20px;
+  }
+  .assign-target-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .assign-target-label { font-size: 11px; font-weight: 700; color: #6366f1; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+  .assign-target-value { font-size: 15px; font-weight: 600; color: #fff; }
+  .assign-target-no-class { font-size: 13px; color: #f87171; font-style: italic; }
+
+  .assign-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: flex-end; }
+  @media (max-width: 540px) { .assign-row { grid-template-columns: 1fr; } }
+
+  .field-label-dark { display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 6px; }
+  .field-input-dark {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid rgba(255,255,255,0.12); border-radius: 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px; color: #fff;
+    background: rgba(255,255,255,0.07);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none; box-sizing: border-box;
+    color-scheme: dark;
+  }
+  .field-input-dark:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+  }
+
+  .btn-send {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 28px; border-radius: 12px; white-space: nowrap;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px; font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff; border: none; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+    transition: transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s, opacity 0.2s;
+  }
+  .btn-send:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(99,102,241,0.55); }
+  .btn-send:active:not(:disabled) { transform: translateY(0); }
+  .btn-send:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-send.success { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 20px rgba(16,185,129,0.4); }
+
+  .save-result {
+    margin-top: 16px; padding: 14px 18px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; text-align: center;
+  }
+  .save-result.ok  { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+  .save-result.err { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+
+  /* ── q-type header card ── */
+  .q-type-card { border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+  .q-type-card.blue   { background: #eff6ff; }
+  .q-type-card.orange { background: #fff7ed; }
+  .q-type-card.teal   { background: #f0fdfa; }
+  .q-type-card.purple { background: #faf5ff; }
+  .q-type-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:800; margin-bottom:14px; }
+  .q-type-title.blue   { color:#1d4ed8; }
+  .q-type-title.orange { color:#c2410c; }
+  .q-type-title.teal   { color:#0f766e; }
+  .q-type-title.purple { color:#7c3aed; }
+
+  @media (max-width: 640px) {
+    .q-options { grid-template-columns: 1fr; }
+    .assign-panel { padding: 24px 18px; }
+    .card { padding: 22px 18px; }
+  }
+`;
 
 export default function Task() {
-  const [grade, setGrade] = useState("8");
+  const [grade, setGrade] = useState("");
   const [subject, setSubject] = useState("Mathematics");
   const [topic, setTopic] = useState("");
   const [taskType, setTaskType] = useState("homework");
@@ -15,36 +263,37 @@ export default function Task() {
   const [saving, setSaving] = useState(false);
   const [saveResult, setSaveResult] = useState(null);
 
-  // New states for Assigning Homework
   const [teacherClasses, setTeacherClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState("");
+  const [selectedClass, setSelectedClass] = useState(null); // full class object
   const [deadline, setDeadline] = useState("");
 
-  // Default question counts (fetched per grade)
   const [defaults, setDefaults] = useState(null);
-
-  // Custom overrides (empty string = use default)
   const [customShortAnswer, setCustomShortAnswer] = useState("");
   const [customMcq, setCustomMcq] = useState("");
   const [customFillInBlanks, setCustomFillInBlanks] = useState("");
   const [customTrueFalse, setCustomTrueFalse] = useState("");
-
-  // Show/hide custom counts section
   const [showCustom, setShowCustom] = useState(false);
 
-  const grades = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
-  const subjects = ["Mathematics", "Science", "English", "History", "Geography"];
+  const grades = ["1","2","3","4","5","6","7","8","9","10"];
+  const subjects = ["Mathematics","Science","English","History","Geography"];
 
-  // Fetch teacher's classes on mount
+  // Fetch teacher classes once
   useEffect(() => {
     const fetchClasses = async () => {
       try {
         const token = localStorage.getItem("access_token");
         if (!token) return;
-        const response = await axios.get("http://127.0.0.1:8000/teacher/my-classes", {
-          headers: { Authorization: `Bearer ${token}` }
+        const res = await axios.get("http://127.0.0.1:8000/teacher/my-classes", {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setTeacherClasses(response.data.classes || []);
+        const classes = res.data.classes || [];
+        setTeacherClasses(classes);
+        // Auto-set grade to the teacher's first class grade (normalized)
+        if (classes.length > 0) {
+          const firstGrade = String(classes[0].grade).replace(/(st|nd|rd|th)$/i, "").trim();
+          setGrade(firstGrade);
+        }
       } catch (err) {
         console.error("Failed to fetch teacher classes:", err);
       }
@@ -52,15 +301,36 @@ export default function Task() {
     fetchClasses();
   }, []);
 
+  // Normalize grade string: strip ordinal suffixes "5th" → "5", "3rd" → "3"
+  const normalizeGrade = (g) => String(g).replace(/(st|nd|rd|th)$/i, "").trim();
+
+  // Auto-select class whenever grade or teacherClasses changes
+  useEffect(() => {
+    if (!teacherClasses.length) return;
+    const match = teacherClasses.find(
+      (cls) => normalizeGrade(cls.grade) === normalizeGrade(grade)
+    );
+    if (match) {
+      setSelectedClassId(match.id);
+      setSelectedClass(match);
+      // Auto-set subject to the teacher's first subject for this class
+      if (match.my_subjects?.length > 0) {
+        setSubject(match.my_subjects[0]);
+      }
+    } else {
+      setSelectedClassId("");
+      setSelectedClass(null);
+    }
+  }, [grade, teacherClasses]);
+
   // Fetch defaults when grade changes
   useEffect(() => {
     if (!grade) return;
     const fetchDefaults = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:8000/question-defaults/${grade}`);
-        setDefaults(response.data.defaults);
-      } catch (err) {
-        console.error("Failed to fetch defaults:", err);
+        const res = await axios.get(`http://127.0.0.1:8000/question-defaults/${grade}`);
+        setDefaults(res.data.defaults);
+      } catch {
         setDefaults(null);
       }
     };
@@ -70,46 +340,26 @@ export default function Task() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!grade || !subject || !topic.trim()) return;
-
     setLoading(true);
     setError(null);
     setQuestions(null);
     setSaveResult(null);
 
     try {
-      const requestBody = {
-        topic: topic.trim(),
-        grade: grade,
-        subject: subject,
-        task_type: taskType,
-      };
+      const body = { topic: topic.trim(), grade, subject, task_type: taskType };
+      if (customShortAnswer !== "")     body.custom_short_answer      = parseInt(customShortAnswer);
+      if (customMcq !== "")            body.custom_mcq               = parseInt(customMcq);
+      if (customFillInBlanks !== "")   body.custom_fill_in_the_blanks = parseInt(customFillInBlanks);
+      if (customTrueFalse !== "" && customTrueFalse !== "0") body.custom_true_false = parseInt(customTrueFalse);
 
-      // Add custom counts only if provided
-      if (customShortAnswer !== "") {
-        requestBody.custom_short_answer = parseInt(customShortAnswer);
+      const res = await axios.post("http://127.0.0.1:8000/generate-task", body);
+      if (res.data.retrieval_info?.chunks) {
+        console.log("📄 Pinecone Chunks:", res.data.retrieval_info.chunks);
       }
-      if (customMcq !== "") {
-        requestBody.custom_mcq = parseInt(customMcq);
-      }
-      if (customFillInBlanks !== "") {
-        requestBody.custom_fill_in_the_blanks = parseInt(customFillInBlanks);
-      }
-      if (customTrueFalse !== "" && customTrueFalse !== "0") {
-        requestBody.custom_true_false = parseInt(customTrueFalse);
-      }
-
-      const response = await axios.post("http://127.0.0.1:8000/generate-task", requestBody);
-
-      // Log retrieved Pinecone chunks to console for debugging
-      if (response.data.retrieval_info?.chunks) {
-        console.log("📄 Retrieved Pinecone Chunks:", response.data.retrieval_info.chunks);
-        console.log(`📊 Total chunks: ${response.data.retrieval_info.chunks_retrieved}`);
-      }
-
-      setQuestions(response.data.questions_json);
+      setQuestions(res.data.questions_json);
     } catch (err) {
       console.error(err);
-      setError("Failed to generate questions. Check your server.");
+      setError("Failed to generate questions. Please check your server.");
     } finally {
       setLoading(false);
     }
@@ -118,33 +368,29 @@ export default function Task() {
   const handleAssignHomework = async () => {
     if (!questions) return;
     if (!selectedClassId) {
-      setSaveResult({ success: false, message: "Please select a class to assign." });
+      setSaveResult({ success: false, message: "No class found for Grade " + grade + ". Please ensure this grade exists in your classes." });
       return;
     }
     if (!deadline) {
-      setSaveResult({ success: false, message: "Please provide a deadline." });
+      setSaveResult({ success: false, message: "Please set a deadline before sending." });
       return;
     }
-
     setSaving(true);
     setSaveResult(null);
-
     try {
       const token = localStorage.getItem("access_token");
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
       const payload = {
         class_id: selectedClassId,
-        subject: subject,
+        subject,
         title: topic.trim(),
         description: `Task generated for ${topic}`,
-        questions: questions,
-        deadline: deadline + "T23:59:00", // setting time to end of day
-        task_type: taskType
+        questions,
+        deadline: deadline + "T23:59:00",
+        task_type: taskType,
       };
-
-      const response = await axios.post("http://127.0.0.1:8000/teacher/assign-homework", payload, { headers });
-      setSaveResult({ success: true, message: response.data.message });
+      const res = await axios.post("http://127.0.0.1:8000/teacher/assign-homework", payload, { headers });
+      setSaveResult({ success: true, message: res.data.message });
     } catch (err) {
       console.error(err);
       setSaveResult({ success: false, message: err.response?.data?.detail || "Failed to assign homework." });
@@ -154,331 +400,307 @@ export default function Task() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 text-center mb-6">
-          Teacher Task Generator
-        </h1>
-        <p className="text-center text-gray-600 mb-10">
-          Select Grade, Subject, Topic, and Task Type to generate questions
-        </p>
+    <>
+      <style>{css}</style>
+      <div className="task-root">
+        <div className="task-container">
 
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Row 1: Topic */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Topic</label>
-              <input
-                type="text"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                placeholder="Enter topic (e.g., Water Cycle, Fractions, Cube Roots)"
-                required
-                className="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-              />
+          {/* ── Header ── */}
+          <div className="task-header">
+            <div className="task-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+              Task Generator
             </div>
+            <h1 className="task-title">Create &amp; Assign Tasks</h1>
+            <p className="task-subtitle">Generate curriculum-aligned questions and send them directly to your class</p>
+          </div>
 
-            {/* Row 2: Grade, Subject, Task Type */}
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Grade</label>
-                <select
-                  value={grade}
-                  onChange={(e) => setGrade(e.target.value)}
+          {/* ── Form Card ── */}
+          <div className="card">
+            <p className="card-section-title">📝 Task Configuration</p>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+              {/* Topic */}
+              <div>
+                <label className="field-label" htmlFor="topic-input">Topic</label>
+                <input
+                  id="topic-input"
+                  type="text"
+                  className="field-input"
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  placeholder="e.g. Water Cycle, Fractions, Cube Roots…"
                   required
-                  className="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-                >
-                  {grades.map((g) => (
-                    <option key={g} value={g}>Grade {g}</option>
-                  ))}
-                </select>
+                />
               </div>
 
-              <div className="flex-1">
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
-                <select
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  required
-                  className="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-                >
-                  {subjects.map((s) => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
+              {/* Grade + Subject + Task Type */}
+              <div className="row-3">
+                <div>
+                  <label className="field-label" htmlFor="grade-select">Grade</label>
+                  <select
+                    id="grade-select"
+                    className="field-select"
+                    value={grade}
+                    onChange={(e) => setGrade(e.target.value)}
+                    required
+                  >
+                    {/* Only show grades the teacher actually has classes for */}
+                    {teacherClasses.length === 0 && (
+                      <option value="">Loading classes…</option>
+                    )}
+                    {teacherClasses.map((cls) => {
+                      const norm = String(cls.grade).replace(/(st|nd|rd|th)$/i, "").trim();
+                      return <option key={cls.id} value={norm}>Grade {norm} — {cls.school}</option>;
+                    })}
+                  </select>
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="subject-select">Subject</label>
+                  <select
+                    id="subject-select"
+                    className="field-select"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    required
+                  >
+                    {/* Show subjects this teacher teaches for the selected grade */}
+                    {(selectedClass?.my_subjects?.length > 0
+                      ? selectedClass.my_subjects
+                      : subjects
+                    ).map((s) => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="field-label" htmlFor="tasktype-select">Task Type</label>
+                  <select
+                    id="tasktype-select"
+                    className="field-select"
+                    value={taskType}
+                    onChange={(e) => setTaskType(e.target.value)}
+                    required
+                  >
+                    <option value="homework">Homework</option>
+                    <option value="test">Test</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="flex-1">
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Task Type</label>
-                <select
-                  value={taskType}
-                  onChange={(e) => setTaskType(e.target.value)}
-                  required
-                  className="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-                >
-                  <option value="homework">Homework</option>
-                  <option value="test">Test</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Default Counts Display */}
-            {defaults && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm font-semibold text-blue-800 mb-2">
-                  Grade {grade} Default Question Counts:
-                </p>
-                <div className="flex flex-wrap gap-4 text-sm text-blue-700">
-                  <span className="bg-blue-100 px-3 py-1 rounded-full">
-                    Short Answer: {defaults.short_answer}
-                  </span>
-                  <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full">
-                    MCQ: {defaults.mcq}
-                  </span>
-                  <span className="bg-teal-100 text-teal-700 px-3 py-1 rounded-full">
-                    Fill-in-Blank: {defaults.fill_in_the_blanks}
-                  </span>
+              {/* Defaults bar */}
+              {defaults && (
+                <div className="defaults-bar">
+                  <span className="defaults-label">Grade {grade} defaults →</span>
+                  <span className="pill pill-blue">Short Answer: {defaults.short_answer}</span>
+                  <span className="pill pill-orange">MCQ: {defaults.mcq}</span>
+                  <span className="pill pill-teal">Fill-in-Blank: {defaults.fill_in_the_blanks}</span>
                   {defaults.true_false > 0 && (
-                    <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full">
-                      True/False: {defaults.true_false}
-                    </span>
+                    <span className="pill pill-purple">True/False: {defaults.true_false}</span>
                   )}
                 </div>
+              )}
+
+              {/* Custom counts accordion */}
+              <div>
+                <button
+                  type="button"
+                  className={`custom-toggle${showCustom ? " open" : ""}`}
+                  onClick={() => setShowCustom((v) => !v)}
+                >
+                  <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
+                    </svg>
+                    Customize Question Counts <span style={{ fontWeight: 400, opacity: 0.6 }}>(optional)</span>
+                  </span>
+                  <span style={{ fontSize: 11 }}>{showCustom ? "▲" : "▼"}</span>
+                </button>
+                {showCustom && (
+                  <div className="custom-body">
+                    <div className="row-2" style={{ gap: 14 }}>
+                      {[
+                        { label: "Short Answer", val: customShortAnswer, set: setCustomShortAnswer, max: 10 },
+                        { label: "MCQ",           val: customMcq,         set: setCustomMcq,         max: 20 },
+                        { label: "Fill-in-Blank", val: customFillInBlanks,set: setCustomFillInBlanks, max: 10 },
+                        { label: "True / False",  val: customTrueFalse,  set: setCustomTrueFalse,   max: 10, placeholder: "0 (excluded by default)" },
+                      ].map(({ label, val, set, max, placeholder }) => (
+                        <div key={label}>
+                          <label className="field-label" style={{ fontSize: 12 }}>{label}</label>
+                          <input
+                            type="number" min="0" max={max}
+                            className="field-input" style={{ fontSize: 13, padding: "10px 12px" }}
+                            value={val} onChange={(e) => set(e.target.value)}
+                            placeholder={placeholder || "Leave blank for default"}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Submit */}
+              <div style={{ paddingTop: 4 }}>
+                <button type="submit" className="btn-generate" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" opacity=".25"/><path d="M21 12a9 9 0 01-9 9"/>
+                      </svg>
+                      Generating…
+                    </>
+                  ) : (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                      </svg>
+                      Generate Questions
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            {/* Loader */}
+            {loading && (
+              <div className="loader-wrap">
+                <div style={{ width: 160 }}><Lottie animationData={bookLoader} loop /></div>
+                <p className="loader-text">Generating curriculum-aligned questions…</p>
               </div>
             )}
 
-            {/* Custom Counts (Collapsible) */}
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <button
-                type="button"
-                onClick={() => setShowCustom(!showCustom)}
-                className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 text-sm font-semibold text-gray-700 transition-all"
-              >
-                <span>⚙️ Customize Question Counts (Optional)</span>
-                <span className="text-gray-400">{showCustom ? "▲" : "▼"}</span>
-              </button>
+            {/* Error */}
+            {error && <div className="error-banner" style={{ marginTop: 20 }}>{error}</div>}
+          </div>
 
-              {showCustom && (
-                <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      Short Answer Questions
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={customShortAnswer}
-                      onChange={(e) => setCustomShortAnswer(e.target.value)}
-                      placeholder="Leave blank for default"
-                      className="w-full border-2 border-gray-200 p-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      MCQ Questions
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="20"
-                      value={customMcq}
-                      onChange={(e) => setCustomMcq(e.target.value)}
-                      placeholder="Leave blank for default"
-                      className="w-full border-2 border-gray-200 p-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      Fill-in-the-Blank
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={customFillInBlanks}
-                      onChange={(e) => setCustomFillInBlanks(e.target.value)}
-                      placeholder="Leave blank for default"
-                      className="w-full border-2 border-gray-200 p-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      True/False (optional)
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={customTrueFalse}
-                      onChange={(e) => setCustomTrueFalse(e.target.value)}
-                      placeholder="0 (not included by default)"
-                      className="w-full border-2 border-gray-200 p-2 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none text-sm"
-                    />
-                  </div>
+          {/* ── Questions ── */}
+          {questions && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <h2 className="section-heading">Generated Questions</h2>
+
+              {/* Short Answer */}
+              {questions.short_answer?.length > 0 && (
+                <div className="q-type-card blue">
+                  <p className="q-type-title blue">Short Answer</p>
+                  {questions.short_answer.map((q, i) => (
+                    <div key={i} className="q-card blue">
+                      <p className="q-question">{i + 1}. {q.question}</p>
+                      <p className="q-answer">Answer: <span>{q.answer}</span></p>
+                    </div>
+                  ))}
                 </div>
               )}
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
-            >
-              {loading ? "Generating..." : "Generate Questions"}
-            </button>
-          </form>
-
-          {loading && (
-            <div className="mt-6 text-center flex flex-col items-center">
-              <div className="w-48">
-                <Lottie animationData={bookLoader} loop={true} />
-              </div>
-              <p className="mt-2 text-gray-600 font-medium">Generating questions...</p>
-            </div>
-          )}
-
-          {error && (
-            <div className="mt-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
-              <p className="text-red-700 font-medium">{error}</p>
-            </div>
-          )}
-        </div>
-
-        {questions && (
-          <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">Generated Questions</h2>
-
-            {/* Short Answer */}
-            {questions.short_answer && questions.short_answer.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-blue-600 mb-4">Short Answer</h3>
-                <div className="space-y-4">
-                  {questions.short_answer.map((q, i) => (
-                    <div key={i} className="border-l-4 border-blue-300 pl-4 py-2 bg-blue-50 rounded-r">
-                      <p className="font-semibold text-gray-800 mb-2">{q.question}</p>
-                      <p className="text-gray-700 font-medium">Answer: {q.answer}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* MCQ */}
-            {questions.mcq && questions.mcq.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-orange-600 mb-4">Multiple Choice Questions</h3>
-                <div className="space-y-4">
+              {/* MCQ */}
+              {questions.mcq?.length > 0 && (
+                <div className="q-type-card orange">
+                  <p className="q-type-title orange">Multiple Choice</p>
                   {questions.mcq.map((q, i) => (
-                    <div key={i} className="border-l-4 border-orange-300 pl-4 py-2 bg-orange-50 rounded-r">
-                      <p className="font-semibold text-gray-800 mb-2">{q.question}</p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
-                        {Object.entries(q.options).map(([key, val]) => (
-                          <div key={key} className="bg-white px-3 py-2 rounded border border-gray-200">{key}: {val}</div>
+                    <div key={i} className="q-card orange">
+                      <p className="q-question">{i + 1}. {q.question}</p>
+                      <div className="q-options">
+                        {Object.entries(q.options).map(([k, v]) => (
+                          <div key={k} className="q-option">{k}: {v}</div>
                         ))}
                       </div>
-                      <p className="text-gray-700 font-medium">Answer: {q.answer}</p>
+                      <p className="q-answer">Answer: <span>{q.answer}</span></p>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Fill in the Blanks */}
-            {questions.fill_in_the_blanks && questions.fill_in_the_blanks.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-teal-600 mb-4">Fill in the Blanks</h3>
-                <div className="space-y-4">
+              {/* Fill in the Blanks */}
+              {questions.fill_in_the_blanks?.length > 0 && (
+                <div className="q-type-card teal">
+                  <p className="q-type-title teal">Fill in the Blanks</p>
                   {questions.fill_in_the_blanks.map((q, i) => (
-                    <div key={i} className="border-l-4 border-teal-300 pl-4 py-2 bg-teal-50 rounded-r">
-                      <p className="font-semibold text-gray-800 mb-2">{q.question}</p>
-                      <p className="text-gray-700 font-medium">Answer: {q.answer}</p>
+                    <div key={i} className="q-card teal">
+                      <p className="q-question">{i + 1}. {q.question}</p>
+                      <p className="q-answer">Answer: <span>{q.answer}</span></p>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* True/False */}
-            {questions.true_false && questions.true_false.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-xl font-bold text-purple-600 mb-4">True / False</h3>
-                <div className="space-y-4">
+              {/* True/False */}
+              {questions.true_false?.length > 0 && (
+                <div className="q-type-card purple">
+                  <p className="q-type-title purple">True / False</p>
                   {questions.true_false.map((q, i) => (
-                    <div key={i} className="border-l-4 border-purple-300 pl-4 py-2 bg-purple-50 rounded-r">
-                      <p className="font-semibold text-gray-800 mb-2">{q.question}</p>
-                      <p className="text-gray-700 font-medium">Answer: {q.answer}</p>
+                    <div key={i} className="q-card purple">
+                      <p className="q-question">{i + 1}. {q.question}</p>
+                      <p className="q-answer">Answer: <span>{q.answer}</span></p>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Send to Students Button Section */}
-            <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
-              <div className="flex flex-col space-y-6">
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">Assign to Students</h3>
-                  <p className="text-gray-600">Review the questions above, then select a class and deadline to assign this task.</p>
-                </div>
-                
-                <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
-                  <div className="w-full md:w-1/3">
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Select Class</label>
-                    <select
-                      value={selectedClassId}
-                      onChange={(e) => setSelectedClassId(e.target.value)}
-                      className="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
-                    >
-                      <option value="">-- Choose Class --</option>
-                      {teacherClasses && teacherClasses.map((cls) => (
-                         // only show classes where the teacher has the current subject?
-                         // better to just show all and let endpoint validate
-                        <option key={cls.id} value={cls.id}>
-                          {cls.school} - Grade {cls.grade} (Students: {cls.student_count})
-                        </option>
-                      ))}
-                    </select>
+              {/* ── Assign Panel ── */}
+              <div className="assign-panel">
+                <p className="assign-title">Send to Students</p>
+                <p className="assign-sub">Review the questions above, then set a deadline to send this {taskType} to your class.</p>
+
+                {/* Read-only class display */}
+                <div className="assign-target">
+                  <div className="assign-target-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                    </svg>
                   </div>
-                  <div className="w-full md:w-1/3">
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Deadline Date</label>
+                  <div>
+                    <p className="assign-target-label">Sending to</p>
+                    {selectedClass ? (
+                      <p className="assign-target-value">
+                        {selectedClass.school} — Grade {selectedClass.grade}
+                        <span style={{ marginLeft: 10, fontSize: 12, opacity: 0.6 }}>
+                          {selectedClass.student_count} student{selectedClass.student_count !== 1 ? "s" : ""}
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="assign-target-no-class">
+                        No class found for Grade {grade} — please check your class assignments
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Deadline + Send */}
+                <div className="assign-row">
+                  <div>
+                    <label className="field-label-dark" htmlFor="deadline-input">Deadline Date</label>
                     <input
+                      id="deadline-input"
                       type="date"
+                      className="field-input-dark"
                       value={deadline}
                       onChange={(e) => setDeadline(e.target.value)}
-                      className="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
                     />
                   </div>
-                </div>
-
-                <div className="flex justify-center mt-4">
                   <button
                     onClick={handleAssignHomework}
                     disabled={saving || saveResult?.success}
-                    className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg active:scale-95 disabled:cursor-not-allowed ${saveResult?.success
-                      ? "bg-green-500 text-white"
-                      : "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400"
-                      }`}
+                    className={`btn-send${saveResult?.success ? " success" : ""}`}
                   >
                     {saving ? (
                       <>
-                        <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" opacity=".25"/><path d="M21 12a9 9 0 01-9 9"/>
                         </svg>
-                        Assigning...
+                        Sending…
                       </>
                     ) : saveResult?.success ? (
                       <>
-                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
                         </svg>
-                        Homework Assigned Successfully
+                        Sent!
                       </>
                     ) : (
                       <>
-                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
                         </svg>
                         Send to Students
                       </>
@@ -487,20 +709,16 @@ export default function Task() {
                 </div>
 
                 {saveResult && (
-                  <div className={`p-4 rounded-lg w-full ${saveResult.success
-                    ? "bg-green-50 border-l-4 border-green-500"
-                    : "bg-red-50 border-l-4 border-red-500"
-                    }`}>
-                    <p className={`font-medium text-center ${saveResult.success ? "text-green-700" : "text-red-700"}`}>
-                      {saveResult.message}
-                    </p>
+                  <div className={`save-result ${saveResult.success ? "ok" : "err"}`}>
+                    {saveResult.message}
                   </div>
                 )}
               </div>
             </div>
-          </div>
-        )}
+          )}
+
+        </div>
       </div>
-    </div>
+    </>
   );
 }
