@@ -132,8 +132,34 @@ const css = `
   .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* ── loader ── */
-  .loader-wrap { display: flex; flex-direction: column; align-items: center; padding: 24px 0; gap: 8px; }
-  .loader-text { font-size: 14px; color: #64748b; font-weight: 500; }
+  .loader-wrap { display: flex; flex-direction: column; align-items: center; padding: 24px 0 16px; gap: 14px; }
+  .loader-text-wrap {
+    height: 26px; display: flex; justify-content: center; align-items: center; overflow: hidden;
+  }
+  .loader-text { 
+    font-size: 15px; 
+    color: #475569; 
+    font-weight: 600; 
+    letter-spacing: 0.02em;
+    animation: elegantSlideFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .loader-text-accent {
+    background: linear-gradient(135deg, #6366f1, #d946ef);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-right: 6px;
+    background-size: 200% 200%;
+    animation: gradientShift 2.5s ease infinite;
+  }
+  @keyframes elegantSlideFade {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 
   /* ── error banner ── */
   .error-banner {
@@ -262,6 +288,28 @@ export default function Task() {
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveResult, setSaveResult] = useState(null);
+  const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
+
+  const loadingMessages = [
+    "Collecting textbook knowledge...",
+    "Processing context via RAG...",
+    "Analyzing grade-level complexity...",
+    "Drafting curriculum-aligned questions...",
+    "Refining multiple choice options...",
+    "Finalizing assessment structure..."
+  ];
+
+  useEffect(() => {
+    let interval;
+    if (loading) {
+      interval = setInterval(() => {
+        setLoadingMsgIdx((prev) => (prev + 1) % loadingMessages.length);
+      }, 4500); 
+    } else {
+      setLoadingMsgIdx(0);
+    }
+    return () => clearInterval(interval);
+  }, [loading]);
 
   const [teacherClasses, setTeacherClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState("");
@@ -566,7 +614,12 @@ export default function Task() {
             {loading && (
               <div className="loader-wrap">
                 <div style={{ width: 160 }}><Lottie animationData={bookLoader} loop /></div>
-                <p className="loader-text">Generating curriculum-aligned questions…</p>
+                <div className="loader-text-wrap">
+                  <p key={loadingMsgIdx} className="loader-text">
+                    <span className="loader-text-accent">✧</span> 
+                    {loadingMessages[loadingMsgIdx]}
+                  </p>
+                </div>
               </div>
             )}
 
