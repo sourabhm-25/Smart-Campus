@@ -1,15 +1,59 @@
 # Backend/main.py
+import re
+import json
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, UploadFile, Form
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CRITICAL PATCH — must run before ANY FastAPI / Starlette code executes.
+#
+# Root cause: fastapi/encoders.py has:
+#   ENCODERS_BY_TYPE = { bytes: lambda o: o.decode(), ... }
+# When a RequestValidationError is raised on a multipart/form-data request,
+# FastAPI tries to JSON-encode the error details, which include the raw binary
+# image bytes → UnicodeDecodeError: 'utf-8' codec can't decode byte 0x89.
+#
+# Fix: replace the bytes encoder in-place so binary data never causes a crash.
+# ─────────────────────────────────────────────────────────────────────────────
+import fastapi.encoders as _enc
+_enc.ENCODERS_BY_TYPE[bytes] = lambda o: f"<binary {len(o)} bytes>"
+
+# Also patch the exception handler function directly (belt-and-suspenders)
+import fastapi.exception_handlers as _feh
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+
+async def _safe_validation_handler(request, exc):
+    try:
+        errors = exc.errors()
+        # Log full error details to uvicorn console
+        import traceback
+        print(f"\n[VALIDATION 422] path={request.url.path} method={request.method}")
+        for i, e in enumerate(errors):
+            # sanitize 'input' field separately since it may contain bytes
+            safe_input = e.get('input')
+            if isinstance(safe_input, bytes):
+                safe_input = f"<binary {len(safe_input)} bytes>"
+            print(f"  [{i}] loc={e.get('loc')} type={e.get('type')} msg={e.get('msg')} input={repr(safe_input)[:80]}")
+        safe = json.loads(
+            json.dumps(errors, default=lambda o: f"<binary {len(o)} bytes>" if isinstance(o, bytes) else str(o))
+        )
+    except Exception as ex:
+        print(f"[VALIDATION 422] serialization error: {ex}")
+        safe = [{"msg": "Validation error"}]
+    return JSONResponse(status_code=422, content={"detail": safe})
+
+_feh.request_validation_exception_handler = _safe_validation_handler
+# ─────────────────────────────────────────────────────────────────────────────
+
+from fastapi import FastAPI, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from core.database import questions_collection
-import re
 
 # --- IMPORT  LLM EVALUATION SERVICE ---
 from evaluation_service import evaluate_handwriting
 
 # --- IMPORT RETRIEVAL ROUTER ---
-from Retrieval_modular import router as retrieval_router  # 👈 Import the router from Retrieval_modular.py (modular prompts with task types & custom counts)
+from Retrieval_modular import router as retrieval_router
 
 # ── IMPORT ROUTERS ──
 from routers.auth_router import router as auth_router
@@ -18,61 +62,67 @@ from routers.class_router import router as class_router
 from routers.teacher_router import router as teacher_router
 from routers.parent_router import router as parent_router
 from routers.notification_router import router as notification_router
+from routers.submission_router import router as submission_router
 
 # ── IMPORT SCHEDULER ──
 from services.deadline_scheduler import start_scheduler, stop_scheduler
 
 
-# ------------------------------------------------
+# ─────────────────────────────────────────────────────────────────────────────
 # Lifespan — startup / shutdown
-# ------------------------------------------------
+# ─────────────────────────────────────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     start_scheduler()
     yield
-    # Shutdown
     stop_scheduler()
 
 
-# ------------------------------------------------
+# ─────────────────────────────────────────────────────────────────────────────
 # Initialize FastAPI App
-# ------------------------------------------------
+# ─────────────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="Unified AI Backend (Evaluation + Retrieval)",
     lifespan=lifespan,
 )
 
-# ------------------------------------------------
+# Register safe validation handler at app level too
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return await _safe_validation_handler(request, exc)
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Middleware (CORS)
-# ------------------------------------------------
+# ─────────────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # TODO: lock to your frontend domain before production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ── Include All Routers ──
-app.include_router(retrieval_router)        # AI question generation
-app.include_router(auth_router)             # Auth (register, login, Google OAuth)
-app.include_router(student_router.router)   # Student endpoints
-app.include_router(class_router)            # Classroom management (central hub)
-app.include_router(teacher_router)          # Teacher endpoints
-app.include_router(parent_router)           # Parent endpoints
-app.include_router(notification_router)     # In-app notifications
+# submission_router MUST come before student_router to avoid route conflicts:
+# Both previously defined POST /student/homework/{homework_id}/submit
+app.include_router(retrieval_router)
+app.include_router(auth_router)
+app.include_router(submission_router)   # multipart/form-data handler ← first
+app.include_router(student_router.router)
+app.include_router(class_router)
+app.include_router(teacher_router)
+app.include_router(parent_router)
+app.include_router(notification_router)
 
 
-# ------------------------------------------------
+# ─────────────────────────────────────────────────────────────────────────────
 # Evaluation Endpoint
-# ------------------------------------------------
+# ─────────────────────────────────────────────────────────────────────────────
 @app.post("/evaluate")
-async def evaluate_answer(question_text: str = Form(...), file: UploadFile = Form(...)):
+async def evaluate_answer(question_text: str = Form(...), file: UploadFile = File(...)):
     """Evaluates handwritten answers using AI handwriting recognition."""
     question_text = question_text.strip()
 
-    # 1️⃣ Find question in MongoDB
     cleaned_question_text = question_text.rstrip('.?')
     db_question = questions_collection.find_one({
         "question": {
@@ -84,15 +134,11 @@ async def evaluate_answer(question_text: str = Form(...), file: UploadFile = For
     if not db_question:
         return {"error": f"Question not found in database for query: '{question_text}'"}
 
-    # Extract correct answer and marks
     correct_answer = db_question.get("answer", "").strip()
     max_marks = db_question.get("max_marks", 5)
 
     try:
-        # 2️⃣ Read image file
         image_bytes = await file.read()
-
-        # 3️⃣ Evaluate handwriting via LLaVA (custom service)
         evaluation = await evaluate_handwriting(
             image_bytes,
             db_question.get("question", question_text),
@@ -104,7 +150,6 @@ async def evaluate_answer(question_text: str = Form(...), file: UploadFile = For
         if "error" in evaluation:
             return evaluation
 
-        # 4️⃣ Return full AI evaluation
         return {
             "question": db_question["question"],
             "student_answer": evaluation.get("transcription", "(AI failed to transcribe)"),
@@ -118,29 +163,16 @@ async def evaluate_answer(question_text: str = Form(...), file: UploadFile = For
         print(f"❌ Error during evaluation: {e}")
         return {"error": f"An internal server error occurred: {e}"}
 
-# ------------------------------------------------
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Root Endpoint
-# ------------------------------------------------
+# ─────────────────────────────────────────────────────────────────────────────
 @app.get("/")
 def read_root():
     return {
         "message": "Unified AI Backend is running 🚀",
         "routes": [
-            "/evaluate",
-            "/generate-task",
-            "/auth/*",
-            "/class/*",
-            "/student/*",
-            "/student/submit",
-            "/student/submissions",
-            "/student/progress",
-            "/teacher/*",
-            "/teacher/homework/{id}/submissions",
-            "/teacher/submissions/{id}/grade",
-            "/teacher/class/{id}/analytics",
-            "/parent/*",
-            "/parent/child/{id}/submissions",
-            "/parent/child/{id}/progress",
-            "/notifications",
+            "/evaluate", "/generate-task", "/auth/*", "/class/*",
+            "/student/*", "/teacher/*", "/parent/*", "/notifications",
         ]
     }

@@ -235,84 +235,106 @@ def preview_class_students(
     }
 
 
-# ─────────────────────────────
-# 4. Assign Homework
-# ─────────────────────────────
+"""
+PATCH for teacher_router.py — POST /teacher/assign-homework
+===========================================================
+Replace your existing assign-homework endpoint with this version.
+The key addition: rubric is generated and stored WITH each question at assignment time.
+This ensures evaluation has criteria to check against.
+"""
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ADD THIS to your existing teacher_router.py
+# ─────────────────────────────────────────────────────────────────────────────
+
+from evaluation_service import generate_rubric   # NEW import
 
 @router.post("/assign-homework")
-def assign_homework(
-    data: AssignHomeworkRequest,
-    background_tasks: BackgroundTasks,
-    user=Depends(require_role("teacher"))
+async def assign_homework(
+    data: dict,  # { class_id, subject, questions, task_type, title, deadline? }
+    current_user: dict = Depends(require_role("teacher")),
 ):
     """
-    Assign homework to a class for a specific subject.
-    Only the teacher assigned for that subject can assign homework.
-    Deadline is stored as datetime; notifications are fired in the background.
+    Assigns homework to a class.
+    NOW: generates and stores a grading rubric for every long/short answer question.
     """
-    cls = classes_collection.find_one({"_id": ObjectId(data.class_id)})
+    class_id  = ObjectId(data["class_id"])
+    subject   = data["subject"]
+    task_type = data.get("task_type", "homework")
+    title     = data.get("title", f"{subject} {task_type.title()}")
+    deadline  = data.get("deadline")  # ISO string or None
+
+    # Verify teacher-subject permission (existing logic)
+    cls = classes_collection.find_one({"_id": class_id})
     if not cls:
-        raise HTTPException(status_code=404, detail="Class not found")
+        raise HTTPException(404, "Class not found")
 
-    is_subject_teacher = any(
-        t["teacher_id"] == user["_id"] and t["subject"].lower() == data.subject.lower()
-        for t in cls.get("teachers", [])
+    teacher_entry = next(
+        (t for t in cls.get("teachers", [])
+         if str(t["teacher_id"]) == str(current_user["_id"]) and t["subject"] == subject),
+        None,
     )
-    if not is_subject_teacher:
-        raise HTTPException(
-            status_code=403,
-            detail=f"You are not the '{data.subject}' teacher for this class."
-        )
+    if not teacher_entry:
+        raise HTTPException(403, "You are not assigned to teach this subject in this class")
 
-    # Parse deadline to datetime if provided
-    deadline_dt = None
-    if data.deadline:
-        try:
-            deadline_dt = datetime.fromisoformat(data.deadline)
-        except ValueError:
-            raise HTTPException(
-                status_code=422,
-                detail=f"Invalid deadline format '{data.deadline}'. Use ISO 8601: 2026-04-25T23:59:00"
-            )
+    # ── Normalize and enrich questions with rubrics ───────────────────────
+    # questions may arrive as a flat list OR as {type: [list]} dict from the AI generator
+    raw_input = data.get("questions", [])
+    if isinstance(raw_input, dict):
+        raw_questions = []
+        for q_type_key, q_list in raw_input.items():
+            if isinstance(q_list, list):
+                for item in q_list:
+                    if isinstance(item, dict):
+                        raw_questions.append({**item, "type": item.get("type", q_type_key)})
+    elif isinstance(raw_input, list):
+        raw_questions = [q for q in raw_input if isinstance(q, dict)]
+    else:
+        raw_questions = []
 
-    student_ids_snapshot = cls.get("students", [])
+    enriched = []
 
-    homework = {
-        "class_id": cls["_id"],
-        "teacher_id": user["_id"],
-        "teacher_name": user.get("name", ""),
-        "school": cls.get("school", ""),
-        "grade": cls.get("grade", ""),
-        "subject": data.subject,
-        "title": data.title,
-        "description": data.description,
-        "questions": data.questions,
-        "task_type": data.task_type,
-        "deadline": deadline_dt,           # datetime or None
-        "status": "active",
-        "submission_count": 0,             # incremented atomically on each submission
-        "created_at": datetime.utcnow(),
-        "student_ids": student_ids_snapshot,
+    for q in raw_questions:
+        q_text      = q.get("question") or q.get("text", "")
+        correct_ans = q.get("answer") or q.get("correct_answer", "")
+        marks       = int(q.get("marks", q.get("max_marks", 1)))
+        q_type      = str(q.get("type", "short_answer")).lower()
+
+        # Auto-generate rubric for questions that will be handwriting-evaluated
+        # Binary types (mcq, t/f, fill) don't need a rubric
+        rubric = None
+        if not any(t in q_type for t in ["mcq", "true_false", "fill", "matching"]):
+            rubric = generate_rubric(q_text, correct_ans, marks, subject)
+
+        enriched.append({
+            **q,
+            "rubric":    rubric,
+            "max_marks": marks,
+        })
+
+    # Snapshot of students at assignment time
+    student_ids = cls.get("students", [])
+
+    homework_doc = {
+        "class_id":            class_id,
+        "teacher_id":          ObjectId(current_user["_id"]),
+        "subject":             subject,
+        "title":               title,
+        "task_type":           task_type,
+        "questions":           enriched,
+        "student_ids":         student_ids,
+        "submitted_student_ids": [],
+        "assigned_at":         datetime.now(timezone.utc),
+        "deadline":            deadline,
+        "status":              "active",
     }
 
-    result = homework_collection.insert_one(homework)
-    homework_id = str(result.inserted_id)
-
-    # Fire notifications in background (non-blocking) — implemented in Step 4
-    background_tasks.add_task(
-        _notify_homework_assigned,
-        homework_id=homework_id,
-        student_ids=student_ids_snapshot,
-        subject=data.subject,
-        title=data.title,
-        class_id=str(cls["_id"]),
-    )
+    result = homework_collection.insert_one(homework_doc)
 
     return {
-        "message": f"Homework '{data.title}' assigned to {cls['school']} - Grade {cls['grade']} for {data.subject}",
-        "homework_id": homework_id,
-        "deadline": data.deadline,
-        "student_count": len(student_ids_snapshot),
+        "homework_id": str(result.inserted_id),
+        "message":     f"Homework assigned to {len(student_ids)} student(s)",
+        "questions_with_rubrics": len([q for q in enriched if q.get("rubric")]),
     }
 
 

@@ -3,12 +3,30 @@
   "subject": "Mathematics",
   "grade": "5",
   "task_type": "homework",
-  "question_config": {
-    "short_answer": null,
-    "mcq": null,
-    "fill_in_the_blanks": null,
-    "true_false": null,
-    "matching": null
+  "scoring": {
+    "total_marks": 10,
+    "grade_band": "elementary",
+    "marks_per_type": {
+      "short_answer": 3,
+      "mcq": 1,
+      "fill_in_the_blanks": 1,
+      "true_false": 1,
+      "matching": 2
+    },
+    "count_per_type": {
+      "short_answer": 2,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    },
+    "subtotal_per_type": {
+      "short_answer": 6,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    }
   },
   "retrieval_info": {
     "chunks_used": 5,
@@ -18,51 +36,53 @@
   "questions": {
     "short_answer": [
       {
-        "question": "Explain the process used to estimate the product of 248 × 49. Name the strategy and give the result.",
-        "answer": "The strategy used is estimation by rounding. 248 is rounded to 250 and 49 is rounded to 50. The estimated product is 250 × 50 = 12,500.",
+        "question": "If 340 ÷ 34 = 10, find the value of 340 ÷ 17. Explain your reasoning.",
+        "answer": "The answer is 20. This is because 17 is half of 34. When you divide by a smaller number, the quotient increases. Therefore, 10 × 2 = 20.",
         "marks": 3
       },
       {
-        "question": "Compare 340 ÷ 34 and 340 ÷ 17. Explain why the quotient changes when the divisor is different.",
-        "answer": "This involves the relationship between the divisor and the quotient. When the divisor is halved from 34 to 17, the quotient doubles. For example, 340 ÷ 34 = 10, while 340 ÷ 17 = 20.",
+        "question": "Use the estimation table to find the match for 12 × 25. Explain your steps.",
+        "answer": "The match is 300. To estimate, round 12 to 10 and 25 to 30. Then, multiply 10 × 30 to get 300.",
         "marks": 3
       }
     ],
     "mcq": [
       {
-        "question": "Which pair of numbers completes the multiplication problem [ ] [ ] [ ] × [ ] = 2,000?",
+        "question": "What is the quotient when 3,005 is divided by 5?",
         "options": [
-          "a) 400 × 5",
-          "b) 300 × 7",
-          "c) 100 × 2",
-          "d) 500 × 3"
+          "a) 600",
+          "b) 601",
+          "c) 610",
+          "d) 501"
         ],
-        "answer": "a",
-        "marks": 2
+        "answer": "b",
+        "marks": 1
       },
       {
-        "question": "Based on the estimation table, what is the estimated product of 132 × 19?",
+        "question": "Based on the provided division patterns, what is the result of 680 ÷ 34?",
         "options": [
-          "a) 300",
-          "b) 1,000",
-          "c) 2,600",
-          "d) 12,500"
+          "a) 10",
+          "b) 20",
+          "c) 30",
+          "d) 40"
         ],
-        "answer": "c",
-        "marks": 2
+        "answer": "b",
+        "marks": 1
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "If 340 ÷ 34 = 10, then the value of 340 ÷ 17 is ___.",
-        "answer": "20",
-        "marks": 2
+        "question": "In the division problem 2,874 ÷ 14, the number 2,874 is called the ______.",
+        "answer": "dividend",
+        "marks": 1
       },
       {
-        "question": "To solve 3,005 ÷ 5 using the provided table, 3,005 is split into 3,000 and ___.",
-        "answer": "5",
-        "marks": 2
+        "question": "If 340 ÷ 34 = 10, then the value of 680 ÷ 68 is ______.",
+        "answer": "10",
+        "marks": 1
       }
-    ]
+    ],
+    "true_false": [],
+    "matching": []
   }
 }

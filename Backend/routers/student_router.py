@@ -261,6 +261,154 @@ def get_all_homework(user=Depends(require_role("student"))):
 
 
 # ─────────────────────────────
+# 4b. Single Homework by ID (with questions)
+# ─────────────────────────────
+
+@router.get("/homework-detail/{homework_id}")
+def get_homework_detail(homework_id: str, user=Depends(require_role("student"))):
+    """
+    Get a single homework document by its ObjectId.
+    Returns all questions so the frontend can render the quiz flow.
+    Also attaches the student's existing submission if any.
+    """
+    user_id = user["_id"]
+
+    try:
+        hw_oid = ObjectId(homework_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid homework ID")
+
+    hw = homework_collection.find_one({"_id": hw_oid, "status": "active"})
+    if not hw:
+        raise HTTPException(status_code=404, detail="Homework not found")
+
+    # Ensure the student is enrolled in the class this homework belongs to
+    cls = classes_collection.find_one({"_id": hw["class_id"], "students": user_id})
+    if not cls:
+        raise HTTPException(status_code=403, detail="You are not enrolled in this class")
+
+    # Check if already submitted
+    sub = submissions_collection.find_one({"homework_id": hw_oid, "student_id": user_id})
+
+    deadline = hw.get("deadline")
+    return {
+        "id": str(hw["_id"]),
+        "title": hw.get("title", ""),
+        "description": hw.get("description", ""),
+        "subject": hw.get("subject", ""),
+        "teacher_name": hw.get("teacher_name", ""),
+        "task_type": hw.get("task_type", "homework"),
+        "questions": hw.get("questions"),
+        "deadline": deadline.isoformat() if isinstance(deadline, datetime) else deadline,
+        "grade": hw.get("grade", ""),
+        "school": hw.get("school", ""),
+        "submitted": sub is not None,
+        "submission_status": sub.get("status") if sub else None,
+        "submission_score": sub.get("total_score") if sub else None,
+        "max_score": sub.get("max_score") if sub else None,
+    }
+
+
+# ─────────────────────────────
+# 4c. Submit Homework by ID  (JSON-only, no photo uploads)
+# NOTE: renamed to /submit-json to avoid conflict with submission_router's
+#       multipart/form-data handler at POST /student/homework/{homework_id}/submit
+# ─────────────────────────────
+
+class AnswerItemV2(BaseModel):
+    question_index: int
+    question: str
+    answer: str
+    type: Optional[str] = "short_answer"
+
+
+class SubmitHomeworkByIdRequest(BaseModel):
+    answers: List[AnswerItemV2]
+
+
+@router.post("/homework/{homework_id}/submit-json")
+def submit_homework_by_id(
+    homework_id: str,
+    data: SubmitHomeworkByIdRequest,
+    user=Depends(require_role("student")),
+):
+    """
+    Submit answers for a specific homework identified by its ObjectId.
+    Accepts the flat answers list from the quiz stepper UI.
+    Returns score if auto-evaluated, otherwise just confirms submission.
+    """
+    user_id = user["_id"]
+
+    try:
+        hw_oid = ObjectId(homework_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid homework ID")
+
+    hw = homework_collection.find_one({"_id": hw_oid})
+    if not hw:
+        raise HTTPException(status_code=404, detail="Homework not found")
+
+    if hw.get("status") == "closed":
+        raise HTTPException(status_code=400, detail="This homework is closed")
+
+    cls = classes_collection.find_one({"_id": hw["class_id"], "students": user_id})
+    if not cls:
+        raise HTTPException(status_code=403, detail="You are not enrolled in this class")
+
+    # Detect late submission
+    now = datetime.utcnow()
+    deadline = hw.get("deadline")
+    sub_status = "late" if (deadline and isinstance(deadline, datetime) and now > deadline) else "submitted"
+
+    answers_payload = [
+        {
+            "question_index": a.question_index,
+            "question": a.question,
+            "answer_text": a.answer,
+            "type": a.type,
+            "score": None,
+            "feedback": None,
+            "evaluated_at": None,
+        }
+        for a in data.answers
+    ]
+
+    submission = {
+        "homework_id": hw_oid,
+        "student_id": user_id,
+        "class_id": hw["class_id"],
+        "subject": hw.get("subject", ""),
+        "answers": answers_payload,
+        "total_score": None,
+        "max_score": None,
+        "submitted_at": now,
+        "status": sub_status,
+    }
+
+    try:
+        result = submissions_collection.insert_one(submission)
+    except Exception as e:
+        if "duplicate key" in str(e).lower() or "E11000" in str(e):
+            raise HTTPException(
+                status_code=409,
+                detail="You have already submitted this homework.",
+            )
+        raise HTTPException(status_code=500, detail=f"Submission failed: {e}")
+
+    homework_collection.update_one({"_id": hw_oid}, {"$inc": {"submission_count": 1}})
+
+    return {
+        "message": "Submitted successfully!",
+        "submission_id": str(result.inserted_id),
+        "status": sub_status,
+        "submitted_at": now.isoformat(),
+        "late": sub_status == "late",
+        "total_score": None,
+        "max_score": None,
+    }
+
+
+# ─────────────────────────────
 # 5. Submit Homework
 # ─────────────────────────────
 

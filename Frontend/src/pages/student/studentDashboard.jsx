@@ -261,7 +261,7 @@ export default function StudentDashboard() {
                     initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.42 + i * 0.07 }}
                     whileHover={{ x: 4 }}
-                    onClick={() => navigate(`/student/tasks/${s.name.toLowerCase().replace(/\s+/g, "-")}`)}
+                    onClick={() => navigate("/student/tasks")}
                     style={{ display: "grid", gridTemplateColumns: "26px 1fr 120px 36px", alignItems: "center", gap: 14, cursor: "pointer", transition: "all 0.2s" }}>
 
                     <span style={{ fontSize: 18 }}>{s.icon}</span>
