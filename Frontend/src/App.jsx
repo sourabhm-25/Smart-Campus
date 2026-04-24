@@ -10,6 +10,7 @@ import HomePage from "./pages/teacher/HomePage";
 import Task from "./pages/teacher/Task";
 import Kanban from "./pages/teacher/Kanban";
 import TestImageSol from "./TestImageSol";
+import Submissions from "./pages/teacher/Submissions";
 
 // Student & Parent
 import StudentLayout from "./layouts/StudentLayout";
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="task" element={<Task />} />
         <Route path="kanban" element={<Kanban />} />
         <Route path="test" element={<TestImageSol />} />
+        <Route path="submissions" element={<Submissions />} />
       </Route>
 
       {/* Student Route */}
