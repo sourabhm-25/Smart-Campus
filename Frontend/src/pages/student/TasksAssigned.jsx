@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import SubmissionResult from "../../components/SubmissionResult";
 import { useEffect, useState, useCallback, useRef } from "react";
+import ProctoringCamera from "./ProctoringCamera";
 
 const API = "http://localhost:8000";
 const getToken = () => localStorage.getItem("access_token");
@@ -180,6 +181,8 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
   const [timeLeft, setTimeLeft] = useState(null);
   const [warnings, setWarnings] = useState(0);
   const [warningMessage, setWarningMessage] = useState(null);
+  const [testStarted, setTestStarted] = useState(task?.task_type !== "test");
+  const [aiReady, setAiReady] = useState(false);
   const autoSubmitRef = useRef();
 
   useEffect(() => {
@@ -301,10 +304,26 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     autoSubmitRef.current = handleSubmit;
   });
 
+  const handleViolation = useCallback((reason = null) => {
+    if (submitting || result) return;
+    
+    setWarnings(prev => {
+      const next = prev + 1;
+      if (next >= 3) {
+        alert(`Warning ${next}/3: You have repeatedly violated test rules. The test will now be submitted automatically.`);
+        if (autoSubmitRef.current) autoSubmitRef.current();
+      } else {
+        setWarningMessage(`Warning ${next}/3: ${reason || "Please do not leave the test window or exit fullscreen."} Your test will be automatically submitted on the 3rd warning!`);
+      }
+      return next;
+    });
+  }, [submitting, result]);
+
   // Fullscreen Lockdown for Tests
   useEffect(() => {
     if (task.task_type !== "test") return;
     if (result || submitting) return;
+    if (!testStarted) return; // Wait until they click Start Test
 
     // Request fullscreen
     const requestFS = async () => {
@@ -318,26 +337,11 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     };
     requestFS();
 
-    const handleViolation = () => {
-      if (submitting || result) return;
-      
-      setWarnings(prev => {
-        const next = prev + 1;
-        if (next >= 3) {
-          alert(`Warning ${next}/3: You have repeatedly violated test rules. The test will now be submitted automatically.`);
-          if (autoSubmitRef.current) autoSubmitRef.current();
-        } else {
-          setWarningMessage(`Warning ${next}/3: Please do not leave the test window or exit fullscreen. Your test will be automatically submitted on the 3rd warning!`);
-        }
-        return next;
-      });
-    };
-
     let hiddenTimeout = null;
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        handleViolation();
+        handleViolation("You left the test window.");
         // 15-second auto-submit if they stay away
         hiddenTimeout = setTimeout(() => {
           if (autoSubmitRef.current) autoSubmitRef.current();
@@ -349,7 +353,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     };
 
     const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) handleViolation();
+      if (!document.fullscreenElement) handleViolation("You exited fullscreen mode.");
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -1034,6 +1038,44 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
             }}
           >
             Acknowledge & Return to Test
+          </button>
+        </div>
+      )}
+
+      {/* ── AI Proctoring Camera ── */}
+      {task.task_type === "test" && !submitting && !result && !warningMessage && (
+        <ProctoringCamera onViolation={handleViolation} onReady={() => setAiReady(true)} />
+      )}
+
+      {/* ── Pre-test setup overlay ── */}
+      {!testStarted && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(8,14,26,0.95)", backdropFilter: "blur(10px)",
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          padding: 40, textAlign: "center",
+        }}>
+          <h2 style={{ color: "#e2e8f0", fontSize: 24, marginBottom: 12 }}>Test Preparation</h2>
+          <p style={{ color: "#94a3b8", fontSize: 15, maxWidth: 500, marginBottom: 30 }}>
+            This test requires camera access for AI proctoring. Please allow camera permissions in your browser.
+          </p>
+          <button
+            disabled={!aiReady}
+            onClick={() => {
+              setTestStarted(true);
+              if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+              }
+            }}
+            style={{
+              background: aiReady ? color : "rgba(255,255,255,0.1)", 
+              color: aiReady ? "#0a0f1a" : "#94a3b8", 
+              border: "none", padding: "14px 28px", borderRadius: 12, 
+              fontSize: 15, fontWeight: 700, cursor: aiReady ? "pointer" : "not-allowed",
+              transition: "all 0.2s"
+            }}
+          >
+            {aiReady ? "Start Test & Enter Fullscreen" : "Loading AI Models..."}
           </button>
         </div>
       )}
