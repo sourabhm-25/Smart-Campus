@@ -62,20 +62,43 @@ def student_dashboard(user=Depends(require_role("student"))):
     user_id = user["_id"]
 
     classes = list(classes_collection.find({"students": user_id}))
+    now = datetime.utcnow()
 
     subjects_with_teachers = []
     total_homework = 0
+    total_submitted = 0
 
     for cls in classes:
         for t in cls.get("teachers", []):
             teacher = users_collection.find_one({"_id": t["teacher_id"]})
             teacher_name = teacher.get("name", "Unknown") if teacher else "Unknown"
 
-            hw_count = homework_collection.count_documents({
-                "class_id": cls["_id"],
-                "subject": t["subject"],
-                "status": "active"
+            # All active homework for this subject/class that is NOT overdue (or has no deadline)
+            all_hw = list(homework_collection.find(
+                {"class_id": cls["_id"], "subject": t["subject"], "status": "active"},
+                {"_id": 1, "deadline": 1}
+            ))
+            # Exclude overdue tasks from pending consideration
+            valid_hw_ids = [
+                hw["_id"] for hw in all_hw
+                if not (hw.get("deadline") and isinstance(hw["deadline"], datetime) and hw["deadline"] < now)
+            ]
+            all_hw_ids = [hw["_id"] for hw in all_hw]
+
+            # Count how many this student has already submitted (across ALL homework, including overdue)
+            submitted_count = submissions_collection.count_documents({
+                "homework_id": {"$in": all_hw_ids},
+                "student_id": user_id
             })
+            total_submitted += submitted_count
+
+            # Count submitted among valid (non-overdue) homework
+            submitted_valid = submissions_collection.count_documents({
+                "homework_id": {"$in": valid_hw_ids},
+                "student_id": user_id
+            })
+            # Pending = non-overdue active homework - already submitted among those
+            hw_count = max(0, len(valid_hw_ids) - submitted_valid)
             total_homework += hw_count
 
             subjects_with_teachers.append({
@@ -116,6 +139,7 @@ def student_dashboard(user=Depends(require_role("student"))):
         },
         "subjects": subjects_with_teachers,
         "total_pending_homework": total_homework,
+        "total_submitted_homework": total_submitted,
         "total_classes": len(classes),
         "enrollment_status": enrollment_status,
     }
@@ -215,8 +239,10 @@ def get_all_homework(user=Depends(require_role("student"))):
     """
     Get all active homework across all subjects for this student.
     Batch-fetches submission status in a single query to prevent N+1.
+    Overdue tasks that have NOT been submitted are excluded.
     """
     user_id = user["_id"]
+    now = datetime.utcnow()
 
     classes = list(classes_collection.find({"students": user_id}))
     class_ids = [cls["_id"] for cls in classes]
@@ -240,6 +266,12 @@ def get_all_homework(user=Depends(require_role("student"))):
     for hw in homework_list:
         sub = my_subs.get(hw["_id"])
         deadline = hw.get("deadline")
+        is_overdue = (
+            deadline and isinstance(deadline, datetime) and deadline < now
+        )
+        # Skip overdue tasks that were never submitted — they're no longer actionable
+        if is_overdue and sub is None:
+            continue
         result.append({
             "id": str(hw["_id"]),
             "title": hw.get("title", ""),
@@ -258,6 +290,7 @@ def get_all_homework(user=Depends(require_role("student"))):
         })
 
     return {"homework": result, "count": len(result)}
+
 
 
 # ─────────────────────────────
@@ -765,21 +798,43 @@ def student_dashboard(user=Depends(require_role("student"))):
 
     # Find classes this student is in
     classes = list(classes_collection.find({"students": user_id}))
+    now = datetime.utcnow()
 
     subjects_with_teachers = []
     total_homework = 0
+    total_submitted = 0
 
     for cls in classes:
         for t in cls.get("teachers", []):
             teacher = users_collection.find_one({"_id": t["teacher_id"]})
             teacher_name = teacher.get("name", "Unknown") if teacher else "Unknown"
 
-            # Count homework for this subject in this class
-            hw_count = homework_collection.count_documents({
-                "class_id": cls["_id"],
-                "subject": t["subject"],
-                "status": "active"
+            # All active homework for this subject/class
+            all_hw = list(homework_collection.find(
+                {"class_id": cls["_id"], "subject": t["subject"], "status": "active"},
+                {"_id": 1, "deadline": 1}
+            ))
+            # Exclude overdue tasks from pending
+            valid_hw_ids = [
+                hw["_id"] for hw in all_hw
+                if not (hw.get("deadline") and isinstance(hw["deadline"], datetime) and hw["deadline"] < now)
+            ]
+            all_hw_ids = [hw["_id"] for hw in all_hw]
+
+            # Count all submissions by this student across ALL homework
+            submitted_count = submissions_collection.count_documents({
+                "homework_id": {"$in": all_hw_ids},
+                "student_id": user_id
             })
+            total_submitted += submitted_count
+
+            # Count submitted among non-overdue homework
+            submitted_valid = submissions_collection.count_documents({
+                "homework_id": {"$in": valid_hw_ids},
+                "student_id": user_id
+            })
+            # Pending = non-overdue - submitted among non-overdue
+            hw_count = max(0, len(valid_hw_ids) - submitted_valid)
             total_homework += hw_count
 
             subjects_with_teachers.append({
@@ -821,6 +876,7 @@ def student_dashboard(user=Depends(require_role("student"))):
         },
         "subjects": subjects_with_teachers,
         "total_pending_homework": total_homework,
+        "total_submitted_homework": total_submitted,
         "total_classes": len(classes),
         "enrollment_status": enrollment_status,
     }

@@ -1110,21 +1110,24 @@ function SubjectSection({ subject, index, onAttempt }) {
             style={{ overflow: "hidden" }}
           >
             <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", padding: "16px 20px" }}>
-              {subject.homeworkList.length === 0 ? (
-                <div style={{ color: "#334155", fontSize: 13, padding: "16px 0", textAlign: "center" }}>
-                  No active assignments.
-                </div>
-              ) : (
-                subject.homeworkList.map((task, i) => (
-                  <HomeworkCard
-                    key={task.id}
-                    task={task}
-                    color={subject.color}
-                    index={i}
-                    onAttempt={onAttempt}
-                  />
-                ))
-              )}
+              {(() => {
+                const pending = subject.homeworkList.filter(h => !h.submitted);
+                return pending.length === 0 ? (
+                  <div style={{ color: "#334155", fontSize: 13, padding: "16px 0", textAlign: "center" }}>
+                    ✓ All tasks submitted for this subject.
+                  </div>
+                ) : (
+                  pending.map((task, i) => (
+                    <HomeworkCard
+                      key={task.id}
+                      task={task}
+                      color={subject.color}
+                      index={i}
+                      onAttempt={onAttempt}
+                    />
+                  ))
+                );
+              })()}
             </div>
           </motion.div>
         )}
@@ -1275,12 +1278,10 @@ export default function TasksAssigned() {
           </h1>
           {totalTasks > 0 && (
             <div style={{ fontSize: 13, color: "#475569" }}>
-              {totalTasks} assignment{totalTasks !== 1 ? "s" : ""} across {subjects.length} subject{subjects.length !== 1 ? "s" : ""}
-              {totalPending > 0 && (
-                <span style={{ color: "#fb923c", fontWeight: 600 }}>
-                  {" "}· {totalPending} pending
-                </span>
-              )}
+              {totalPending > 0
+                ? <><span style={{ color: "#fb923c", fontWeight: 600 }}>{totalPending} pending</span>{" task"}{totalPending !== 1 ? "s" : ""} to complete</>
+                : <span style={{ color: "#34d399", fontWeight: 600 }}>All caught up ✓</span>
+              }
             </div>
           )}
         </motion.div>
@@ -1297,15 +1298,29 @@ export default function TasksAssigned() {
               Check back after your teacher assigns tasks.
             </div>
           </motion.div>
+        ) : totalPending === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            style={{ color: "#475569", textAlign: "center", padding: "80px 0" }}
+          >
+            <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
+            <div style={{ fontSize: 16, fontWeight: 600, color: "#34d399" }}>All tasks submitted!</div>
+            <div style={{ fontSize: 13, marginTop: 8, color: "#475569" }}>
+              Head to <strong style={{ color: "#60a5fa" }}>Tasks Submitted</strong> to view your results.
+            </div>
+          </motion.div>
         ) : (
-          subjects.map((subject, i) => (
-            <SubjectSection
-              key={subject.id}
-              subject={subject}
-              index={i}
-              onAttempt={setAttemptTask}
-            />
-          ))
+          subjects
+            .filter(subject => subject.unsubmitted > 0)
+            .map((subject, i) => (
+              <SubjectSection
+                key={subject.id}
+                subject={subject}
+                index={i}
+                onAttempt={setAttemptTask}
+              />
+            ))
         )}
       </div>
 

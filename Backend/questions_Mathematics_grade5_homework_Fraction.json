@@ -36,17 +36,28 @@
   "questions": {
     "short_answer": [
       {
-        "question": "If 340 ÷ 34 = 10, find the value of 340 ÷ 17. Explain your reasoning.",
-        "answer": "The answer is 20. This is because 17 is half of 34. When you divide by a smaller number, the quotient increases. Therefore, 10 × 2 = 20.",
+        "question": "Explain the process of estimating the product for 248 × 49. Which estimated value from the provided list matches this product?",
+        "answer": "Estimation involves rounding numbers to the nearest ten or hundred to simplify calculations. For 248 × 49, one can round the numbers to 250 × 50. This calculation results in 12,500, which is the matching value from the list.",
         "marks": 3
       },
       {
-        "question": "Use the estimation table to find the match for 12 × 25. Explain your steps.",
-        "answer": "The match is 300. To estimate, round 12 to 10 and 25 to 30. Then, multiply 10 × 30 to get 300.",
+        "question": "Compare the results of 340 ÷ 34 and 340 ÷ 17. Explain why the quotient changes when the divisor is halved.",
+        "answer": "The quotient of 340 ÷ 34 is 10, while 340 ÷ 17 is 20. The quotient doubles because the dividend is being split into smaller groups. For example, dividing by 17 creates twice as many groups as dividing by 34.",
         "marks": 3
       }
     ],
     "mcq": [
+      {
+        "question": "In a multiplication problem, a three-digit number is multiplied by 5 to get a product of 1 [ ] [ ] 0. Which of these numbers could be the missing three-digit factor?",
+        "options": [
+          "a) 240",
+          "b) 420",
+          "c) 150",
+          "d) 500"
+        ],
+        "answer": "a",
+        "marks": 1
+      },
       {
         "question": "What is the quotient when 3,005 is divided by 5?",
         "options": [
@@ -57,28 +68,17 @@
         ],
         "answer": "b",
         "marks": 1
-      },
-      {
-        "question": "Based on the provided division patterns, what is the result of 680 ÷ 34?",
-        "options": [
-          "a) 10",
-          "b) 20",
-          "c) 30",
-          "d) 40"
-        ],
-        "answer": "b",
-        "marks": 1
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "In the division problem 2,874 ÷ 14, the number 2,874 is called the ______.",
+        "question": "In the division problem 2,874 ÷ 14, the number 2,874 is known as the ________.",
         "answer": "dividend",
         "marks": 1
       },
       {
-        "question": "If 340 ÷ 34 = 10, then the value of 680 ÷ 68 is ______.",
-        "answer": "10",
+        "question": "If 340 ÷ 34 = 10, then the value of 680 ÷ 34 is ________.",
+        "answer": "20",
         "marks": 1
       }
     ],

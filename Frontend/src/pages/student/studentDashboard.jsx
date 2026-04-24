@@ -98,6 +98,7 @@ export default function StudentDashboard() {
   const [studentName, setStudentName] = useState("Student");
   const [subjects, setSubjects] = useState([]);
   const [totalHomework, setTotalHomework] = useState(0);
+  const [totalSubmitted, setTotalSubmitted] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -122,6 +123,7 @@ export default function StudentDashboard() {
         const d = dashResult.value;
         if (d.student?.name) setStudentName(d.student.name.split(" ")[0]);
         setTotalHomework(d.total_pending_homework ?? 0);
+        setTotalSubmitted(d.total_submitted_homework ?? 0);
 
         // Map subjects from backend to display format
         const mappedSubjects = (d.subjects || []).map(s => {
@@ -197,7 +199,7 @@ export default function StudentDashboard() {
             { label: "Subjects", rawVal: subjects.length, icon: "📚", color: "#60a5fa" },
             { label: "Tasks Pending", rawVal: totalHomework, icon: "📝", color: "#fb923c" },
             { label: "Notifications", rawVal: unreadCount, icon: "🔔", color: "#34d399" },
-            { label: "Submitted", rawVal: 0, icon: "✅", color: "#fbbf24" },
+            { label: "Submitted", rawVal: totalSubmitted, icon: "✅", color: "#fbbf24" },
           ].map((s, i) => (
             <motion.div key={i}
               initial={{ opacity: 0, y: 24, scale: 0.93 }}

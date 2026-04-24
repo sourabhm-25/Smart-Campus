@@ -1,0 +1,88 @@
+{
+  "topic": "Cube roots",
+  "subject": "Mathematics",
+  "grade": "5",
+  "task_type": "homework",
+  "scoring": {
+    "total_marks": 10,
+    "grade_band": "elementary",
+    "marks_per_type": {
+      "short_answer": 3,
+      "mcq": 1,
+      "fill_in_the_blanks": 1,
+      "true_false": 1,
+      "matching": 2
+    },
+    "count_per_type": {
+      "short_answer": 2,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    },
+    "subtotal_per_type": {
+      "short_answer": 6,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    }
+  },
+  "retrieval_info": {
+    "chunks_used": 5,
+    "namespace": "grade5_math",
+    "index": "grade-5"
+  },
+  "questions": {
+    "short_answer": [
+      {
+        "question": "Explain how to estimate the product of 25 × 31 using the provided table. Name the mathematical concept used and show your reasoning.",
+        "answer": "The concept used is estimation. To estimate 25 × 31, one can round 31 to 30. Then, 25 × 30 = 750. This matches the value provided in the estimation table.",
+        "marks": 3
+      },
+      {
+        "question": "Compare the division problems 340 ÷ 34 and 340 ÷ 17. Explain why the quotient changes when the divisor is halved.",
+        "answer": "The concept is the relationship between the divisor and the quotient. When the divisor is halved from 34 to 17, the quotient doubles. For example, 340 ÷ 34 = 10, while 340 ÷ 17 = 20.",
+        "marks": 3
+      }
+    ],
+    "mcq": [
+      {
+        "question": "Based on the data collected from 35 friends, how many friends spend 1/2 hr watching TV?",
+        "options": [
+          "a) 7 friends",
+          "b) 8 friends",
+          "c) 9 friends",
+          "d) 10 friends"
+        ],
+        "answer": "c",
+        "marks": 1
+      },
+      {
+        "question": "According to the estimation table, which value is the best match for the product of 132 × 19?",
+        "options": [
+          "a) 300",
+          "b) 1,000",
+          "c) 2,600",
+          "d) 12,500"
+        ],
+        "answer": "c",
+        "marks": 1
+      }
+    ],
+    "fill_in_the_blanks": [
+      {
+        "question": "In the division problem 7,032 ÷ 6, the number 7,032 is known as the _______.",
+        "answer": "dividend",
+        "marks": 1
+      },
+      {
+        "question": "Based on the provided calculations in section A, the value of 340 ÷ 34 = _______.",
+        "answer": "10",
+        "marks": 1
+      }
+    ],
+    "true_false": [],
+    "matching": []
+  }
+}

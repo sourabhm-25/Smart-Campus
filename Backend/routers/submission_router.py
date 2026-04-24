@@ -403,7 +403,25 @@ def _evaluate_text_answer(
 
     # Binary types
     if any(t in q_type for t in ["mcq", "true_false", "fill"]):
-        correct = student_norm == correct_norm or student_norm in correct_norm
+        # correct_norm may be just a letter ("a") while student_norm is the full
+        # option text ("a) some option text…").  We accept a match if:
+        #   1. exact match after normalisation, OR
+        #   2. the student's answer starts with the correct letter followed by
+        #      ")" or "." or whitespace (e.g. "a) …" matches correct="a"), OR
+        #   3. the correct answer is a substring of the student answer
+        #      (handles "a) …" contains "a"), OR
+        #   4. the student answer is a substring of the correct answer
+        #      (handles when the full text is stored as the answer)
+        import re as _re
+        correct = (
+            student_norm == correct_norm
+            or correct_norm in student_norm
+            or student_norm in correct_norm
+            or bool(_re.match(
+                r'^' + _re.escape(correct_norm) + r'[\s\)\.]',
+                student_norm
+            ))
+        )
         score = marks if correct else 0
         return {
             "score": score,
