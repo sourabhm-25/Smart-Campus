@@ -177,6 +177,35 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
   const [submitError, setSubmitError] = useState(null);
   const [result, setResult] = useState(null);
 
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [warnings, setWarnings] = useState(0);
+  const [warningMessage, setWarningMessage] = useState(null);
+  const autoSubmitRef = useRef();
+
+  useEffect(() => {
+    if (hw?.task_type === "test" && hw?.time_limit) {
+      setTimeLeft(hw.time_limit * 60);
+    }
+  }, [hw]);
+
+  useEffect(() => {
+    if (timeLeft === null || result || submitting) return;
+    if (timeLeft <= 0) {
+      if (autoSubmitRef.current) autoSubmitRef.current();
+      return;
+    }
+    const timerId = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+    return () => clearInterval(timerId);
+  }, [timeLeft, result, submitting]);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
   useEffect(() => {
     setLoading(true);
     fetch(`${API}/student/homework-detail/${task.id}`, {
@@ -268,6 +297,74 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     }
   };
 
+  useEffect(() => {
+    autoSubmitRef.current = handleSubmit;
+  });
+
+  // Fullscreen Lockdown for Tests
+  useEffect(() => {
+    if (task.task_type !== "test") return;
+    if (result || submitting) return;
+
+    // Request fullscreen
+    const requestFS = async () => {
+      try {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (err) {
+        console.warn("Fullscreen request failed", err);
+      }
+    };
+    requestFS();
+
+    const handleViolation = () => {
+      if (submitting || result) return;
+      
+      setWarnings(prev => {
+        const next = prev + 1;
+        if (next >= 3) {
+          alert(`Warning ${next}/3: You have repeatedly violated test rules. The test will now be submitted automatically.`);
+          if (autoSubmitRef.current) autoSubmitRef.current();
+        } else {
+          setWarningMessage(`Warning ${next}/3: Please do not leave the test window or exit fullscreen. Your test will be automatically submitted on the 3rd warning!`);
+        }
+        return next;
+      });
+    };
+
+    let hiddenTimeout = null;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        handleViolation();
+        // 15-second auto-submit if they stay away
+        hiddenTimeout = setTimeout(() => {
+          if (autoSubmitRef.current) autoSubmitRef.current();
+          setWarningMessage("You stayed out of the test window for more than 15 seconds. Your test has been automatically submitted.");
+        }, 15000);
+      } else {
+        if (hiddenTimeout) clearTimeout(hiddenTimeout);
+      }
+    };
+
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) handleViolation();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      if (hiddenTimeout) clearTimeout(hiddenTimeout);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+    };
+  }, [task.task_type, submitting, result]);
+
   // Keyboard navigation
   useEffect(() => {
     const handler = (e) => {
@@ -313,20 +410,41 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
         background: "rgba(255,255,255,0.02)",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <button
-            onClick={onClose}
-            style={{
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: 10, color: "#94a3b8",
-              fontSize: 13, fontWeight: 600,
-              padding: "8px 14px", cursor: "pointer",
-              display: "flex", alignItems: "center", gap: 6,
-              transition: "all 0.15s",
-            }}
-          >
-            ← Exit
-          </button>
+          {task.task_type !== "test" ? (
+            <button
+              onClick={onClose}
+              style={{
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 10, color: "#94a3b8",
+                fontSize: 13, fontWeight: 600,
+                padding: "8px 14px", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 6,
+                transition: "all 0.15s",
+              }}
+            >
+              ← Exit
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                if (window.confirm("Are you sure you want to exit? Your test will be submitted with your current answers.")) {
+                  if (autoSubmitRef.current) autoSubmitRef.current();
+                }
+              }}
+              style={{
+                background: "rgba(239,68,68,0.15)",
+                border: "1px solid rgba(239,68,68,0.3)",
+                borderRadius: 10, color: "#fca5a5",
+                fontSize: 13, fontWeight: 600,
+                padding: "8px 14px", cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 6,
+                transition: "all 0.15s",
+              }}
+            >
+              Exit Test
+            </button>
+          )}
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{
@@ -343,6 +461,16 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
               }}>
                 {task.task_type}
               </span>
+              {timeLeft !== null && (
+                <span style={{
+                  fontSize: 11,
+                  color: timeLeft < 60 ? "#ef4444" : "#eab308",
+                  background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: "3px 10px",
+                  fontWeight: 700, display: "flex", alignItems: "center", gap: 4
+                }}>
+                  ⏱️ {formatTime(timeLeft)} remaining
+                </span>
+              )}
               {hw?.deadline && (() => {
                 const dl = formatDeadline(hw.deadline);
                 return (
@@ -878,6 +1006,37 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
           )}
         </div>
       )}
+
+      {/* ── Warning Overlay ── */}
+      {warningMessage && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(8,14,26,0.95)", backdropFilter: "blur(10px)",
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          padding: 40, textAlign: "center",
+        }}>
+          <div style={{ fontSize: 64, marginBottom: 20 }}>⚠️</div>
+          <h2 style={{ color: "#ef4444", fontSize: 24, marginBottom: 12 }}>Test Rule Violation</h2>
+          <p style={{ color: "#e2e8f0", fontSize: 16, maxWidth: 500, lineHeight: 1.6, marginBottom: 32 }}>
+            {warningMessage}
+          </p>
+          <button
+            onClick={() => {
+              setWarningMessage(null);
+              if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+              }
+            }}
+            style={{
+              background: "#ef4444", color: "#fff", border: "none",
+              padding: "14px 28px", borderRadius: 12, fontSize: 15, fontWeight: 700,
+              cursor: "pointer", boxShadow: "0 4px 20px rgba(239,68,68,0.4)",
+            }}
+          >
+            Acknowledge & Return to Test
+          </button>
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -999,7 +1158,7 @@ function HomeworkCard({ task, color, index, onAttempt }) {
                   boxShadow: `0 4px 12px ${color}33`,
                 }}
               >
-                Start Task →
+                {task.task_type === "test" ? "Start Test →" : "Start Task →"}
               </motion.button>
             ) : (
               <div style={{

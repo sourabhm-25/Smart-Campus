@@ -401,6 +401,17 @@ def _evaluate_text_answer(
     student_norm  = student_text.lower().strip()
     correct_norm  = correct_answer.lower().strip()
 
+    if not student_norm:
+        return {
+            "score": 0, "max_score": marks, "percentage": 0,
+            "criteria_scores": [
+                {"criterion": "Completeness", "marks_awarded": 0, "max_marks": marks, "reason": "No answer provided"}
+            ],
+            "feedback": "No answer provided.",
+            "confidence": 1.0, "low_confidence": False,
+            "needs_manual_review": False, "eval_mode": "text",
+        }
+
     # Binary types
     if any(t in q_type for t in ["mcq", "true_false", "fill"]):
         # correct_norm may be just a letter ("a") while student_norm is the full
@@ -440,15 +451,6 @@ def _evaluate_text_answer(
 
     # Short answer: simple keyword overlap scoring
     # (For typed answers, this is reasonable; photo answers use LLaVA)
-    if not student_text:
-        return {
-            "score": 0, "max_score": marks, "percentage": 0,
-            "criteria_scores": [],
-            "feedback": "No answer provided.",
-            "confidence": 1.0, "low_confidence": False,
-            "needs_manual_review": False, "eval_mode": "text",
-        }
-
     correct_words = set(correct_norm.split())
     student_words = set(student_norm.split())
     overlap = len(correct_words & student_words) / max(len(correct_words), 1)

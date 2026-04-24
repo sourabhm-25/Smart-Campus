@@ -1,0 +1,152 @@
+{
+  "topic": "Cube roots",
+  "subject": "Mathematics",
+  "grade": "5",
+  "task_type": "test",
+  "scoring": {
+    "total_marks": 19,
+    "grade_band": "elementary",
+    "marks_per_type": {
+      "short_answer": 3,
+      "mcq": 1,
+      "fill_in_the_blanks": 1,
+      "true_false": 1,
+      "matching": 2
+    },
+    "count_per_type": {
+      "short_answer": 2,
+      "mcq": 5,
+      "fill_in_the_blanks": 3,
+      "true_false": 5,
+      "matching": 0
+    },
+    "subtotal_per_type": {
+      "short_answer": 6,
+      "mcq": 5,
+      "fill_in_the_blanks": 3,
+      "true_false": 5,
+      "matching": 0
+    }
+  },
+  "retrieval_info": {
+    "chunks_used": 5,
+    "namespace": "grade5_math",
+    "index": "grade-5"
+  },
+  "questions": {
+    "short_answer": [
+      {
+        "question": "Using the provided patterns, explain why 340 ÷ 17 = 20 if 340 ÷ 34 = 10.",
+        "answer": "Since 17 is half of 34, dividing by a smaller number results in a larger quotient. Therefore, the answer is 10 × 2 = 20.",
+        "marks": 3
+      },
+      {
+        "question": "Based on the TV watching data, how many friends spend exactly 2.5 hours watching TV?",
+        "answer": "There are 3 friends who spend exactly 2.5 hours watching TV.",
+        "marks": 3
+      }
+    ],
+    "mcq": [
+      {
+        "question": "What is the result of the calculation 3,005 ÷ 5?",
+        "options": [
+          "a) 600",
+          "b) 601",
+          "c) 610",
+          "d) 501"
+        ],
+        "answer": "b",
+        "marks": 1
+      },
+      {
+        "question": "Which estimated product matches the expression 248 × 49?",
+        "options": [
+          "a) 1,000",
+          "b) 2,600",
+          "c) 750",
+          "d) 12,500"
+        ],
+        "answer": "d",
+        "marks": 1
+      },
+      {
+        "question": "In the long division of 2,874 ÷ 14, which multiplication represents the first step of the subtraction?",
+        "options": [
+          "a) 14 × 100 = 1,400",
+          "b) 14 × 20 = 280",
+          "c) 14 × 200 = 2,800",
+          "d) 14 × 300 = 4,200"
+        ],
+        "answer": "c",
+        "marks": 1
+      },
+      {
+        "question": "Which pair of numbers fits the multiplication puzzle [ ] [ ] [ ] × [ ] = 2,000?",
+        "options": [
+          "a) 200 × 10",
+          "b) 250 × 8",
+          "c) 100 × 20",
+          "d) 50 × 40"
+        ],
+        "answer": "b",
+        "marks": 1
+      },
+      {
+        "question": "What is the quotient of 680 ÷ 68?",
+        "options": [
+          "a) 1",
+          "b) 10",
+          "c) 20",
+          "d) 100"
+        ],
+        "answer": "b",
+        "marks": 1
+      }
+    ],
+    "fill_in_the_blanks": [
+      {
+        "question": "The result of a division problem is called the _______.",
+        "answer": "quotient",
+        "marks": 1
+      },
+      {
+        "question": "The value of 680 ÷ 17 is _______.",
+        "answer": "40",
+        "marks": 1
+      },
+      {
+        "question": "The estimated product of 12 × 25 is _______.",
+        "answer": "300",
+        "marks": 1
+      }
+    ],
+    "true_false": [
+      {
+        "question": "The result of 7,032 ÷ 6 is 1,172.",
+        "answer": "true",
+        "marks": 1
+      },
+      {
+        "question": "The estimated product of 101 × 11 is 300.",
+        "answer": "false",
+        "marks": 1
+      },
+      {
+        "question": "More friends watch TV for 0.5 hours than for 2.5 hours.",
+        "answer": "true",
+        "marks": 1
+      },
+      {
+        "question": "The calculation 170 ÷ 17 equals 10.",
+        "answer": "true",
+        "marks": 1
+      },
+      {
+        "question": "In the division 2,874 ÷ 14, the hundreds digit of the quotient is 1.",
+        "answer": "false",
+        "marks": 1
+      }
+    ],
+    "matching": []
+  }
+}

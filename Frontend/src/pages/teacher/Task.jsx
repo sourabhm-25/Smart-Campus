@@ -79,8 +79,9 @@ const css = `
 
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
   @media (max-width: 640px) {
-    .row-2, .row-3 { grid-template-columns: 1fr; }
+    .row-2, .row-3, .row-4 { grid-template-columns: 1fr; }
   }
 
   /* ── defaults pill strip ── */
@@ -283,6 +284,7 @@ export default function Task() {
   const [subject, setSubject] = useState("Mathematics");
   const [topic, setTopic] = useState("");
   const [taskType, setTaskType] = useState("homework");
+  const [testTime, setTestTime] = useState(30);
   const [questions, setQuestions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -395,6 +397,7 @@ export default function Task() {
 
     try {
       const body = { topic: topic.trim(), grade, subject, task_type: taskType };
+      if (taskType === "test") body.time_limit = parseInt(testTime);
       if (customShortAnswer !== "")     body.custom_short_answer      = parseInt(customShortAnswer);
       if (customMcq !== "")            body.custom_mcq               = parseInt(customMcq);
       if (customFillInBlanks !== "")   body.custom_fill_in_the_blanks = parseInt(customFillInBlanks);
@@ -437,6 +440,9 @@ export default function Task() {
         deadline: deadline + "T23:59:00",
         task_type: taskType,
       };
+      if (taskType === "test") {
+        payload.time_limit = parseInt(testTime);
+      }
       const res = await axios.post("http://127.0.0.1:8000/teacher/assign-homework", payload, { headers });
       setSaveResult({ success: true, message: res.data.message });
     } catch (err) {
@@ -485,7 +491,7 @@ export default function Task() {
               </div>
 
               {/* Grade + Subject + Task Type */}
-              <div className="row-3">
+              <div className={taskType === "test" ? "row-4" : "row-3"}>
                 <div>
                   <label className="field-label" htmlFor="grade-select">Grade</label>
                   <select
@@ -534,6 +540,20 @@ export default function Task() {
                     <option value="test">Test</option>
                   </select>
                 </div>
+                {taskType === "test" && (
+                  <div>
+                    <label className="field-label" htmlFor="time-input">Time Limit (mins)</label>
+                    <input
+                      id="time-input"
+                      type="number"
+                      min="1"
+                      className="field-input"
+                      value={testTime}
+                      onChange={(e) => setTestTime(e.target.value)}
+                      required
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Defaults bar */}
