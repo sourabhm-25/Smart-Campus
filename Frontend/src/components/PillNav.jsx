@@ -9,7 +9,7 @@ const PillNav = ({
   activeHref,
   className = '',
   ease = 'power3.easeOut',
-  baseColor = '#fff',
+  baseColor = '#1d0068ff',
   pillColor = '#060010',
   hoveredPillTextColor = '#060010',
   pillTextColor,

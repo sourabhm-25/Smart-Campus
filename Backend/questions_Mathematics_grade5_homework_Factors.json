@@ -3,12 +3,30 @@
   "subject": "Mathematics",
   "grade": "5",
   "task_type": "homework",
-  "question_config": {
-    "short_answer": 4,
-    "mcq": 4,
-    "fill_in_the_blanks": 4,
-    "true_false": 4,
-    "matching": null
+  "scoring": {
+    "total_marks": 12,
+    "grade_band": "elementary",
+    "marks_per_type": {
+      "short_answer": 3,
+      "mcq": 1,
+      "fill_in_the_blanks": 1,
+      "true_false": 1,
+      "matching": 2
+    },
+    "count_per_type": {
+      "short_answer": 3,
+      "mcq": 2,
+      "fill_in_the_blanks": 1,
+      "true_false": 0,
+      "matching": 0
+    },
+    "subtotal_per_type": {
+      "short_answer": 9,
+      "mcq": 2,
+      "fill_in_the_blanks": 1,
+      "true_false": 0,
+      "matching": 0
+    }
   },
   "retrieval_info": {
     "chunks_used": 5,
@@ -18,23 +36,18 @@
   "questions": {
     "short_answer": [
       {
-        "question": "Calculate 680 ÷ 34. Explain your reasoning using the fact that 340 ÷ 34 = 10.",
-        "answer": "The answer is 20. Since 680 is exactly double 340, the quotient must also be double. Therefore, 10 × 2 = 20.",
+        "question": "Look at the expression 25 × 31. Explain how you can estimate this product using rounding.",
+        "answer": "To estimate 25 × 31, you can round 25 up to 30 and 31 down to 30. Multiply 30 × 30 to get 900. This provides a quick approximate value for the actual product.",
         "marks": 3
       },
       {
-        "question": "Explain how to estimate the product of 248 × 49 to arrive at 12,500.",
-        "answer": "Round 248 up to 250 and round 49 up to 50. Multiply 250 × 50 to get 12,500.",
+        "question": "Solve 3,005 ÷ 5. Describe the steps you used to find the quotient.",
+        "answer": "First, divide 3,000 by 5 to get 600. Next, divide the remaining 5 by 5 to get 1. Finally, add 600 + 1 to find the total quotient of 601.",
         "marks": 3
       },
       {
-        "question": "Solve 3,005 ÷ 5. Provide the step-by-step calculation.",
-        "answer": "First, divide 3,000 by 5 to get 600. Then, divide 5 by 5 to get 1. Adding these together gives a final quotient of 601.",
-        "marks": 3
-      },
-      {
-        "question": "Compare the results of 340 ÷ 34 and 170 ÷ 17. What do you notice about the quotients?",
-        "answer": "Both 340 ÷ 34 and 170 ÷ 17 equal 10. I notice that the quotients are identical even though the numbers are different.",
+        "question": "Compare 340 ÷ 34 and 340 ÷ 17. Why is the quotient for 340 ÷ 17 larger?",
+        "answer": "The quotient is larger because 17 is a smaller divisor than 34. Specifically, 17 is half of 34. When you divide by a smaller number, the quotient increases. For example, 340 ÷ 17 = 20, which is double 10.",
         "marks": 3
       }
     ],
@@ -42,91 +55,34 @@
       {
         "question": "What is the quotient of 7,032 ÷ 6?",
         "options": [
-          "a) 1,072",
-          "b) 1,172",
+          "a) 1,172",
+          "b) 1,162",
           "c) 1,272",
-          "d) 1,182"
+          "d) 1,072"
         ],
-        "answer": "b",
-        "marks": 2
+        "answer": "a",
+        "marks": 1
       },
       {
-        "question": "Which estimation is the best match for the product of 132 × 19?",
+        "question": "Based on the estimation table, which value best matches the product of 248 × 49?",
         "options": [
-          "a) 300",
-          "b) 750",
-          "c) 2,600",
-          "d) 12,500"
-        ],
-        "answer": "c",
-        "marks": 2
-      },
-      {
-        "question": "What is the result of 340 ÷ 17?",
-        "options": [
-          "a) 10",
-          "b) 20",
-          "c) 30",
-          "d) 40"
+          "a) 2,600",
+          "b) 12,500",
+          "c) 750",
+          "d) 1,000"
         ],
         "answer": "b",
-        "marks": 2
-      },
-      {
-        "question": "Which multiplication problem has an estimated product of 1,000?",
-        "options": [
-          "a) 25 × 31",
-          "b) 101 × 11",
-          "c) 12 × 25",
-          "d) 132 × 19"
-        ],
-        "answer": "b",
-        "marks": 2
+        "marks": 1
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "The result of a division problem, such as 1,172 in the problem 7,032 ÷ 6, is called the ______.",
-        "answer": "quotient",
-        "marks": 2
-      },
-      {
-        "question": "To estimate 12 × 25, a student might round the numbers to find a product of ______.",
-        "answer": "300",
-        "marks": 2
-      },
-      {
-        "question": "If 340 ÷ 34 = 10, then 680 ÷ 68 must equal ______.",
-        "answer": "10",
-        "marks": 2
-      },
-      {
-        "question": "In the expression 3,005 ÷ 5, the number 5 is the ______.",
+        "question": "In the division problem 3,005 ÷ 5 = 601, the number 5 is known as the ________.",
         "answer": "divisor",
-        "marks": 2
+        "marks": 1
       }
     ],
-    "true_false": [
-      {
-        "question": "The estimated product of 25 × 31 is 750.",
-        "answer": "true",
-        "marks": 2
-      },
-      {
-        "question": "The quotient of 680 ÷ 68 is 10.",
-        "answer": "true",
-        "marks": 2
-      },
-      {
-        "question": "The result of 3,005 ÷ 5 is 601.",
-        "answer": "true",
-        "marks": 2
-      },
-      {
-        "question": "The product of 101 × 11 estimates to 2,600.",
-        "answer": "false",
-        "marks": 2
-      }
-    ]
+    "true_false": [],
+    "matching": []
   }
 }
