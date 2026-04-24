@@ -253,12 +253,12 @@ function ProgressRing({ pct = 72, size = 36, stroke = 3, color = "#6366f1" }) {
 /* ─────────────────────────────────────────
    MICRO: TOP HEADER STATS BAR
 ───────────────────────────────────────── */
-function HeaderStats() {
+function HeaderStats({ data }) {
   const stats = [
-    { label: "Classes", value: "4", icon: "🏫", color: "#818cf8" },
-    { label: "Students", value: "128", icon: "👥", color: "#34d399" },
-    { label: "Pending", value: "12", icon: "⏳", color: "#f59e0b" },
-    { label: "Avg Score", value: "84%", icon: "🎯", color: "#22d3ee" },
+    { label: "Classes", value: data.classes.toString(), icon: "🏫", color: "#818cf8" },
+    { label: "Students", value: data.students.toString(), icon: "👥", color: "#34d399" },
+    { label: "Pending", value: data.pending.toString(), icon: "⏳", color: "#f59e0b" },
+    { label: "Avg Score", value: data.avg + "%", icon: "🎯", color: "#22d3ee" },
   ];
   return (
     <div style={{ display: "flex", gap: 8 }}>
@@ -446,8 +446,57 @@ const TeacherLayout = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [pageReady, setPageReady] = useState(false);
+  const [statsData, setStatsData] = useState({ classes: 0, students: 0, pending: 0, avg: 0, pendingTasksCount: 0 });
 
   useEffect(() => { setPageReady(true); }, []);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        if (!token) return;
+        const headers = { Authorization: `Bearer ${token}` };
+        
+        const [classesRes, hwRes] = await Promise.all([
+          fetch("http://localhost:8000/teacher/my-classes", { headers }).then(r => r.json()),
+          fetch("http://localhost:8000/teacher/homework", { headers }).then(r => r.json())
+        ]);
+        
+        const rawClasses = classesRes.classes || [];
+        const rawHomeworks = hwRes.homework || [];
+        
+        const totalClasses = rawClasses.length;
+        const totalStudents = rawClasses.reduce((acc, c) => acc + (c.student_count || 0), 0);
+        
+        let totalPending = 0;
+        let overallSum = 0;
+        let hwCount = 0;
+        let pTasks = 0;
+        
+        rawHomeworks.forEach(hw => {
+           const st = hw.student_count || 0;
+           const sub = hw.submission_count || 0;
+           totalPending += Math.max(0, st - sub);
+           overallSum += (hw.avg_score || 0);
+           if (st - sub > 0) pTasks++;
+           hwCount++;
+        });
+        
+        const avgScore = hwCount > 0 ? Math.round(overallSum / hwCount) : 0;
+        
+        setStatsData({
+          classes: totalClasses,
+          students: totalStudents,
+          pending: totalPending,
+          avg: avgScore,
+          pendingTasksCount: pTasks
+        });
+      } catch (err) {
+        console.error("Failed to fetch layout stats", err);
+      }
+    };
+    fetchStats();
+  }, [location.pathname]);
 
   const isActive = (path) => {
     if (path === "/teacher/dashboard") return location.pathname === "/teacher/dashboard";
@@ -540,7 +589,7 @@ const TeacherLayout = () => {
                 }}>
                   <div style={{ fontSize: 10, color: "#6366f1", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Today</div>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    {[{ v: "4", l: "Classes" }, { v: "12", l: "Pending" }, { v: "84%", l: "Avg" }].map(s => (
+                    {[{ v: statsData.classes.toString(), l: "Classes" }, { v: statsData.pending.toString(), l: "Pending" }, { v: statsData.avg + "%", l: "Avg" }].map(s => (
                       <div key={s.l} style={{ textAlign: "center" }}>
                         <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 800, color: "#c7d2fe" }}>{s.v}</div>
                         <div style={{ fontSize: 9, color: "#475569", textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.l}</div>
@@ -562,9 +611,13 @@ const TeacherLayout = () => {
           ))}
 
           <SectionLabel label="Class Management" collapsed={collapsed} />
-          {NAV_ITEMS.slice(4).map(item => (
-            <NavItem key={item.path} item={item} active={isActive(item.path)} collapsed={collapsed} />
-          ))}
+          {NAV_ITEMS.slice(4).map(item => {
+            const dynamicItem = { ...item };
+            if (item.label === "Submissions") {
+              dynamicItem.badge = statsData.pendingTasksCount > 0 ? statsData.pendingTasksCount.toString() : null;
+            }
+            return <NavItem key={dynamicItem.path} item={dynamicItem} active={isActive(dynamicItem.path)} collapsed={collapsed} />;
+          })}
 
           <SectionLabel label="Account" collapsed={collapsed} />
           {BOTTOM_ITEMS.map(item => (
@@ -638,7 +691,7 @@ const TeacherLayout = () => {
 
           {/* Center: Stats */}
           <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
-            <HeaderStats />
+            <HeaderStats data={statsData} />
           </div>
 
           {/* Right: Actions */}

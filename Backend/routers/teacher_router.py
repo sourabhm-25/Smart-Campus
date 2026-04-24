@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from core.database import (
     users_collection, classes_collection, homework_collection,
-    enrollment_requests_collection, submissions_collection
+    enrollment_requests_collection, submissions_collection, kanban_collection
 )
 from core.security import get_current_user, require_role
 from bson import ObjectId
@@ -376,8 +376,18 @@ def get_my_homework(user=Depends(require_role("teacher"))):
     result = []
     for hw in homework_list:
         deadline = hw.get("deadline")
+        hw_id = hw["_id"]
+        
+        # Calculate real submission count and average score
+        subs = list(submissions_collection.find({"homework_id": hw_id}))
+        submission_count = len(subs)
+        avg_score = 0
+        if submission_count > 0:
+            total = sum(s.get("percentage", 0) for s in subs)
+            avg_score = round(total / submission_count)
+            
         result.append({
-            "id": str(hw["_id"]),
+            "id": str(hw_id),
             "class_id": str(hw.get("class_id", "")),
             "school": hw.get("school", ""),
             "grade": hw.get("grade", ""),
@@ -388,7 +398,8 @@ def get_my_homework(user=Depends(require_role("teacher"))):
             "deadline": deadline.isoformat() if isinstance(deadline, datetime) else deadline,
             "status": hw.get("status", ""),
             "student_count": len(hw.get("student_ids", [])),
-            "submission_count": hw.get("submission_count", 0),
+            "submission_count": submission_count,
+            "avg_score": avg_score,
             "created_at": str(hw.get("created_at", "")),
         })
 
@@ -444,32 +455,61 @@ def get_homework_submissions(homework_id: str, user=Depends(require_role("teache
 
     hw_oid = ObjectId(homework_id)
     subs = list(submissions_collection.find({"homework_id": hw_oid}).sort("submitted_at", -1))
+    
+    # Create a map of student_id -> submission
+    subs_map = {str(s["student_id"]): s for s in subs}
 
     result = []
-    for sub in subs:
-        student = users_collection.find_one({"_id": sub["student_id"]})
-        submitted_at = sub.get("submitted_at")
-        result.append({
-            "submission_id": str(sub["_id"]),
-            "student_id": str(sub["student_id"]),
-            "student_name": student.get("name", "Unknown") if student else "Unknown",
-            "student_email": student.get("email", "") if student else "",
-            "status": sub.get("status", "submitted"),
-            "total_score": sub.get("total_score"),
-            "max_score": sub.get("max_score"),
-            "submitted_at": submitted_at.isoformat() if isinstance(submitted_at, datetime) else str(submitted_at),
-            "answers": sub.get("answers", []),
-        })
+    enrolled_student_ids = hw.get("student_ids", [])
+    
+    for sid in enrolled_student_ids:
+        student = users_collection.find_one({"_id": sid})
+        if not student:
+            continue
+            
+        student_id_str = str(sid)
+        
+        if student_id_str in subs_map:
+            sub = subs_map[student_id_str]
+            submitted_at = sub.get("submitted_at")
+            percentage = sub.get("percentage")
+            result.append({
+                "submission_id": str(sub["_id"]),
+                "student_id": student_id_str,
+                "student_name": student.get("name", "Unknown"),
+                "student_email": student.get("email", ""),
+                "status": sub.get("status", "submitted"),
+                "total_score": sub.get("total_score"),
+                "max_score": sub.get("total_marks"),
+                "percentage": percentage,
+                "submitted_at": submitted_at.isoformat() if isinstance(submitted_at, datetime) else str(submitted_at),
+                "answers": sub.get("answers", []),
+            })
+        else:
+            result.append({
+                "submission_id": None,
+                "student_id": student_id_str,
+                "student_name": student.get("name", "Unknown"),
+                "student_email": student.get("email", ""),
+                "status": "pending",
+                "total_score": None,
+                "max_score": None,
+                "percentage": None,
+                "submitted_at": None,
+                "answers": [],
+            })
 
-    enrolled_count = len(hw.get("student_ids", []))
+    enrolled_count = len(enrolled_student_ids)
+    submitted_count = len(subs)
+    
     return {
         "homework_id": homework_id,
         "title": hw.get("title", ""),
         "subject": hw.get("subject", ""),
         "submissions": result,
-        "submitted_count": len(result),
+        "submitted_count": submitted_count,
         "enrolled_count": enrolled_count,
-        "completion_rate": round(len(result) / enrolled_count * 100, 1) if enrolled_count else 0,
+        "completion_rate": round(submitted_count / enrolled_count * 100, 1) if enrolled_count else 0,
     }
 
 
@@ -790,3 +830,39 @@ def _notify_enrollment_result(student_id, accepted, school, grade, subject):
     except ImportError:
         pass
 
+
+# ─────────────────────────────
+# Kanban Endpoints
+# ─────────────────────────────
+
+class KanbanCard(BaseModel):
+    id: str
+    title: str
+    column: str
+
+class KanbanBoardRequest(BaseModel):
+    cards: List[KanbanCard]
+
+@router.get("/kanban")
+def get_kanban(current_user=Depends(require_role("teacher"))):
+    """Get the Kanban board cards for the current teacher."""
+    teacher_id = current_user["_id"]
+    board = kanban_collection.find_one({"teacher_id": teacher_id})
+    if not board:
+        return {"cards": []}
+    
+    # Exclude _id to prevent serialization issues
+    return {"cards": board.get("cards", [])}
+
+@router.put("/kanban")
+def update_kanban(req: KanbanBoardRequest, current_user=Depends(require_role("teacher"))):
+    """Update the Kanban board cards for the current teacher."""
+    teacher_id = current_user["_id"]
+    cards_list = [card.dict() for card in req.cards]
+    
+    kanban_collection.update_one(
+        {"teacher_id": teacher_id},
+        {"$set": {"cards": cards_list, "updated_at": datetime.now(timezone.utc).isoformat()}},
+        upsert=True
+    )
+    return {"message": "Kanban board updated successfully"}

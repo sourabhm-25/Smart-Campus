@@ -28,6 +28,7 @@ enrollment_requests_collection = db["enrollment_requests"]  # Student join reque
 submissions_collection = db["submissions"]                  # Student homework submissions + scores
 notifications_collection = db["notifications"]              # In-app notification feed
 questions_collection = db["questions"]                      # AI-generated questions saved by /save-questions
+kanban_collection = db["kanban"]                            # Teacher kanban board cards
 
 
 def _create_indexes():
