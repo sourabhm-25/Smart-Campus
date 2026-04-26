@@ -4,7 +4,11 @@
   "grade": "5",
   "task_type": "test",
   "scoring": {
+<<<<<<< Updated upstream
     "total_marks": 19,
+=======
+    "total_marks": 17,
+>>>>>>> Stashed changes
     "grade_band": "elementary",
     "marks_per_type": {
       "short_answer": 3,
@@ -15,16 +19,28 @@
     },
     "count_per_type": {
       "short_answer": 2,
+<<<<<<< Updated upstream
       "mcq": 5,
       "fill_in_the_blanks": 3,
       "true_false": 5,
+=======
+      "mcq": 3,
+      "fill_in_the_blanks": 4,
+      "true_false": 4,
+>>>>>>> Stashed changes
       "matching": 0
     },
     "subtotal_per_type": {
       "short_answer": 6,
+<<<<<<< Updated upstream
       "mcq": 5,
       "fill_in_the_blanks": 3,
       "true_false": 5,
+=======
+      "mcq": 3,
+      "fill_in_the_blanks": 4,
+      "true_false": 4,
+>>>>>>> Stashed changes
       "matching": 0
     }
   },
@@ -36,6 +52,7 @@
   "questions": {
     "short_answer": [
       {
+<<<<<<< Updated upstream
         "question": "Using the provided patterns, explain why 340 ÷ 17 = 20 if 340 ÷ 34 = 10.",
         "answer": "Since 17 is half of 34, dividing by a smaller number results in a larger quotient. Therefore, the answer is 10 × 2 = 20.",
         "marks": 3
@@ -43,33 +60,60 @@
       {
         "question": "Based on the TV watching data, how many friends spend exactly 2.5 hours watching TV?",
         "answer": "There are 3 friends who spend exactly 2.5 hours watching TV.",
+=======
+        "question": "Look at the estimation table. Explain how you can estimate the product of 132 × 19 to reach 2,600.",
+        "answer": "This process is called estimation. I round 132 down to 130 and round 19 up to 20. Then, 130 × 20 = 2,600.",
+        "marks": 3
+      },
+      {
+        "question": "Using the long division example 7,032 ÷ 6, explain how the thousands place is handled.",
+        "answer": "This is long division. Divide 7 thousands by 6 to get a quotient of 1 thousand. The remainder of 1 thousand is carried to the hundreds place.",
+>>>>>>> Stashed changes
         "marks": 3
       }
     ],
     "mcq": [
       {
+<<<<<<< Updated upstream
         "question": "What is the result of the calculation 3,005 ÷ 5?",
         "options": [
           "a) 600",
           "b) 601",
           "c) 610",
           "d) 501"
+=======
+        "question": "Based on the provided division patterns, if 340 ÷ 34 = 10, what is the value of 340 ÷ 17?",
+        "options": [
+          "a) 10",
+          "b) 20",
+          "c) 30",
+          "d) 40"
+>>>>>>> Stashed changes
         ],
         "answer": "b",
         "marks": 1
       },
       {
+<<<<<<< Updated upstream
         "question": "Which estimated product matches the expression 248 × 49?",
         "options": [
           "a) 1,000",
           "b) 2,600",
           "c) 750",
+=======
+        "question": "According to the estimation table, which value is the best match for the product of 248 × 49?",
+        "options": [
+          "a) 750",
+          "b) 1,000",
+          "c) 2,600",
+>>>>>>> Stashed changes
           "d) 12,500"
         ],
         "answer": "d",
         "marks": 1
       },
       {
+<<<<<<< Updated upstream
         "question": "In the long division of 2,874 ÷ 14, which multiplication represents the first step of the subtraction?",
         "options": [
           "a) 14 × 100 = 1,400",
@@ -98,6 +142,14 @@
           "b) 10",
           "c) 20",
           "d) 100"
+=======
+        "question": "Based on the data collected from the 35 friends, how many friends spend exactly 2½ hours watching TV?",
+        "options": [
+          "a) 2",
+          "b) 3",
+          "c) 4",
+          "d) 5"
+>>>>>>> Stashed changes
         ],
         "answer": "b",
         "marks": 1
@@ -105,6 +157,7 @@
     ],
     "fill_in_the_blanks": [
       {
+<<<<<<< Updated upstream
         "question": "The result of a division problem is called the _______.",
         "answer": "quotient",
         "marks": 1
@@ -117,32 +170,67 @@
       {
         "question": "The estimated product of 12 × 25 is _______.",
         "answer": "300",
+=======
+        "question": "In the division problem 680 ÷ 68, the quotient is ___.",
+        "answer": "10",
+        "marks": 1
+      },
+      {
+        "question": "The process of finding an approximate value for products like 12 × 25 is called ___.",
+        "answer": "estimation",
+        "marks": 1
+      },
+      {
+        "question": "In the long division calculation 7,032 ÷ 6, the final result is ___.",
+        "answer": "1,172",
+        "marks": 1
+      },
+      {
+        "question": "Based on the math patterns provided, 170 ÷ 17 = ___.",
+        "answer": "10",
+>>>>>>> Stashed changes
         "marks": 1
       }
     ],
     "true_false": [
       {
+<<<<<<< Updated upstream
         "question": "The result of 7,032 ÷ 6 is 1,172.",
+=======
+        "question": "In the estimation table, the product of 101 × 11 is matched to 1,000.",
+>>>>>>> Stashed changes
         "answer": "true",
         "marks": 1
       },
       {
+<<<<<<< Updated upstream
         "question": "The estimated product of 101 × 11 is 300.",
+=======
+        "question": "The total number of friends who provided data about their TV habits was 30.",
+>>>>>>> Stashed changes
         "answer": "false",
         "marks": 1
       },
       {
+<<<<<<< Updated upstream
         "question": "More friends watch TV for 0.5 hours than for 2.5 hours.",
+=======
+        "question": "In the long division of 7,032 ÷ 6, the final remainder is 0.",
+>>>>>>> Stashed changes
         "answer": "true",
         "marks": 1
       },
       {
+<<<<<<< Updated upstream
         "question": "The calculation 170 ÷ 17 equals 10.",
         "answer": "true",
         "marks": 1
       },
       {
         "question": "In the division 2,874 ÷ 14, the hundreds digit of the quotient is 1.",
+=======
+        "question": "Based on the division patterns, 680 ÷ 34 equals 10.",
+>>>>>>> Stashed changes
         "answer": "false",
         "marks": 1
       }

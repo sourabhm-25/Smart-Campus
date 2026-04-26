@@ -92,7 +92,7 @@ async def test_with_image(question_query: str, image_path: str):
     except Exception as e:
         print(f"\n❌ ERROR during evaluation: {e}")
         print(f"\n💡 Make sure:")
-        print(f"   1. Ollama is running with llava model")
+        print(f"   1. Ollama is running with qwen2.5vl model")
         print(f"   2. The ngrok tunnel is active")
         print(f"   3. MongoDB is running")
 

@@ -41,7 +41,7 @@ The backend will be live at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ---
 ## 🧠 AI Answer Evaluation System
-This is a full-stack application designed to automate the grading of handwritten student answers. A teacher can select a question from a database, and a student can upload a photo of their handwritten answer. The system uses a powerful multimodal AI model (LLaVA) to read, transcribe, and grade the answer against the correct solution.
+This is a full-stack application designed to automate the grading of handwritten student answers. A teacher can select a question from a database, and a student can upload a photo of their handwritten answer. The system uses a powerful multimodal AI model (Qwen2.5-VL) to read, transcribe, and grade the answer against the correct solution.
 
 This project uniquely runs the expensive AI model locally for free, while the web application can be deployed to any cloud service.
 
@@ -55,14 +55,14 @@ The user interface (UI) that runs in the browser.
 ### Backend (FastAPI):
 A lightweight server (can be deployed on Vercel/Render) that connects to the database and the AI.
 
-### AI Model (Ollama + LLaVA):
-The "brain" (LLaVA) is a large multimodal model that runs on your local computer using Ollama.
+### AI Model (Ollama + Qwen2.5-VL):
+The "brain" (Qwen2.5-VL) is a large multimodal model that runs on your local computer using Ollama.
 
 ### Tunnel (Ngrok/Cloudflared):
 A secure "tunnel" that connects your deployed backend to the AI model running on your local PC.
 
 ### Data Flow:
-React App → FastAPI Backend → Ngrok Tunnel URL → Your Local PC → Ollama/LLaVA AI → (Response flows back)
+React App → FastAPI Backend → Ngrok Tunnel URL → Your Local PC → Ollama/Qwen2.5-VL AI → (Response flows back)
 
 ### 💻 Tech Stack
 Frontend: React, Vite, Axios
@@ -73,7 +73,7 @@ Database: MongoDB (using pymongo)
 
 AI Engine (Local): Ollama
 
-AI Model (Local): LLaVA (llava:latest)
+AI Model (Local): Qwen2.5-VL (qwen2.5vl:7b)
 
 Tunneling: Ngrok (or Cloudflared)
 
@@ -97,9 +97,9 @@ Install Ollama: Download and install the application from ollama.com.
 
 Run Ollama: Launch the Ollama application. It will run in the background.
 
-Pull the AI Model: Open your terminal and pull the LLaVA model.
+Pull the AI Model: Open your terminal and pull the Qwen2.5-VL model.
 ```bash
-ollama pull llava
+ollama pull qwen2.5vl:7b
 ```
 (This is a large, one-time download).
 

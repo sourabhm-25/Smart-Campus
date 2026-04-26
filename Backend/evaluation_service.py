@@ -5,7 +5,11 @@ evaluation_service.py — Rubric-Driven, Subject-Aware Handwriting Evaluation
 Architecture:
   1. Each question carries a `rubric` (list of criteria with individual marks).
   2. Evaluation checks EACH criterion independently → partial credit is precise.
+<<<<<<< Updated upstream
   3. Subject routing selects the right evaluation strategy before calling Gemini.
+=======
+  3. Subject routing selects the right evaluation strategy before calling Qwen2.5-VL.
+>>>>>>> Stashed changes
   4. Math: step-by-step checking. Science: keyword + diagram. English: holistic.
   5. Confidence score added to every response so teacher can flag low-confidence evals.
 
@@ -23,19 +27,28 @@ from enum import Enum
 from typing import Optional
 from io import BytesIO
 
+from dotenv import load_dotenv
 import google.generativeai as genai
 from PIL import Image
+
+load_dotenv()
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Config
 # ─────────────────────────────────────────────────────────────────────────────
+<<<<<<< Updated upstream
 GEMINI_MODEL  = "gemini-2.5-flash"
-GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
 if not GEMINI_API_KEY:
-    raise EnvironmentError("GOOGLE_API_KEY environment variable is not set.")
+    raise EnvironmentError("GEMINI_API_KEY or GOOGLE_API_KEY environment variable is not set.")
 
 genai.configure(api_key=GEMINI_API_KEY)
+=======
+OLLAMA_URL   = "https://nickeliferous-unchainable-ty.ngrok-free.dev/api/chat"
+MODEL_NAME   = "qwen2.5vl:7b"
+TIMEOUT_SECS = 300.0
+>>>>>>> Stashed changes
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Enums & constants
@@ -433,7 +446,11 @@ def build_evaluation_prompt(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+<<<<<<< Updated upstream
 # Response normalizer — unchanged, same contract
+=======
+# Response normalizer — make Qwen2.5-VL output safe
+>>>>>>> Stashed changes
 # ─────────────────────────────────────────────────────────────────────────────
 def normalize_response(raw: dict, max_marks: int) -> dict:
     criteria = raw.get("criteria_scores", [])
@@ -471,8 +488,15 @@ def normalize_response(raw: dict, max_marks: int) -> dict:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+<<<<<<< Updated upstream
 # Gemini 2.5 Flash caller  (replaces _call_llava)
 # ─────────────────────────────────────────────────────────────────────────────
+=======
+# Qwen2.5-VL caller
+# ─────────────────────────────────────────────────────────────────────────────
+async def _call_qwen(image_bytes: bytes, prompt: str) -> dict:
+    encoded_image = base64.b64encode(image_bytes).decode("utf-8")
+>>>>>>> Stashed changes
 
 def _repair_json_strings(text: str) -> str:
     """
@@ -524,6 +548,7 @@ def _parse_structured_json(content: str) -> dict:
     except json.JSONDecodeError:
         pass
 
+<<<<<<< Updated upstream
     # Level 2: extract outermost { } block (handles any preamble)
     match = re.search(r"\{.*\}", cleaned, re.DOTALL)
     if match:
@@ -537,6 +562,12 @@ def _parse_structured_json(content: str) -> dict:
                 return json.loads(repaired)
             except json.JSONDecodeError:
                 pass
+=======
+    # Extract first valid JSON object
+    match = re.search(r"\{.*\}", content, re.DOTALL)
+    if not match:
+        raise ValueError(f"No JSON found in Qwen2.5-VL response: {content[:200]}")
+>>>>>>> Stashed changes
 
     # Last resort: repair the full cleaned text
     repaired = _repair_json_strings(cleaned)
@@ -726,7 +757,11 @@ async def evaluate_handwriting(
     )
 
     try:
+<<<<<<< Updated upstream
         raw = await _call_gemini(image_bytes, prompt)
+=======
+        raw = await _call_qwen(image_bytes, prompt)
+>>>>>>> Stashed changes
         result = normalize_response(raw, max_marks)
         result["eval_mode"] = mode.value
         result["subject"] = subject

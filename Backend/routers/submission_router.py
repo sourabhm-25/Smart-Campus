@@ -5,7 +5,7 @@ Handles student homework submissions with per-question, per-criterion grading.
 
 Two submission paths:
   A) Text answer (MCQ/T-F/short typed) → direct comparison, no LLaVA
-  B) Photo upload (handwritten)         → LLaVA OCR + rubric evaluation
+  B) Photo upload (handwritten)         → Qwen2.5-VL OCR + rubric evaluation
 
 POST /student/homework/{homework_id}/submit
 GET  /student/homework/{homework_id}/result
@@ -53,7 +53,7 @@ async def submit_homework(
     """
     Submit homework answers. Supports mixed submissions:
     - Typed text answers evaluated with string comparison
-    - Photo uploads evaluated with LLaVA OCR + rubric grading
+    - Photo uploads evaluated with Qwen2.5-VL OCR + rubric grading
 
     Accepts multipart/form-data with:
       - answers: JSON string (list of {question_index, answer, type, has_photo})
@@ -450,7 +450,20 @@ def _evaluate_text_answer(
         }
 
     # Short answer: simple keyword overlap scoring
+<<<<<<< Updated upstream
     # (For typed answers, this is reasonable; photo answers use LLaVA)
+=======
+    # (For typed answers, this is reasonable; photo answers use Qwen2.5-VL)
+    if not student_text:
+        return {
+            "score": 0, "max_score": marks, "percentage": 0,
+            "criteria_scores": [],
+            "feedback": "No answer provided.",
+            "confidence": 1.0, "low_confidence": False,
+            "needs_manual_review": False, "eval_mode": "text",
+        }
+
+>>>>>>> Stashed changes
     correct_words = set(correct_norm.split())
     student_words = set(student_norm.split())
     overlap = len(correct_words & student_words) / max(len(correct_words), 1)

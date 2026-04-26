@@ -3,12 +3,30 @@
   "subject": "Mathematics",
   "grade": "5",
   "task_type": "homework",
-  "question_config": {
-    "short_answer": null,
-    "mcq": null,
-    "fill_in_the_blanks": null,
-    "true_false": null,
-    "matching": null
+  "scoring": {
+    "total_marks": 10,
+    "grade_band": "elementary",
+    "marks_per_type": {
+      "short_answer": 3,
+      "mcq": 1,
+      "fill_in_the_blanks": 1,
+      "true_false": 1,
+      "matching": 2
+    },
+    "count_per_type": {
+      "short_answer": 2,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    },
+    "subtotal_per_type": {
+      "short_answer": 6,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    }
   },
   "retrieval_info": {
     "chunks_used": 5,
@@ -18,51 +36,53 @@
   "questions": {
     "short_answer": [
       {
-        "question": "Look at the estimation table. Explain how you would estimate the product of 248 × 49 to get 12,500.",
-        "answer": "I would use the concept of rounding. I can round 248 to 250 and 49 to 50. Then, 250 × 50 = 12,500.",
+        "question": "Explain how to estimate the product of 248 × 49 using the matching table. Name the concept used and provide the steps.",
+        "answer": "The concept used is estimation. First, round 248 to 250 and 49 to 50. Then, calculate 250 × 50 to get 12,500.",
         "marks": 3
       },
       {
-        "question": "If 340 ÷ 17 = 20, explain how to find the answer to 680 ÷ 17 without long division.",
-        "answer": "I can use the concept of doubling. Since 680 is double 340, the quotient also doubles. Therefore, 20 × 2 = 40.",
+        "question": "Using the fact that 340 ÷ 34 = 10, explain how to find the quotient of 340 ÷ 17. Name the concept involved.",
+        "answer": "This uses the concept of division relationships. Since 17 is half of 34, the quotient will be double. Therefore, 340 ÷ 17 = 20.",
         "marks": 3
       }
     ],
     "mcq": [
       {
-        "question": "Based on the matching table, what is the estimated product of 12 × 25?",
+        "question": "Based on the estimation table, which value is the best match for the product of 12 × 25?",
         "options": [
-          "a) 300",
-          "b) 750",
-          "c) 1,000",
+          "a) 750",
+          "b) 1,000",
+          "c) 300",
           "d) 2,600"
         ],
-        "answer": "a",
-        "marks": 2
+        "answer": "c",
+        "marks": 1
       },
       {
         "question": "If 192 ÷ 4 = 48, what is the quotient when 192 is divided by 8?",
         "options": [
           "a) 96",
-          "b) 48",
-          "c) 24",
+          "b) 24",
+          "c) 48",
           "d) 12"
         ],
-        "answer": "c",
-        "marks": 2
+        "answer": "b",
+        "marks": 1
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "In the division problem 7,032 ÷ 6 = 1,172, the number 1,172 is called the ______.",
-        "answer": "quotient",
-        "marks": 2
+        "question": "In the division problem 7,032 ÷ 6 = 1,172, the number 7,032 is known as the ________.",
+        "answer": "dividend",
+        "marks": 1
       },
       {
-        "question": "Given that 340 ÷ 34 = 10, the value of 340 ÷ 17 is ______.",
-        "answer": "20",
-        "marks": 2
+        "question": "Following the pattern where 340 ÷ 17 = 20, the value of 680 ÷ 17 is ________.",
+        "answer": "40",
+        "marks": 1
       }
-    ]
+    ],
+    "true_false": [],
+    "matching": []
   }
 }
