@@ -5,17 +5,9 @@ evaluation_service.py — Rubric-Driven, Subject-Aware Handwriting Evaluation
 Architecture:
   1. Each question carries a `rubric` (list of criteria with individual marks).
   2. Evaluation checks EACH criterion independently → partial credit is precise.
-<<<<<<< Updated upstream
-  3. Subject routing selects the right evaluation strategy before calling Gemini.
-=======
   3. Subject routing selects the right evaluation strategy before calling Qwen2.5-VL.
->>>>>>> Stashed changes
   4. Math: step-by-step checking. Science: keyword + diagram. English: holistic.
   5. Confidence score added to every response so teacher can flag low-confidence evals.
-
-CHANGED: LLaVA / Ollama / ngrok → Google Gemini 2.5 Flash (Vision)
-  - Requires: pip install google-generativeai pillow
-  - Env var:  GOOGLE_API_KEY
 """
 
 import base64
@@ -28,27 +20,16 @@ from typing import Optional
 from io import BytesIO
 
 from dotenv import load_dotenv
-import google.generativeai as genai
-from PIL import Image
+import httpx
 
 load_dotenv()
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Config
 # ─────────────────────────────────────────────────────────────────────────────
-<<<<<<< Updated upstream
-GEMINI_MODEL  = "gemini-2.5-flash"
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-
-if not GEMINI_API_KEY:
-    raise EnvironmentError("GEMINI_API_KEY or GOOGLE_API_KEY environment variable is not set.")
-
-genai.configure(api_key=GEMINI_API_KEY)
-=======
 OLLAMA_URL   = "https://nickeliferous-unchainable-ty.ngrok-free.dev/api/chat"
 MODEL_NAME   = "qwen2.5vl:7b"
 TIMEOUT_SECS = 300.0
->>>>>>> Stashed changes
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Enums & constants
@@ -446,11 +427,7 @@ def build_evaluation_prompt(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-<<<<<<< Updated upstream
-# Response normalizer — unchanged, same contract
-=======
 # Response normalizer — make Qwen2.5-VL output safe
->>>>>>> Stashed changes
 # ─────────────────────────────────────────────────────────────────────────────
 def normalize_response(raw: dict, max_marks: int) -> dict:
     criteria = raw.get("criteria_scores", [])
@@ -488,15 +465,38 @@ def normalize_response(raw: dict, max_marks: int) -> dict:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-<<<<<<< Updated upstream
-# Gemini 2.5 Flash caller  (replaces _call_llava)
-# ─────────────────────────────────────────────────────────────────────────────
-=======
 # Qwen2.5-VL caller
 # ─────────────────────────────────────────────────────────────────────────────
 async def _call_qwen(image_bytes: bytes, prompt: str) -> dict:
     encoded_image = base64.b64encode(image_bytes).decode("utf-8")
->>>>>>> Stashed changes
+    
+    payload = {
+        "model": MODEL_NAME,
+        "stream": False,
+        "options": {
+            "temperature": 0,
+            "top_p": 1,
+            "top_k": 1,
+            "repeat_penalty": 1.0,
+            "seed": 42,
+            "num_predict": 1500,
+        },
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt,
+                "images": [encoded_image],
+            }
+        ],
+    }
+
+    async with httpx.AsyncClient(timeout=TIMEOUT_SECS) as client:
+        response = await client.post(OLLAMA_URL, json=payload)
+        response.raise_for_status()
+        ollama_response = response.json()
+
+    content = ollama_response.get("message", {}).get("content", "{}")
+    return _parse_structured_json(content)
 
 def _repair_json_strings(text: str) -> str:
     """
@@ -548,26 +548,18 @@ def _parse_structured_json(content: str) -> dict:
     except json.JSONDecodeError:
         pass
 
-<<<<<<< Updated upstream
-    # Level 2: extract outermost { } block (handles any preamble)
+    # Extract first valid JSON object
     match = re.search(r"\{.*\}", cleaned, re.DOTALL)
     if match:
         candidate = match.group()
         try:
             return json.loads(candidate)
         except json.JSONDecodeError:
-            # Level 3: repair illegal whitespace inside strings, then retry
             repaired = _repair_json_strings(candidate)
             try:
                 return json.loads(repaired)
             except json.JSONDecodeError:
                 pass
-=======
-    # Extract first valid JSON object
-    match = re.search(r"\{.*\}", content, re.DOTALL)
-    if not match:
-        raise ValueError(f"No JSON found in Qwen2.5-VL response: {content[:200]}")
->>>>>>> Stashed changes
 
     # Last resort: repair the full cleaned text
     repaired = _repair_json_strings(cleaned)
@@ -579,149 +571,7 @@ def _parse_structured_json(content: str) -> dict:
     raise ValueError(f"Could not parse grading JSON: {content[:400]}")
 
 
-def _build_transcription_prompt(question: str) -> str:
-    """
-    Step 1 prompt: ONLY transcribe the handwriting as plain text.
-    No JSON at all — returns raw plain text, which is always safe.
-    """
-    return (
-        f"The student was answering this question:\n\"{question}\"\n\n"
-        "Please read the handwritten content in the image carefully and transcribe "
-        "EXACTLY what the student has written, including all working steps, numbers, "
-        "symbols, and diagrams (describe diagrams in [brackets]). "
-        "Output ONLY the transcribed text — no commentary, no JSON, no explanation."
-    )
-
-
-def _build_grading_prompt_from_transcription(
-    transcription: str,
-    prompt_with_rubric: str,
-) -> str:
-    """
-    Step 2 prompt: Grade using the transcription as text input (no image needed).
-    The transcription is injected as a clearly delimited block so Gemini
-    never confuses it with the JSON output structure.
-
-    Key fix: transcription lives OUTSIDE the JSON template entirely.
-    Gemini grades the text, not the image — no free-form text inside JSON strings.
-    """
-    # Replace the image-based transcription instruction with the actual transcribed text
-    grading_prompt = prompt_with_rubric.replace(
-        "1. First, carefully TRANSCRIBE the student's handwritten work EXACTLY as written.",
-        "1. The student's handwritten work has already been transcribed for you (see below).",
-    ).replace(
-        "1. TRANSCRIBE the student's answer exactly as written (and describe any diagrams present).",
-        "1. The student's handwritten answer has already been transcribed for you (see below).",
-    ).replace(
-        "1. TRANSCRIBE the student's complete handwritten answer.",
-        "1. The student's complete answer has already been transcribed for you (see below).",
-    ).replace(
-        "1. TRANSCRIBE what the student has written.",
-        "1. The student's answer has already been transcribed for you (see below).",
-    )
-
-    # Remove the transcription field from the JSON output template — we'll add it back ourselves
-    grading_prompt = grading_prompt.replace(
-        '"transcription": "<exact transcription of student\'s handwritten work>",',
-        "",
-    ).replace(
-        '"transcription": "<exact transcription + description of any diagrams>",',
-        "",
-    ).replace(
-        '"transcription": "<full transcription of student\'s answer>",',
-        "",
-    ).replace(
-        '"transcription": "<student\'s answer as written>",',
-        "",
-    )
-
-    return (
-        f"=== STUDENT'S TRANSCRIBED ANSWER ===\n"
-        f"{transcription}\n"
-        f"=== END OF STUDENT'S ANSWER ===\n\n"
-        f"{grading_prompt}\n\n"
-        f"CRITICAL OUTPUT RULES:\n"
-        f"1. Do NOT include a transcription field in your JSON output.\n"
-        f"2. Output ONLY the criteria_scores, total_score, max_score, overall_feedback, and confidence fields.\n"
-        f"3. Every 'reason' string MUST be a single line with at most 15 words. No quotes, no newlines inside strings.\n"
-        f"4. Output raw JSON only — no markdown, no code fences, no preamble."
-    )
-
-
-async def _call_gemini(image_bytes: bytes, prompt: str) -> dict:
-    """
-    Two-step Gemini call that permanently solves the JSON parse failure.
-
-    WHY TWO STEPS:
-      The root cause of every JSON failure was putting free-form handwritten text
-      (with quotes, ÷, newlines, math symbols) inside a JSON string value.
-      No amount of escaping instructions reliably fixes this — Gemini generates
-      the transcription naturally and breaks JSON in the process.
-
-    SOLUTION:
-      Step 1 — Ask Gemini to transcribe the image as plain text (no JSON at all).
-                Plain text output is always safe, never broken.
-      Step 2 — Feed the transcription as a labelled text block and ask Gemini
-                to output ONLY the structured grading JSON (no transcription field).
-                Since Step 2 has no free-form text in its JSON, it never breaks.
-
-    The transcription is then added back to the final result in Python,
-    never passing through JSON serialization at all.
-
-    COST: 2 API calls per evaluation instead of 1.
-    At $0.15/M input tokens, the extra transcription call costs ~$0.00002.
-    Completely negligible.
-    """
-    # ── Validate and prepare image ──────────────────────────────────────────
-    try:
-        image = Image.open(BytesIO(image_bytes))
-        if image.mode not in ("RGB", "L"):
-            image = image.convert("RGB")
-    except Exception as e:
-        raise ValueError(f"Invalid image data: {e}")
-
-    # ── Shared model config ─────────────────────────────────────────────────
-    text_model = genai.GenerativeModel(
-        model_name=GEMINI_MODEL,
-        generation_config=genai.types.GenerationConfig(
-            temperature=0,
-            top_p=1,
-            top_k=1,
-            max_output_tokens=1024,
-        ),
-    )
-    json_model = genai.GenerativeModel(
-        model_name=GEMINI_MODEL,
-        generation_config=genai.types.GenerationConfig(
-            temperature=0,
-            top_p=1,
-            top_k=1,
-            max_output_tokens=2048,
-            response_mime_type="application/json",
-        ),
-    )
-
-    # ── Step 1: Transcribe image → plain text (no JSON) ────────────────────
-    # Extract question from prompt for context (between first pair of quotes)
-    question_match = re.search(r'"([^"]{10,})"', prompt)
-    question_hint = question_match.group(1) if question_match else "a student question"
-
-    transcription_prompt = _build_transcription_prompt(question_hint)
-    tx_response = text_model.generate_content([transcription_prompt, image])
-    transcription = tx_response.text.strip()
-
-    # ── Step 2: Grade using transcription as text (no image, no free-form JSON) ──
-    grading_prompt = _build_grading_prompt_from_transcription(transcription, prompt)
-    grade_response = json_model.generate_content(grading_prompt)
-    grading_data = _parse_structured_json(grade_response.text.strip())
-
-    # ── Merge: add transcription back in Python (bypasses JSON entirely) ────
-    grading_data["transcription"] = transcription
-    return grading_data
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Public API — signature unchanged, drop-in replacement
+# Public API
 # ─────────────────────────────────────────────────────────────────────────────
 async def evaluate_handwriting(
     image_bytes: bytes,
@@ -757,31 +607,19 @@ async def evaluate_handwriting(
     )
 
     try:
-<<<<<<< Updated upstream
-        raw = await _call_gemini(image_bytes, prompt)
-=======
         raw = await _call_qwen(image_bytes, prompt)
->>>>>>> Stashed changes
         result = normalize_response(raw, max_marks)
         result["eval_mode"] = mode.value
         result["subject"] = subject
         result["question_type"] = question_type
         return result
 
+    except httpx.ConnectError:
+        return _error_response(max_marks, "Cannot connect to AI model. Is the Ollama tunnel running?")
+    except httpx.ReadTimeout:
+        return _error_response(max_marks, "AI model timed out. Please retry.")
     except Exception as e:
-        error_str = str(e)
-
-        # Surface specific Gemini API errors clearly
-        if "API_KEY" in error_str or "permission" in error_str.lower():
-            return _error_response(max_marks, "Invalid or missing GOOGLE_API_KEY.")
-        if "quota" in error_str.lower() or "429" in error_str:
-            return _error_response(max_marks, "Gemini API rate limit hit. Wait and retry, or enable billing.")
-        if "image" in error_str.lower() or "PIL" in error_str:
-            return _error_response(max_marks, "Could not read image. Ensure the upload is a valid JPEG/PNG.")
-        if "JSONDecodeError" in type(e).__name__:
-            return _error_response(max_marks, f"Gemini returned invalid JSON: {e}")
-
-        return _error_response(max_marks, f"Unexpected error: {error_str}")
+        return _error_response(max_marks, f"Unexpected error: {e}")
 
 
 def _error_response(max_marks: int, message: str) -> dict:
