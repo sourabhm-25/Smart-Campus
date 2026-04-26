@@ -450,20 +450,7 @@ def _evaluate_text_answer(
         }
 
     # Short answer: simple keyword overlap scoring
-<<<<<<< Updated upstream
-    # (For typed answers, this is reasonable; photo answers use LLaVA)
-=======
     # (For typed answers, this is reasonable; photo answers use Qwen2.5-VL)
-    if not student_text:
-        return {
-            "score": 0, "max_score": marks, "percentage": 0,
-            "criteria_scores": [],
-            "feedback": "No answer provided.",
-            "confidence": 1.0, "low_confidence": False,
-            "needs_manual_review": False, "eval_mode": "text",
-        }
-
->>>>>>> Stashed changes
     correct_words = set(correct_norm.split())
     student_words = set(student_norm.split())
     overlap = len(correct_words & student_words) / max(len(correct_words), 1)
