@@ -71,6 +71,121 @@ function Toast({ msg, type }) {
   );
 }
 
+/* ── Subject Picker Modal ── */
+function SubjectModal({ req, onConfirm, onClose }) {
+  const [selected, setSelected] = useState("");
+  const [custom, setCustom] = useState("");
+  const subjects = req?.my_subjects || [];
+
+  const value = selected === "__custom__" ? custom.trim() : selected;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      style={{
+        position: "fixed", inset: 0, zIndex: 200,
+        background: "rgba(0,0,0,0.65)", backdropFilter: "blur(8px)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: 380, borderRadius: 18,
+          background: "rgba(12,11,30,0.98)",
+          border: "1px solid rgba(99,102,241,0.3)",
+          backdropFilter: "blur(24px)",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.7)",
+          padding: "28px 28px 24px",
+        }}
+      >
+        <div style={{ fontSize: 18, marginBottom: 8 }}>📚</div>
+        <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 15, fontWeight: 800, color: "#e2e8f0", marginBottom: 6 }}>
+          Select Subject to Accept
+        </div>
+        <div style={{ fontSize: 12, color: "#475569", marginBottom: 20 }}>
+          Accepting <strong style={{ color: "#c7d2fe" }}>{req?.student_name}</strong> — Grade {req?.grade}
+        </div>
+
+        {subjects.length > 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
+            {subjects.map(s => (
+              <motion.div
+                key={s}
+                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                onClick={() => setSelected(s)}
+                style={{
+                  padding: "10px 14px", borderRadius: 10, cursor: "pointer",
+                  background: selected === s ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.03)",
+                  border: selected === s ? "1px solid rgba(99,102,241,0.5)" : "1px solid rgba(255,255,255,0.08)",
+                  color: selected === s ? "#a5b4fc" : "#94a3b8",
+                  fontSize: 13, fontWeight: 600, transition: "all 0.15s",
+                }}
+              >{s}</motion.div>
+            ))}
+            <motion.div
+              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              onClick={() => setSelected("__custom__")}
+              style={{
+                padding: "10px 14px", borderRadius: 10, cursor: "pointer",
+                background: selected === "__custom__" ? "rgba(99,102,241,0.1)" : "rgba(255,255,255,0.02)",
+                border: selected === "__custom__" ? "1px solid rgba(99,102,241,0.3)" : "1px solid rgba(255,255,255,0.06)",
+                color: "#475569", fontSize: 12, fontWeight: 600, transition: "all 0.15s",
+              }}
+            >+ Enter custom subject</motion.div>
+          </div>
+        ) : (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 12, color: "#475569", marginBottom: 8 }}>No subjects auto-detected. Enter manually:</div>
+          </div>
+        )}
+
+        {(selected === "__custom__" || subjects.length === 0) && (
+          <input
+            autoFocus
+            value={custom}
+            onChange={e => setCustom(e.target.value)}
+            placeholder="e.g. Mathematics"
+            style={{
+              width: "100%", padding: "10px 14px", borderRadius: 10, marginBottom: 16,
+              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(99,102,241,0.3)",
+              color: "#e2e8f0", fontSize: 13, outline: "none",
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          />
+        )}
+
+        <div style={{ display: "flex", gap: 10 }}>
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            disabled={!value}
+            onClick={() => value && onConfirm(value)}
+            style={{
+              flex: 1, padding: "11px", borderRadius: 10, cursor: value ? "pointer" : "not-allowed",
+              background: value ? "rgba(52,211,153,0.15)" : "rgba(255,255,255,0.03)",
+              border: value ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(255,255,255,0.07)",
+              color: value ? "#34d399" : "#334155", fontSize: 13, fontWeight: 700,
+              fontFamily: "'DM Sans',sans-serif", transition: "all 0.2s",
+            }}
+          >✓ Confirm Accept</motion.button>
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={onClose}
+            style={{
+              padding: "11px 18px", borderRadius: 10, cursor: "pointer",
+              background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
+              color: "#475569", fontSize: 13, fontWeight: 600,
+              fontFamily: "'DM Sans',sans-serif",
+            }}
+          >Cancel</motion.button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 /* ── Enrollment Request Card ── */
 function EnrollmentCard({ req, index, onAccept, onReject, processing }) {
   const color = classColors[index % classColors.length];
@@ -241,6 +356,7 @@ export default function Students() {
   const [processing, setProcessing] = useState(null);
   const [toast, setToast] = useState(null);
   const [activeClass, setActiveClass] = useState("all");
+  const [subjectModal, setSubjectModal] = useState(null); // { req } | null
 
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
@@ -281,13 +397,15 @@ export default function Students() {
     fetchClasses();
   }, []);
 
-  /* Accept request */
-  const handleAccept = async (req) => {
-    const subject = req.my_subjects?.[0];
-    if (!subject) {
-      showToast("No subject found for this class", "error");
-      return;
-    }
+  /* Accept request — opens subject picker first */
+  const handleAccept = (req) => {
+    setSubjectModal(req);
+  };
+
+  /* Called when teacher confirms a subject in the modal */
+  const confirmAccept = async (subject) => {
+    const req = subjectModal;
+    setSubjectModal(null);
     setProcessing(req.id);
     try {
       await axios.post(
@@ -297,7 +415,7 @@ export default function Students() {
       );
       showToast(`${req.student_name} accepted into Grade ${req.grade || "class"}!`);
       setRequests(prev => prev.filter(r => r.id !== req.id));
-      fetchClasses(); // refresh enrolled list
+      fetchClasses();
     } catch (err) {
       showToast(err.response?.data?.detail || "Failed to accept request", "error");
     } finally {
@@ -525,6 +643,17 @@ export default function Students() {
       {/* Toast */}
       <AnimatePresence>
         {toast && <Toast key="toast" msg={toast.msg} type={toast.type} />}
+      </AnimatePresence>
+
+      {/* Subject Picker Modal */}
+      <AnimatePresence>
+        {subjectModal && (
+          <SubjectModal
+            req={subjectModal}
+            onConfirm={confirmAccept}
+            onClose={() => setSubjectModal(null)}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
