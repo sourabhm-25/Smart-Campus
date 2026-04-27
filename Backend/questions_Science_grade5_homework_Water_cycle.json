@@ -1,0 +1,129 @@
+{
+  "topic": "Water cycle",
+  "subject": "Science",
+  "grade": "5",
+  "task_type": "homework",
+  "scoring": {
+    "total_marks": 24,
+    "grade_band": "elementary",
+    "marks_per_type": {
+      "short_answer": 3,
+      "mcq": 1,
+      "fill_in_the_blanks": 1,
+      "true_false": 1,
+      "matching": 2
+    },
+    "count_per_type": {
+      "short_answer": 5,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 5,
+      "matching": 0
+    },
+    "subtotal_per_type": {
+      "short_answer": 15,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 5,
+      "matching": 0
+    }
+  },
+  "retrieval_info": {
+    "chunks_used": 5,
+    "namespace": "grade5_science",
+    "index": "grade-5"
+  },
+  "questions": {
+    "short_answer": [
+      {
+        "question": "Explain the process of evaporation and provide a real-world example.",
+        "answer": "Evaporation is the process where liquid water changes into water vapor. This happens when heat is added to the water. A common example is a wet towel drying in the sun.",
+        "marks": 3
+      },
+      {
+        "question": "Explain the process of condensation and provide a real-world example.",
+        "answer": "Condensation is the process where water vapor cools and turns back into liquid. This creates clouds in the atmosphere. An example is water droplets forming on a cold soda can.",
+        "marks": 3
+      },
+      {
+        "question": "Explain the process of precipitation and provide a real-world example.",
+        "answer": "Precipitation occurs when water falls from clouds to the Earth. It happens when cloud droplets become too heavy to stay aloft. Examples include rain, snow, sleet, or hail.",
+        "marks": 3
+      },
+      {
+        "question": "What is the role of the sun in the water cycle?",
+        "answer": "The sun acts as the energy source for the water cycle. It heats the oceans to trigger evaporation. Without the sun, water would not move from the ground to the sky.",
+        "marks": 3
+      },
+      {
+        "question": "How does the water cycle help Earth remain a shared home for all living things?",
+        "answer": "The water cycle helps Earth by moving fresh water across the planet. It distributes this water to different land areas. An example is how rain waters crops on a farm.",
+        "marks": 3
+      }
+    ],
+    "mcq": [
+      {
+        "question": "Which process turns water vapor into liquid water?",
+        "options": [
+          "a) Evaporation",
+          "b) Condensation",
+          "c) Precipitation",
+          "d) Transpiration"
+        ],
+        "answer": "b",
+        "marks": 1
+      },
+      {
+        "question": "What is the main energy source that drives the water cycle?",
+        "options": [
+          "a) The moon",
+          "b) Wind currents",
+          "c) The sun",
+          "d) Ocean tides"
+        ],
+        "answer": "c",
+        "marks": 1
+      }
+    ],
+    "fill_in_the_blanks": [
+      {
+        "question": "The process where plants release water vapor into the air is called ______.",
+        "answer": "transpiration",
+        "marks": 1
+      },
+      {
+        "question": "Water that gathers in oceans, lakes, and rivers is known as ______.",
+        "answer": "collection",
+        "marks": 1
+      }
+    ],
+    "true_false": [
+      {
+        "question": "The water cycle has a definite beginning and end.",
+        "answer": "false",
+        "marks": 1
+      },
+      {
+        "question": "Water vapor is the gaseous form of water.",
+        "answer": "true",
+        "marks": 1
+      },
+      {
+        "question": "Condensation happens when water vapor is heated.",
+        "answer": "false",
+        "marks": 1
+      },
+      {
+        "question": "Precipitation can occur as either liquid or solid.",
+        "answer": "true",
+        "marks": 1
+      },
+      {
+        "question": "The water cycle only happens over the oceans.",
+        "answer": "false",
+        "marks": 1
+      }
+    ],
+    "matching": []
+  }
+}

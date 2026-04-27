@@ -297,6 +297,7 @@ function Breadcrumb({ current }) {
    MICRO: TEACHER AVATAR + STATUS
 ───────────────────────────────────────── */
 function TeacherAvatar({ collapsed }) {
+  const userName = localStorage.getItem("userName") || "Teacher";
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: 10,
@@ -326,7 +327,7 @@ function TeacherAvatar({ collapsed }) {
       <AnimatePresence>
         {!collapsed && (
           <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.15 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0", whiteSpace: "nowrap" }}>Sourabh</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0", whiteSpace: "nowrap" }}>{userName}</div>
             <div style={{ fontSize: 10, color: "#34d399", fontWeight: 600, letterSpacing: "0.04em" }}>● Online</div>
           </motion.div>
         )}
@@ -456,34 +457,34 @@ const TeacherLayout = () => {
         const token = localStorage.getItem("access_token");
         if (!token) return;
         const headers = { Authorization: `Bearer ${token}` };
-        
+
         const [classesRes, hwRes] = await Promise.all([
           fetch("http://localhost:8000/teacher/my-classes", { headers }).then(r => r.json()),
           fetch("http://localhost:8000/teacher/homework", { headers }).then(r => r.json())
         ]);
-        
+
         const rawClasses = classesRes.classes || [];
         const rawHomeworks = hwRes.homework || [];
-        
+
         const totalClasses = rawClasses.length;
         const totalStudents = rawClasses.reduce((acc, c) => acc + (c.student_count || 0), 0);
-        
+
         let totalPending = 0;
         let overallSum = 0;
         let hwCount = 0;
         let pTasks = 0;
-        
+
         rawHomeworks.forEach(hw => {
-           const st = hw.student_count || 0;
-           const sub = hw.submission_count || 0;
-           totalPending += Math.max(0, st - sub);
-           overallSum += (hw.avg_score || 0);
-           if (st - sub > 0) pTasks++;
-           hwCount++;
+          const st = hw.student_count || 0;
+          const sub = hw.submission_count || 0;
+          totalPending += Math.max(0, st - sub);
+          overallSum += (hw.avg_score || 0);
+          if (st - sub > 0) pTasks++;
+          hwCount++;
         });
-        
+
         const avgScore = hwCount > 0 ? Math.round(overallSum / hwCount) : 0;
-        
+
         setStatsData({
           classes: totalClasses,
           students: totalStudents,
