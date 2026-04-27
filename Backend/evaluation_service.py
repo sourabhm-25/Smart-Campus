@@ -21,15 +21,16 @@ from io import BytesIO
 
 from dotenv import load_dotenv
 import httpx
+import google.generativeai as genai
+from PIL import Image
 
 load_dotenv()
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Config
 # ─────────────────────────────────────────────────────────────────────────────
-OLLAMA_URL   = "https://nickeliferous-unchainable-ty.ngrok-free.dev/api/chat"
-MODEL_NAME   = "qwen2.5vl:7b"
-TIMEOUT_SECS = 300.0
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+GEMINI_MODEL_NAME = "gemini-flash-latest"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Enums & constants
@@ -465,37 +466,21 @@ def normalize_response(raw: dict, max_marks: int) -> dict:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Qwen2.5-VL caller
+# Gemini caller
 # ─────────────────────────────────────────────────────────────────────────────
-async def _call_qwen(image_bytes: bytes, prompt: str) -> dict:
-    encoded_image = base64.b64encode(image_bytes).decode("utf-8")
+async def _call_gemini(image_bytes: bytes, prompt: str) -> dict:
+    model = genai.GenerativeModel(GEMINI_MODEL_NAME)
+    img = Image.open(BytesIO(image_bytes))
     
-    payload = {
-        "model": MODEL_NAME,
-        "stream": False,
-        "options": {
+    response = await model.generate_content_async(
+        [prompt, img],
+        generation_config={
+            "response_mime_type": "application/json",
             "temperature": 0,
-            "top_p": 1,
-            "top_k": 1,
-            "repeat_penalty": 1.0,
-            "seed": 42,
-            "num_predict": 1500,
-        },
-        "messages": [
-            {
-                "role": "user",
-                "content": prompt,
-                "images": [encoded_image],
-            }
-        ],
-    }
-
-    async with httpx.AsyncClient(timeout=TIMEOUT_SECS) as client:
-        response = await client.post(OLLAMA_URL, json=payload)
-        response.raise_for_status()
-        ollama_response = response.json()
-
-    content = ollama_response.get("message", {}).get("content", "{}")
+        }
+    )
+    
+    content = response.text
     return _parse_structured_json(content)
 
 def _repair_json_strings(text: str) -> str:
@@ -607,17 +592,13 @@ async def evaluate_handwriting(
     )
 
     try:
-        raw = await _call_qwen(image_bytes, prompt)
+        raw = await _call_gemini(image_bytes, prompt)
         result = normalize_response(raw, max_marks)
         result["eval_mode"] = mode.value
         result["subject"] = subject
         result["question_type"] = question_type
         return result
 
-    except httpx.ConnectError:
-        return _error_response(max_marks, "Cannot connect to AI model. Is the Ollama tunnel running?")
-    except httpx.ReadTimeout:
-        return _error_response(max_marks, "AI model timed out. Please retry.")
     except Exception as e:
         return _error_response(max_marks, f"Unexpected error: {e}")
 

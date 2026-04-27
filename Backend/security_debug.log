@@ -2343,3 +2343,41 @@ get_current_user returning user: std@gmail.com
 role_checker called. Required: student, User: std@gmail.com Role: student
 =======
 >>>>>>> Stashed changes
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user init
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user JWTError: Signature has expired.
