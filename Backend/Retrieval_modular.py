@@ -163,7 +163,7 @@ print(f"✅ Loaded embedding model: {EMBEDDING_MODEL}")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 os.environ['GOOGLE_API_KEY'] = GEMINI_API_KEY
 llm = GoogleGenerativeAI(
-    model="models/gemma-4-31b-it",
+    model="models/gemini-flash-latest",
 )
 print("✅ Initialized Gemini LLM")
 

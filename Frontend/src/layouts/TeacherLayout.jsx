@@ -446,7 +446,7 @@ const TeacherLayout = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [pageReady, setPageReady] = useState(false);
-  const [statsData, setStatsData] = useState({ classes: 0, students: 0, pending: 0, avg: 0, pendingTasksCount: 0 });
+  const [statsData, setStatsData] = useState({ classes: 0, students: 0, pending: 0, avg: 0, pendingTasksCount: 0, pendingEnrollments: 0 });
 
   useEffect(() => { setPageReady(true); }, []);
 
@@ -457,13 +457,15 @@ const TeacherLayout = () => {
         if (!token) return;
         const headers = { Authorization: `Bearer ${token}` };
         
-        const [classesRes, hwRes] = await Promise.all([
+        const [classesRes, hwRes, enrollRes] = await Promise.all([
           fetch("http://localhost:8000/teacher/my-classes", { headers }).then(r => r.json()),
-          fetch("http://localhost:8000/teacher/homework", { headers }).then(r => r.json())
+          fetch("http://localhost:8000/teacher/homework", { headers }).then(r => r.json()),
+          fetch("http://localhost:8000/teacher/enrollment-requests", { headers }).then(r => r.json()).catch(() => ({ requests: [] }))
         ]);
         
         const rawClasses = classesRes.classes || [];
         const rawHomeworks = hwRes.homework || [];
+        const pendingEnrollments = (enrollRes.requests || []).length;
         
         const totalClasses = rawClasses.length;
         const totalStudents = rawClasses.reduce((acc, c) => acc + (c.student_count || 0), 0);
@@ -489,7 +491,8 @@ const TeacherLayout = () => {
           students: totalStudents,
           pending: totalPending,
           avg: avgScore,
-          pendingTasksCount: pTasks
+          pendingTasksCount: pTasks,
+          pendingEnrollments,
         });
       } catch (err) {
         console.error("Failed to fetch layout stats", err);
@@ -615,6 +618,9 @@ const TeacherLayout = () => {
             const dynamicItem = { ...item };
             if (item.label === "Submissions") {
               dynamicItem.badge = statsData.pendingTasksCount > 0 ? statsData.pendingTasksCount.toString() : null;
+            }
+            if (item.label === "Students") {
+              dynamicItem.badge = statsData.pendingEnrollments > 0 ? statsData.pendingEnrollments.toString() : null;
             }
             return <NavItem key={dynamicItem.path} item={dynamicItem} active={isActive(dynamicItem.path)} collapsed={collapsed} />;
           })}
