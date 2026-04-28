@@ -16,13 +16,21 @@ import Students from "./pages/teacher/Students";
 // Student & Parent
 import StudentLayout from "./layouts/StudentLayout";
 import StudentDashboard from "./pages/student/studentDashboard";
-import ParentDashboard from "./pages/parent/parentDashboard";
 import TasksAssigned from "./pages/student/TasksAssigned";
 import TasksSubmitted from "./pages/student/TasksSubmitted";
 import KanbanBoard from "./pages/student/KanbanBoard";
 import Notifications from "./pages/student/Notifications";
 import Profile from "./pages/student/Profile";
 import SubjectTasks from "./pages/student/SubjectTasks";
+
+// Parent pages
+import ParentLayout from "./layouts/ParentLayout";
+import ParentDashboard from "./pages/parent/parentDashboard";
+import ChildrenManagement from "./pages/parent/ChildrenManagement";
+import ReportCards from "./pages/parent/ReportCards";
+import ProgressTracking from "./pages/parent/ProgressTracking";
+import ParentNotifications from "./pages/parent/ParentNotifications";
+import ParentProfile from "./pages/parent/ParentProfile";
 
 export default function App() {
   return (
@@ -57,8 +65,15 @@ export default function App() {
         <Route path="profile" element={<Profile />} />
       </Route>
 
-      {/* Parent Route */}
-      <Route path="/parent" element={<ParentDashboard />} />
+      {/* Parent Routes */}
+      <Route path="/parent" element={<ParentLayout />}>
+        <Route index element={<ParentDashboard />} />
+        <Route path="children" element={<ChildrenManagement />} />
+        <Route path="report-cards" element={<ReportCards />} />
+        <Route path="progress" element={<ProgressTracking />} />
+        <Route path="notifications" element={<ParentNotifications />} />
+        <Route path="profile" element={<ParentProfile />} />
+      </Route>
 
     </Routes>
   );
