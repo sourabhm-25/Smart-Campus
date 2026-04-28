@@ -36,49 +36,61 @@
   "questions": {
     "short_answer": [
       {
-        "question": "The estimation table results include the number 1,000. Explain the concept of a cube root and identify the cube root of 1,000 based on this value.",
-        "answer": "A cube root is a value that, when multiplied by itself three times, produces the original number. The cube root of 1,000 is 10. This is calculated because 10 × 10 × 10 = 1,000.",
+        "question": "A sculptor has a cube-shaped ice block with a volume of 216 cubic centimetres. He needs to find the side length to plan his carving. Find the length of one side. Show your working.",
+        "answer": "Step 1: We need to find ∛216. Step 2: 6 × 6 × 6 = 216, so ∛216 = 6. Answer: The side length is 6 centimetres.",
         "marks": 3
       },
       {
-        "question": "Using the TV data set, find the cube root of the number 1 and explain why this result occurs.",
-        "answer": "The cube root of 1 is 1. This occurs because the number 1 multiplied by itself any number of times, such as 1 × 1 × 1, always equals 1. In mathematics, this means 1 is a perfect cube.",
+        "question": "A gift shop uses cube-shaped boxes with a volume of 512 cubic inches. The manager needs to know the height to fit them on a shelf. Find the height of the box. Show your working.",
+        "answer": "Step 1: Find ∛512. Step 2: 8 × 8 × 8 = 512, so ∛512 = 8. Answer: The height of the box is 8 inches.",
         "marks": 3
       }
     ],
     "mcq": [
       {
-        "question": "In the estimation table, one product is approximately 1,000. Which number is the cube root of 1,000?",
+        "question": "A cubic storage box has a volume of 64 cubic centimetres. What is the length of one side?",
         "options": [
-          "a) 100",
-          "b) 30",
-          "c) 10",
-          "d) 3"
+          "a) 8 cm",
+          "b) 4 cm",
+          "c) 16 cm",
+          "d) 32 cm"
         ],
-        "answer": "c",
+        "answer": "b",
         "marks": 1
       },
       {
-        "question": "If a student watches TV for 1 hour, what is the value of this number cubed (1³)?",
+        "question": "A small dice is shaped like a cube with a volume of 8 cubic millimetres. What is the side length?",
         "options": [
-          "a) 3",
-          "b) 1",
-          "c) 0",
-          "d) 111"
+          "a) 4 mm",
+          "b) 1 mm",
+          "c) 2 mm",
+          "d) 3 mm"
         ],
-        "answer": "b",
+        "answer": "c",
         "marks": 1
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "The number 10 is the ___ of 1,000 because 10 × 10 × 10 = 1,000.",
-        "answer": "cube root",
+        "question": "A construction crew built a cube-shaped room with a volume of 27 cubic metres. The length of one wall is _______ metres.\nA) 3   B) 9   C) 6   D) 4",
+        "options": [
+          "A) 3",
+          "B) 9",
+          "C) 6",
+          "D) 4"
+        ],
+        "answer": "A",
         "marks": 1
       },
       {
-        "question": "A number like 1,000 is called a perfect ___ because its cube root is a whole number.",
-        "answer": "cube",
+        "question": "A large cube-shaped aquarium has a volume of 1,000 cubic litres. The length of one side of the aquarium is _______ decimetres.\nA) 10   B) 20   C) 100   D) 5",
+        "options": [
+          "A) 10",
+          "B) 20",
+          "C) 100",
+          "D) 5"
+        ],
+        "answer": "A",
         "marks": 1
       }
     ],

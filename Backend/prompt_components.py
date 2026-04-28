@@ -423,26 +423,80 @@ class SubjectPrompts:
             return """
 SUBJECT: Mathematics
 
-Focus Areas:
-- Conceptual understanding of mathematical principles
-- Procedural fluency and calculation skills
-- Problem-solving and reasoning
-- Real-world applications of mathematics
+=== QUESTION FORMAT SPECIFICATIONS ===
 
-Question Requirements:
-- Use proper mathematical notation (NO LaTeX, NO backslashes, NO $ symbols)
-- Use Unicode symbols: × ÷ ≠ ≤ ≥ ± √ ²  ³
-- Use ^ for exponents (e.g., 5^2)
-- Use sqrt() for square roots (e.g., sqrt(16))
-- Include step-by-step solutions for calculations
-- Test formula application, not just memorization
-- Include word problems and real-world scenarios
-- Progress from procedural to conceptual questions
+SHORT ANSWER — MULTI-STEP REAL-WORLD WORD PROBLEM:
+  A word problem set in a real-world context requiring the student to show all working.
+  Must have 2-3 sentences of context before asking the calculation.
+  Student must write out each step.
 
-Mathematical Symbols to Use:
-× (multiplication), ÷ (division), = (equals), ≠ (not equals)
-< > ≤ ≥ (comparison), ± (plus-minus), √ (square root)
-² ³ (superscripts), ° (degree)
+  TEMPLATE STYLE (based on real school exam papers):
+    "[Name] has a cube-shaped [object] with a volume of [N] [units].
+     [Optional second sentence with additional info.]
+     Find [what to calculate]. Show your working."
+
+  GOOD EXAMPLES:
+    Q: "Riya has a cube-shaped fish tank with a volume of 512 litres.
+        She wants to find the length of one side to know which cabinet to buy.
+        Find the length of one side of the tank. Show your working."
+    A: "Step 1: We need to find ∛512.
+        Step 2: 8 × 8 × 8 = 512, so ∛512 = 8.
+        Answer: The side length is 8 litres."
+
+    Q: "A school is building a cube-shaped storage room with a volume of 1000 cubic metres.
+        The principal wants to order shelves for each wall.
+        Find the length, width, and height of the room."
+    A: "Step 1: Find ∛1000.
+        Step 2: 10 × 10 × 10 = 1000, so ∛1000 = 10.
+        Answer: Each side = 10 metres."
+
+  BAD EXAMPLES (BANNED):
+    ✗ "Explain how to find a cube root."
+    ✗ "Describe the difference between cubing and cube roots."
+    ✗ "Find the cube root of 512." (no context, no story — too bare)
+
+MCQ — COMPUTATION QUESTION WITH 4 NUMERICAL OPTIONS:
+  A word-problem or direct computation question with 4 answer choices.
+  Distractors must be common errors (wrong root, square root confusion, off-by-one cube).
+
+  GOOD EXAMPLE:
+    Q: "A cubic box has volume 125 cm³. What is the length of one side?"
+    Options: A) 5 cm   B) 25 cm   C) 15 cm   D) 10 cm
+    Answer: A
+
+  BAD EXAMPLE:
+    Q: "Which best describes a cube root?" (definition — banned)
+
+FILL IN THE BLANK — A SENTENCE WITH A BLANK (_______ ) EMBEDDED IN IT:
+  The blank tests a computed value or key mathematical term.
+  NO options — just a plain text answer.
+
+  GOOD EXAMPLES:
+    Q: "A cube-shaped box has a volume of 125 cm³. The side length of this box is _______ cm."
+    Answer: "5"
+
+    Q: "A storage bin is a cube with volume 512 cubic metres. The length of one side is _______ metres."
+    Answer: "8"
+
+    Q: "When we find the cube root of 27, the answer is _______."
+    Answer: "3"
+
+  BAD EXAMPLES (banned):
+    Q: "∛343 = ___"  (too bare — wrap it in a sentence)
+    Q: "The inverse of cubing is called _______"  (vocabulary — banned)
+
+MATHEMATICAL NOTATION RULES:
+- NO LaTeX, NO backslashes, NO $ symbols
+- Use: ∛ for cube root, × for multiply, ÷ for divide, ² ³ for powers
+- Write cube root as ∛N or "cube root of N"
+
+QUESTION DESIGN:
+- Ground ALL problems in real-world contexts: storage boxes, fish tanks, grain silos,
+  water tanks, cubic rooms, ice blocks, gift boxes, cube-shaped buildings
+- Perfect cubes to use: 8, 27, 64, 125, 216, 343, 512, 729, 1000
+- Grade 5-6: side-length word problems only (one step)
+- Grade 7-8: two-step problems (find side, then find area/perimeter)
+- Grade 9-10: multi-part, algebraic (x³ = k, estimate non-perfect cubes)
 """
         
         elif "science" in subject_lower:
@@ -600,37 +654,141 @@ class PromptBuilder:
         subject: str,
         grade: str,
         task_type: str = "homework",
-        config: Optional[QuestionConfig] = None
+        config: Optional[QuestionConfig] = None,
+        topic: str = "",
     ) -> PromptTemplate:
         """
         Build complete prompt from components.
-        
+
         Args:
             subject: Subject name (e.g., "Mathematics")
             grade: Grade level (e.g., "5", "8", "10")
             task_type: "homework" or "test"
             config: Custom QuestionConfig (optional, uses grade default if None)
-        
+            topic: The topic to generate questions about (used in CRITICAL RULES)
+
         Returns:
             Complete PromptTemplate ready to use
         """
-        
+
         # Get default config for grade if not provided
         if config is None:
             grade_cfg = self.grade_prompts.get_grade_config(grade)
             config = grade_cfg["default_config"]
-        
+
         # Build component strings
         grade_instructions = self.grade_prompts.get_grade_instructions(grade)
         task_instructions = self.task_prompts.get_task_instructions(task_type)
         subject_instructions = self.subject_prompts.get_subject_instructions(subject)
-        
+
         # Build question requirements string
         question_requirements = self._build_question_requirements(config)
-        
+
+        # Use a placeholder if topic is not provided at build time
+        topic_label = topic if topic else "{{question}}"
+
+        # ── Subject detection ──────────────────────────────────────────────────
+        is_math = "math" in subject.lower()
+
+        # ── Math computation override block ────────────────────────────────────
+        # The generic grade instructions describe short_answer as "write 3-5 sentences,
+        # name a concept and give an example" — that produces ESSAY answers in Maths.
+        # This block explicitly overrides that and mandates computational sums.
+        if is_math:
+            math_override = f"""
+╔══════════════════════════════════════════════════════════════════════╗
+║   MATHEMATICS OVERRIDE — CANCELS GRADE INSTRUCTIONS FOR Q FORMAT   ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+You are setting a Grade {grade} MATHEMATICS exam paper — exactly as a school
+teacher would. Every question must be a SUM or PROBLEM to SOLVE.
+
+SHORT ANSWER = A MULTI-SENTENCE REAL-WORLD WORD PROBLEM. Show full step-by-step working.
+
+✅ CORRECT short_answer format (copy this style exactly):
+   Q: "Riya has a cube-shaped fish tank with a volume of 512 litres.
+       She wants to know the length of one side to fit it on a shelf.
+       Find the side length of the tank. Show your working."
+   A: "Step 1: We need to find ∛512.
+       Step 2: 8 × 8 × 8 = 512, so ∛512 = 8.
+       Answer: The side length is 8 litres."
+
+   Q: "A school is building a cube-shaped storage room with a volume of 1000 cubic metres.
+       The principal needs to know the room dimensions to order shelves.
+       Find the length of one side of the room."
+   A: "Step 1: Find ∛1000.
+       Step 2: 10 × 10 × 10 = 1000, so ∛1000 = 10.
+       Answer: Each side = 10 metres."
+
+❌ BANNED short_answer formats:
+   "Find the cube root of 512."  (no story, no context — too bare)
+   "Explain how a cube root is found."  (essay — banned)
+   "Describe the difference between cubing and cube roots."  (essay — banned)
+
+ANSWER FORMAT: Always use numbered steps then a final Answer line.
+
+MCQ: One computation question, four NUMERICAL answer options.
+  Distractors = common student errors (wrong root, square root instead of cube root,
+  off-by-one cube, sign error for negatives).
+  GOOD: "What is ∛64?"  Options: a) 4   b) 8   c) 32   d) 16    Answer: a
+  BAD:  "Which best describes a cube root?"  (definition — banned)
+
+FILL IN THE BLANK = A SENTENCE WITH A BLANK (________) EMBEDDED IN IT.
+The blank tests a computed value or key mathematical term.
+NO options array — just a plain text answer.
+
+✅ CORRECT fill_in_the_blank format:
+   Q: "A cube-shaped box has a volume of 125 cm³. The side length of this box is _______ cm."
+   answer: "5"
+
+   Q: "A storage bin is a cube with volume 512 cubic metres. The length of one side is _______ metres."
+   answer: "8"
+
+   Q: "When we find the cube root of 27, the answer is _______." 
+   answer: "3"
+
+❌ BANNED fill_in_the_blank formats:
+   "The inverse of cubing is called _______"  (vocabulary — banned)
+   "∛343 = ___"  (too bare, no sentence context — add a sentence around it)
+
+GRADE {grade} DIFFICULTY TARGET:
+  Grade 1–4 : Direct cube root of small perfect cubes (1–125). One-step only.
+  Grade 5–6 : Perfect cubes up to 1000. Simple word problems (volumes, side lengths).
+  Grade 7–8 : Two-step word problems. Negative cube roots. Comparing cubes.
+  Grade 9–10: Multi-part problems. Algebraic use (x³=k). Estimation for non-perfect cubes.
+
+Every question must feel like it came from a real Grade {grade} maths textbook or board exam.
+"""
+            rule_7 = """
+RULE 7 — MATHEMATICS: COMPUTATION ONLY (OVERRIDES ALL PREVIOUS INSTRUCTIONS):
+This is a MATHS paper. Every question must require CALCULATION, SOLVING, or COMPUTING.
+BANNED question stems for Maths (instant disqualification):
+  Explain... / Describe... / Define... / What is the meaning of... /
+  How does... / Why is... / What are the uses of... / Compare and contrast...
+These belong on an English or Science paper. They MUST NOT appear on a Maths paper.
+If you cannot think of a computation for a slot — write a harder sum instead.
+"""
+            output_format_examples = """
+Each question object should include:
+- short_answer:      {{"question": "Riya has a cube-shaped fish tank with volume 512 litres. Find the side length. Show your working.", "answer": "Step 1: Find ∛512. Step 2: 8 × 8 × 8 = 512. Answer: 8 litres.", "marks": X}}
+- mcq:               {{"question": "A cubic box has volume 125 cm³. What is the side length?", "options": ["a) 5 cm", "b) 25 cm", "c) 15 cm", "d) 10 cm"], "answer": "a", "marks": X}}
+- fill_in_the_blanks:{{"question": "A cube-shaped box has a volume of 125 cm³. The side length of this box is _______ cm.", "answer": "5", "marks": X}}
+- true_false:        {{"question": "∛64 = 4", "answer": "false", "marks": X}}"""
+        else:
+            math_override = ""
+            rule_7 = ""
+            output_format_examples = """
+Each question object should include:
+- For short_answer:      {{"question": "...", "answer": "...", "marks": X}}
+- For mcq:               {{"question": "...", "options": ["a) ...", "b) ...", "c) ...", "d) ..."], "answer": "a", "marks": X}}
+- For fill_in_the_blanks:{{"question": "...", "answer": "...", "marks": X}}
+- For true_false:        {{"question": "...", "answer": "true/false", "marks": X}}"""
+
         # Combine all components into final template
+        math_intro = "Think exactly like a school mathematics teacher setting an exam paper." if is_math else ""
         template = f"""
-You are an experienced {subject} teacher creating a {task_type} assignment for students.
+You are an experienced {subject} teacher writing a {task_type} paper for Grade {grade} students.
+{math_intro}
 
 {grade_instructions}
 
@@ -638,33 +796,53 @@ You are an experienced {subject} teacher creating a {task_type} assignment for s
 
 {subject_instructions}
 
+{math_override}
+
 {question_requirements}
 
-IMPORTANT RULES:
-1. Base ALL questions ONLY on the context provided below
-2. Do NOT invent examples or information not in the context
-3. Ensure questions are clear, unambiguous, and appropriate for the grade level
-4. For Mathematics: NO LaTeX, NO backslashes, NO $ symbols - use Unicode only
-5. Return ONLY a valid JSON object - no markdown formatting, no code blocks
+=== CRITICAL RULES — VIOLATING ANY OF THESE MAKES THE OUTPUT INVALID ===
+
+RULE 1 — TOPIC LOCK:
+Every single question must be directly about: "{topic_label}"
+Do NOT drift to related topics that appeared in the context.
+
+RULE 2 — SELF-CONTAINED QUESTIONS:
+Every question must make complete sense on its own, without the student needing to see
+any table, diagram, graph, chart, passage, or figure.
+NEVER write: "Based on the table...", "Refer to the diagram...",
+"According to the data...", "From the graph above...", "Look at the figure..."
+Extract any fact from context visuals and state it directly in the question stem.
+
+RULE 3 — NO INVENTION:
+Base question CONCEPTS on the provided context, but do NOT copy data points from
+unrelated chunks. Generate fresh, grade-appropriate examples.
+
+RULE 4 — ANSWER CORRECTNESS:
+Every answer must be factually and mathematically correct. Double-check all calculations.
+For MCQs, the correct option letter must match the correct option text exactly.
+
+RULE 5 — GRADE MATCH:
+Questions must match the cognitive level and vocabulary of Grade {grade}.
+
+RULE 6 — FORMAT:
+Return ONLY valid JSON. No markdown. No code fences. No explanation outside the JSON.
+For Mathematics: NO LaTeX, NO backslashes, NO $ symbols — use Unicode: ∛ × ÷ ² ³ ≤ ≥
+{rule_7}
+=== END RULES ===
 
 OUTPUT FORMAT:
 Return a JSON object with these keys: {self._get_output_keys(config)}
+{output_format_examples}
 
-Each question object should include:
-- For short_answer: {{{{"question": "...", "answer": "...", "marks": X}}}}
-- For mcq: {{{{"question": "...", "options": ["a) ...", "b) ...", "c) ...", "d) ..."], "answer": "a", "marks": X}}}}
-- For fill_in_the_blanks: {{{{"question": "...", "answer": "...", "marks": X}}}}
-- For true_false: {{{{"question": "...", "answer": "true/false", "marks": X}}}}
-
-CONTEXT:
+CONTEXT (background knowledge only — do NOT reference as if student can see it):
 {{context}}
 
-TOPIC:
+TOPIC TO GENERATE QUESTIONS ABOUT:
 {{question}}
 
 JSON_OUTPUT:
 """
-        
+
         return PromptTemplate(
             template=template,
             input_variables=["context", "question"]
@@ -678,7 +856,7 @@ JSON_OUTPUT:
         if config.short_answer > 0:
             requirements.append(
                 f"- Create {config.short_answer} short-answer questions "
-                f"(requiring written explanations or calculations)"
+                f"(computational problems to solve — NOT explanation or essay questions)"
             )
         
         if config.mcq > 0:
@@ -739,11 +917,12 @@ def create_prompt(
     mcq: Optional[int] = None,
     fill_in_the_blanks: Optional[int] = None,
     true_false: Optional[int] = None,
-    matching: Optional[int] = None
+    matching: Optional[int] = None,
+    topic: str = "",
 ) -> PromptTemplate:
     """
     Quick function to create a prompt.
-    
+
     Args:
         subject: Subject name
         grade: Grade level
@@ -753,17 +932,18 @@ def create_prompt(
         fill_in_the_blanks: Number of fill-in-blank (None = use default)
         true_false: Number of true/false (None = use default)
         matching: Number of matching (None = use default)
-    
+        topic: The topic string — embedded into RULE 1 for explicit LLM topic lock
+
     Returns:
         PromptTemplate ready to use
     """
     builder = PromptBuilder()
-    
+
     # If any custom counts provided, create custom config
     if any(x is not None for x in [short_answer, mcq, fill_in_the_blanks, true_false, matching]):
         # Get defaults first
         defaults = builder.get_grade_defaults(grade)
-        
+
         config = QuestionConfig(
             short_answer=short_answer if short_answer is not None else defaults.short_answer,
             mcq=mcq if mcq is not None else defaults.mcq,
@@ -773,8 +953,8 @@ def create_prompt(
         )
     else:
         config = None  # Use grade defaults
-    
-    return builder.build_prompt(subject, grade, task_type, config)
+
+    return builder.build_prompt(subject, grade, task_type, config, topic=topic)
 
 
 # Example usage

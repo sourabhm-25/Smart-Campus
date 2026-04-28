@@ -181,8 +181,14 @@ class SmartRetriever:
     def __init__(self, embedding_model):
         self.embedding_model = embedding_model
 
-    def enhance_query(self, topic: str) -> str:
-        return f"Represent this educational content for retrieval: {topic}"
+    def enhance_query(self, topic: str, subject: str = "", grade: str = "") -> str:
+        """
+        Build a richer query embedding that includes subject + grade context
+        so the vector is semantically closer to how chunks were originally indexed.
+        """
+        parts = [f"Grade {grade}" if grade else "", subject, topic]
+        context = " ".join(p for p in parts if p)
+        return f"Educational content about {context} for students"
 
     def retrieve(
         self,
@@ -190,28 +196,46 @@ class SmartRetriever:
         topic: str,
         top_k: int = 5,
         namespace: str = "",
+        subject: str = "",
+        grade: str = "",
+        min_score: float = 0.40,
         **kwargs
     ) -> List[Dict[str, Any]]:
 
-        enhanced_query = self.enhance_query(topic)
+        enhanced_query = self.enhance_query(topic, subject, grade)
         query_embedding = self.embedding_model.encode(enhanced_query).tolist()
 
+        # Fetch extra so score-filtering doesn't starve us
         results = index.query(
             vector=query_embedding,
-            top_k=top_k,
+            top_k=top_k * 2,
             namespace=namespace,
             include_metadata=True
         )
 
         formatted_chunks = []
         for match in results['matches']:
+            score = match['score']
+            chunk_text = match['metadata'].get('text', '')
+            if score < min_score:
+                print(
+                    f"   ⚠️  Skipping chunk (score {score:.3f} < {min_score}): "
+                    f"{chunk_text[:60]}..."
+                )
+                continue
             formatted_chunks.append({
-                'text': match['metadata'].get('text', ''),
-                'score': match['score'],
+                'text': chunk_text,
+                'score': score,
                 'metadata': match['metadata']
             })
 
-        return formatted_chunks
+        if len(formatted_chunks) < 2:
+            print(
+                f"   ❌ Only {len(formatted_chunks)} chunk(s) above threshold {min_score} "
+                f"for topic '{topic}'. Content may not be ingested for this topic."
+            )
+
+        return formatted_chunks[:top_k]   # cap at original top_k
 
 
 retriever = SmartRetriever(embedding_model)
@@ -308,7 +332,8 @@ def generate_task(request: TaskRequest):
             mcq=request.custom_mcq,
             fill_in_the_blanks=request.custom_fill_in_the_blanks,
             true_false=request.custom_true_false,
-            matching=request.custom_matching
+            matching=request.custom_matching,
+            topic=topic,        # ← bakes topic into RULE 1 of the prompt
         )
         print(f"✅ Prompt built: {request.subject} | Grade {request.grade} | {request.task_type}")
 
@@ -317,17 +342,29 @@ def generate_task(request: TaskRequest):
             index=pinecone_index,
             topic=topic,
             top_k=5,
-            namespace=namespace
+            namespace=namespace,
+            subject=request.subject,
+            grade=request.grade,
+            min_score=0.40,
         )
 
         if not chunks:
             raise HTTPException(
                 status_code=404,
-                detail=f"No relevant content found for topic: '{topic}'. "
-                       f"Verify the namespace '{namespace}' has ingested content."
+                detail=(
+                    f"No relevant content found for topic '{topic}' in namespace '{namespace}'. "
+                    f"Verify this topic has been ingested. "
+                    f"Run ingestion for Grade {request.grade} {request.subject} before generating questions."
+                )
             )
 
-        print(f"   Retrieved {len(chunks)} chunks (top score: {chunks[0]['score']:.4f})")
+        top_score = chunks[0]['score']
+        print(f"   Retrieved {len(chunks)} chunks (top score: {top_score:.4f})")
+        if top_score < 0.50:
+            print(
+                f"   ⚠️  LOW RELEVANCE WARNING: top chunk score is {top_score:.3f}. "
+                f"Content may not cover '{topic}' well. Consider re-ingesting this chapter."
+            )
 
         context_text = "\n\n---\n\n".join([c['text'] for c in chunks])
 

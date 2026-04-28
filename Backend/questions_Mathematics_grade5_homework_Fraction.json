@@ -36,49 +36,49 @@
   "questions": {
     "short_answer": [
       {
-        "question": "Explain the process of estimating the product for 248 × 49. Which estimated value from the provided list matches this product?",
-        "answer": "Estimation involves rounding numbers to the nearest ten or hundred to simplify calculations. For 248 × 49, one can round the numbers to 250 × 50. This calculation results in 12,500, which is the matching value from the list.",
+        "question": "A baker makes 24 cookies for a school sale. Two-thirds of the cookies are chocolate chip. Find the total number of chocolate chip cookies. Show your working.",
+        "answer": "Step 1: Divide the total number of cookies by the denominator. 24 ÷ 3 = 8. Step 2: Multiply this result by the numerator. 8 × 2 = 16. Answer: 16 cookies.",
         "marks": 3
       },
       {
-        "question": "Compare the results of 340 ÷ 34 and 340 ÷ 17. Explain why the quotient changes when the divisor is halved.",
-        "answer": "The quotient of 340 ÷ 34 is 10, while 340 ÷ 17 is 20. The quotient doubles because the dividend is being split into smaller groups. For example, dividing by 17 creates twice as many groups as dividing by 34.",
+        "question": "Maya eats 3/8 of a pizza and her brother eats 2/8 of the same pizza. Find the fraction of the pizza that remains. Show your working.",
+        "answer": "Step 1: Add the fractions eaten to find the total consumed. 3/8 + 2/8 = 5/8. Step 2: Subtract the total consumed from one whole. 8/8 - 5/8 = 3/8. Answer: 3/8 of the pizza.",
         "marks": 3
       }
     ],
     "mcq": [
       {
-        "question": "In a multiplication problem, a three-digit number is multiplied by 5 to get a product of 1 [ ] [ ] 0. Which of these numbers could be the missing three-digit factor?",
+        "question": "A recipe for a large cake requires 3 1/2 cups of flour. What is this amount written as an improper fraction?",
         "options": [
-          "a) 240",
-          "b) 420",
-          "c) 150",
-          "d) 500"
+          "a) 7/2",
+          "b) 4/2",
+          "c) 6/2",
+          "d) 5/2"
         ],
         "answer": "a",
         "marks": 1
       },
       {
-        "question": "What is the quotient when 3,005 is divided by 5?",
+        "question": "Farmer Joe planted corn on 5/12 of his land and wheat on 4/12 of his land. What total fraction of his land is planted with crops?",
         "options": [
-          "a) 600",
-          "b) 601",
-          "c) 610",
-          "d) 501"
+          "a) 9/24",
+          "b) 1/12",
+          "c) 9/12",
+          "d) 20/144"
         ],
-        "answer": "b",
+        "answer": "c",
         "marks": 1
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "In the division problem 2,874 ÷ 14, the number 2,874 is known as the ________.",
-        "answer": "dividend",
+        "question": "A group of 20 students went to the park. If 1/4 of the students wore hats, then _______ students wore hats.",
+        "answer": "5",
         "marks": 1
       },
       {
-        "question": "If 340 ÷ 34 = 10, then the value of 680 ÷ 34 is ________.",
-        "answer": "20",
+        "question": "To find an equivalent fraction for 2/5 with a denominator of 10, the numerator must be _______.",
+        "answer": "4",
         "marks": 1
       }
     ],
