@@ -16,4 +16,5 @@ Backend/venv/
 
 # OS files
 .DS_Store
-Thumbs.db
+Thumbs.dbBackend/security_debug.log
+Backend/security_debug.log
