@@ -2774,33 +2774,118 @@ get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
 get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user init
+get_current_user init
 get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user init
 get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
 get_current_user init
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
-get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user init
+get_current_user init
 get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
 get_current_user init
 get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user returning user: trs@gmail.com
@@ -2808,6 +2893,7 @@ role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
 get_current_user init
+get_current_user init
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
@@ -2817,7 +2903,6 @@ get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
-get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
@@ -2831,18 +2916,23 @@ get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
 get_current_user init
+get_current_user init
+get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
-get_current_user init
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
 get_current_user init
 get_current_user returning user: trs@gmail.com
-role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
-get_current_user returning user: trs@gmail.com
-get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
@@ -2865,47 +2955,71 @@ role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
-role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
 get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
-get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
-get_current_user init
+get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user init
+get_current_user init
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
-role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
+get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
+get_current_user init
+get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
@@ -2917,6 +3031,9 @@ role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
+get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
@@ -2924,11 +3041,20 @@ role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
 get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
+s@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user returning user: trs@gmail.com
@@ -2936,40 +3062,728 @@ role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
 get_current_user init
 get_current_user init
 get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
 get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
 get_current_user init
+get_current_user init
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: student, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: student, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: student, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
+get_current_user init
+get_current_user returning user: trs@gmail.com
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: student, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: student, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: trs@gmail.com
+role_checker called. Required: student, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: trs@gmail.com
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
 get_current_user init
 get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: teacher, User: std@gmail.com Role: student
+role_checker called. Required: teacher, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: teacher, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: teacher, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: teacher, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
 get_current_user returning user: trs@gmail.com
+role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
 get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user returning user: trs@gmail.com
 role_checker called. Required: teacher, User: trs@gmail.com Role: teacher
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user init
+get_current_user returning user: prt@gmail.com
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user init
+get_current_user returning user: prt@gmail.com
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user init
+get_current_user returning user: prt@gmail.com
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: prt@gmail.com
+role_checker called. Required: parent, User: prt@gmail.com Role: parent
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: parent, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: parent, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: parent, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user init
+quired: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user JWTError: Signature has expired.
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user init
+get_current_user returning user: std@gmail.com
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student
+role_checker called. Required: student, User: std@gmail.com Role: student
