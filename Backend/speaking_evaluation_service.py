@@ -254,7 +254,7 @@ async def _call_gemini(
         ],
         "generationConfig": {
             "temperature": 0.1,
-            "maxOutputTokens": 800,
+            "maxOutputTokens": 2048,
             "responseMimeType": "application/json",
         },
     }
@@ -302,10 +302,14 @@ async def _call_gemini(
                 data = response.json()
                 candidates = data.get("candidates", [])
                 if not candidates:
-                    raise EvaluationError(
+                    last_error = EvaluationError(
                         "Gemini returned no candidates — audio may be unprocessable.",
                         "NO_CANDIDATES",
                     )
+                    wait = RETRY_BASE_DELAY * (2 ** attempt)
+                    logger.warning(f"No candidates returned, retrying in {wait}s")
+                    await asyncio.sleep(wait)
+                    continue
 
                 finish_reason = candidates[0].get("finishReason", "")
                 if finish_reason in ("SAFETY", "RECITATION"):
@@ -318,7 +322,11 @@ async def _call_gemini(
                 raw_text = "".join(p.get("text", "") for p in parts)
 
                 if not raw_text.strip():
-                    raise EvaluationError("Gemini returned empty response.", "EMPTY_RESPONSE")
+                    last_error = EvaluationError("Gemini returned empty response.", "EMPTY_RESPONSE")
+                    wait = RETRY_BASE_DELAY * (2 ** attempt)
+                    logger.warning(f"Empty response from Gemini, retrying in {wait}s")
+                    await asyncio.sleep(wait)
+                    continue
 
                 raw_text = re.sub(r"```json|```", "", raw_text).strip()
 
@@ -326,9 +334,13 @@ async def _call_gemini(
                     return json.loads(raw_text)
                 except json.JSONDecodeError as e:
                     logger.error(f"Gemini response not valid JSON: {raw_text[:300]}")
-                    raise EvaluationError(
+                    last_error = EvaluationError(
                         "Gemini response was not valid JSON.", "INVALID_JSON"
-                    ) from e
+                    )
+                    wait = RETRY_BASE_DELAY * (2 ** attempt)
+                    logger.warning(f"Invalid JSON returned, retrying in {wait}s")
+                    await asyncio.sleep(wait)
+                    continue
 
             except (httpx.TimeoutException, httpx.ConnectError) as e:
                 wait = RETRY_BASE_DELAY * (2 ** attempt)
