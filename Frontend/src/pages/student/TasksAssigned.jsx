@@ -264,9 +264,9 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
       </div>
 
       {/* Main content */}
-      <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
+      <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 24px" }}>
         {hwLoading && (
-          <div style={{ color: "#475569", display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ color: "#475569", display: "flex", alignItems: "center", gap: 12, margin: "auto 0" }}>
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               style={{ width: 28, height: 28, border: `3px solid ${color}33`, borderTopColor: color, borderRadius: "50%" }} />
             Loading task…
@@ -274,7 +274,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
         )}
 
         {hwError && (
-          <div style={{ color: "#fca5a5", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "16px 24px" }}>
+          <div style={{ color: "#fca5a5", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "16px 24px", margin: "auto 0" }}>
             ⚠️ {hwError}
           </div>
         )}
@@ -284,7 +284,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            style={{ maxWidth: 600, width: "100%", display: "flex", flexDirection: "column", gap: 20 }}
+            style={{ maxWidth: 600, width: "100%", display: "flex", flexDirection: "column", gap: 20, margin: "auto 0" }}
           >
             {/* Score hero */}
             <div style={{
@@ -368,7 +368,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
 
         {/* ── ERROR STATE ── */}
         {phase === "error" && (
-          <div style={{ textAlign: "center", maxWidth: 420 }}>
+          <div style={{ textAlign: "center", maxWidth: 420, margin: "auto 0" }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>😕</div>
             <div style={{ color: "#fca5a5", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "16px 24px", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
               {submitError}
@@ -384,7 +384,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
 
         {/* ── PROCESSING ── */}
         {phase === "processing" && (
-          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20, margin: "auto 0" }}>
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
@@ -397,7 +397,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
 
         {/* ── IDLE / RECORDING STATE ── */}
         {(phase === "idle" || phase === "recording") && !hwLoading && !hwError && hw && (
-          <div style={{ maxWidth: 560, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
+          <div style={{ maxWidth: 560, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 28, margin: "auto 0" }}>
 
             {/* Passage card */}
             <div style={{
