@@ -122,6 +122,83 @@ async def submit_homework(
     if existing:
         raise HTTPException(409, "Already submitted. Contact your teacher to reopen.")
 
+    # ── Deadline enforcement ──────────────────────────────────────────────
+    now_utc = datetime.now(timezone.utc)
+    task_type = hw.get("task_type", "homework").lower()
+    deadline_raw = hw.get("deadline")
+
+    # Normalise deadline to aware datetime
+    if isinstance(deadline_raw, str):
+        try:
+            deadline_dt = datetime.fromisoformat(deadline_raw.replace("Z", "+00:00"))
+            if deadline_dt.tzinfo is None:
+                deadline_dt = deadline_dt.replace(tzinfo=timezone.utc)
+        except ValueError:
+            deadline_dt = None
+    elif isinstance(deadline_raw, datetime):
+        deadline_dt = deadline_raw if deadline_raw.tzinfo else deadline_raw.replace(tzinfo=timezone.utc)
+    else:
+        deadline_dt = None
+
+    is_overdue = deadline_dt is not None and now_utc > deadline_dt
+
+    if task_type == "test" and is_overdue:
+        # Hard-lock: auto-insert a zero submission so teacher can see the miss
+        questions = _normalize_questions(hw.get("questions", []))
+        total_marks = sum(int(q.get("marks", q.get("max_marks", 1))) for q in questions)
+        zero_answers = [
+            {
+                "question_index": i,
+                "question": q.get("question") or q.get("text", f"Q{i+1}"),
+                "correct_answer": q.get("answer") or q.get("correct_answer", ""),
+                "marks": int(q.get("marks", q.get("max_marks", 1))),
+                "student_answer": "",
+                "has_photo": False,
+                "evaluation": {
+                    "score": 0,
+                    "max_score": int(q.get("marks", q.get("max_marks", 1))),
+                    "feedback": "Not attempted — test deadline passed.",
+                    "confidence": 1.0,
+                    "low_confidence": False,
+                    "needs_manual_review": False,
+                    "eval_mode": "deadline_lock",
+                },
+            }
+            for i, q in enumerate(questions)
+        ]
+        zero_doc = {
+            "homework_id":    hw_oid,
+            "student_id":     student_id,
+            "class_id":       ObjectId(str(hw["class_id"])),
+            "subject":        hw.get("subject", "general"),
+            "submitted_at":   now_utc,
+            "answers":        zero_answers,
+            "total_score":    0,
+            "total_marks":    total_marks,
+            "percentage":     0.0,
+            "grade":          "F",
+            "status":         "deadline_missed",
+            "low_confidence_questions": [],
+            "teacher_overrides": [],
+        }
+        try:
+            z_result = db.submissions.insert_one(zero_doc)
+            db.homework.update_one(
+                {"_id": hw_oid},
+                {"$addToSet": {"submitted_student_ids": student_id}}
+            )
+        except Exception:
+            pass  # already exists — ignore
+        raise HTTPException(
+            status_code=423,
+            detail={
+                "error": "deadline_passed",
+                "message": "This test is locked. The deadline has passed.",
+                "score": 0,
+                "grade": "F",
+            }
+        )
+
     questions = _normalize_questions(hw.get("questions", []))
     subject   = hw.get("subject", "general")
 
@@ -193,6 +270,11 @@ async def submit_homework(
             "evaluation":     eval_result,
         })
 
+    # ── Determine late-submission status for homework ─────────────────────
+    submission_status = "submitted"
+    if task_type == "homework" and is_overdue:
+        submission_status = "late"
+
     # ── Build submission document ─────────────────────────────────────────
     percentage = round((total_score / total_marks * 100) if total_marks > 0 else 0, 1)
     grade_label = _percentage_to_grade(percentage)
@@ -207,13 +289,15 @@ async def submit_homework(
         "student_id":     student_id,
         "class_id":       ObjectId(str(hw["class_id"])),
         "subject":        subject,
+        "task_type":      task_type,
         "submitted_at":   datetime.now(timezone.utc),
         "answers":        evaluated_answers,
         "total_score":    total_score,
         "total_marks":    total_marks,
         "percentage":     percentage,
         "grade":          grade_label,
-        "status":         "reviewed" if not low_confidence_questions else "needs_review",
+        "status":         submission_status if not low_confidence_questions else "needs_review",
+        "is_late":        submission_status == "late",
         "low_confidence_questions": low_confidence_questions,
         "teacher_overrides": [],  # Track manual corrections by teacher
     }
@@ -505,6 +589,7 @@ def _percentage_to_grade(pct: float) -> str:
 
 
 def _serialize_submission(s: dict) -> dict:
+    status = s.get("status", "reviewed")
     return {
         "submission_id": str(s["_id"]),
         "homework_id":   str(s["homework_id"]),
@@ -513,8 +598,11 @@ def _serialize_submission(s: dict) -> dict:
         "total_marks":   s["total_marks"],
         "percentage":    s["percentage"],
         "grade":         s.get("grade", ""),
-        "status":        s.get("status", "reviewed"),
-        "needs_review":  s.get("status") == "needs_review",
+        "status":        status,
+        "is_late":       s.get("is_late", False) or status == "late",
+        "deadline_missed": status == "deadline_missed",
+        "task_type":     s.get("task_type", "homework"),
+        "needs_review":  status == "needs_review",
         "breakdown": [
             {
                 "question_index": a["question_index"],

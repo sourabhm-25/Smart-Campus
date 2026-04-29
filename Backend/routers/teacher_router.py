@@ -476,12 +476,15 @@ def get_homework_submissions(homework_id: str, user=Depends(require_role("teache
             sub = subs_map[student_id_str]
             submitted_at = sub.get("submitted_at")
             percentage = sub.get("percentage")
+            sub_status = sub.get("status", "submitted")
             result.append({
                 "submission_id": str(sub["_id"]),
                 "student_id": student_id_str,
                 "student_name": student.get("name", "Unknown"),
                 "student_email": student.get("email", ""),
-                "status": sub.get("status", "submitted"),
+                "status": sub_status,
+                "is_late": sub.get("is_late", False) or sub_status == "late",
+                "deadline_missed": sub_status == "deadline_missed",
                 "total_score": sub.get("total_score"),
                 "max_score": sub.get("total_marks"),
                 "percentage": percentage,

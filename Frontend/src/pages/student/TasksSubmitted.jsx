@@ -106,11 +106,19 @@ function SubmittedCard({ task, color, index }) {
                 {submittedAt && (
                   <span style={{ fontSize: 11, color: "#475569" }}>Submitted {submittedAt}</span>
                 )}
-                {task.submission_status === "late" && (
+                {(task.is_late || task.submission_status === "late" || task.status === "late") && !task.deadline_missed && (
                   <span style={{
-                    fontSize: 11, color: "#fb923c", background: "rgba(251,146,60,0.1)",
-                    borderRadius: 6, padding: "2px 8px", fontWeight: 600,
-                  }}>Late</span>
+                    fontSize: 11, color: "#fb923c", background: "rgba(251,146,60,0.12)",
+                    borderRadius: 6, padding: "2px 9px", fontWeight: 700,
+                    border: "1px solid rgba(251,146,60,0.25)",
+                  }}>⏰ Late Submission</span>
+                )}
+                {(task.deadline_missed || task.status === "deadline_missed") && (
+                  <span style={{
+                    fontSize: 11, color: "#f87171", background: "rgba(248,113,113,0.10)",
+                    borderRadius: 6, padding: "2px 9px", fontWeight: 700,
+                    border: "1px solid rgba(248,113,113,0.25)",
+                  }}>⛔ Missed — 0 / F</span>
                 )}
               </div>
             </div>
@@ -325,7 +333,85 @@ function SubjectGroup({ subject, index }) {
   );
 }
 
+// ── Old Task History Panel ───────────────────────────────
+function OldTaskHistory({ subjects }) {
+  const [open, setOpen] = useState(false);
+
+  const totalOld = subjects.reduce((s, sub) => s + sub.tasks, 0);
+  if (totalOld === 0) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      style={{ marginTop: 32 }}
+    >
+      {/* Toggle button */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: "100%",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          background: open ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: open ? "16px 16px 0 0" : 16,
+          padding: "16px 24px",
+          cursor: "pointer",
+          transition: "all 0.2s",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontSize: 20 }}>📂</span>
+          <div style={{ textAlign: "left" }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#e2e8f0" }}>
+              Old Task History
+            </div>
+            <div style={{ fontSize: 12, color: "#475569", marginTop: 2 }}>
+              {totalOld} past task{totalOld !== 1 ? "s" : ""} · Click to {open ? "collapse" : "expand"}
+            </div>
+          </div>
+        </div>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.25 }}
+          style={{ color: "#64748b", fontSize: 16 }}
+        >▼</motion.span>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="history"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+          >
+            <div style={{
+              background: "rgba(255,255,255,0.015)",
+              border: "1px solid rgba(255,255,255,0.06)",
+              borderTop: "none",
+              borderRadius: "0 0 16px 16px",
+              padding: "20px 20px 8px",
+            }}>
+              {subjects.map((subject, i) => (
+                <SubjectGroup key={subject.id} subject={subject} index={i} />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
 // ── Main Page ────────────────────────────────────────────
+// "Recent" = submitted within the last 30 days & not overdue
+// "Old"     = everything else that was submitted
+const RECENT_DAYS = 30;
+
 export default function TasksSubmitted() {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -376,6 +462,9 @@ export default function TasksSubmitted() {
             deadline: hw.deadline,
             submitted_at: hw.submitted_at,
             submission_status: hw.submission_status,
+            status: hw.status,
+            is_late: hw.is_late || hw.submission_status === "late" || hw.status === "late",
+            deadline_missed: hw.deadline_missed || hw.status === "deadline_missed",
             submission_score: hw.total_score ?? hw.submission_score,
             total_marks: hw.total_marks,
             percentage: hw.percentage,
@@ -394,6 +483,31 @@ export default function TasksSubmitted() {
   }, []);
 
   useEffect(() => { loadSubmitted(); }, [loadSubmitted]);
+
+  // Split subjects into "recent" (submitted within RECENT_DAYS) and "old"
+  const now = new Date();
+  const cutoff = new Date(now.getTime() - RECENT_DAYS * 24 * 60 * 60 * 1000);
+
+  const recentSubjects = [];
+  const oldSubjects = [];
+
+  for (const subject of subjects) {
+    const recentTasks = subject.homeworkList.filter(h => {
+      if (!h.submitted_at) return true; // no date → treat as recent
+      return new Date(h.submitted_at) >= cutoff;
+    });
+    const oldTasks = subject.homeworkList.filter(h => {
+      if (!h.submitted_at) return false;
+      return new Date(h.submitted_at) < cutoff;
+    });
+
+    if (recentTasks.length > 0) {
+      recentSubjects.push({ ...subject, tasks: recentTasks.length, homeworkList: recentTasks });
+    }
+    if (oldTasks.length > 0) {
+      oldSubjects.push({ ...subject, tasks: oldTasks.length, homeworkList: oldTasks });
+    }
+  }
 
   const totalSubmitted = subjects.reduce((s, sub) => s + sub.tasks, 0);
   const overallPct = totalSubmitted > 0
@@ -451,7 +565,8 @@ export default function TasksSubmitted() {
         )}
       </motion.div>
 
-      {subjects.length === 0 ? (
+      {/* ── RECENT SUBMISSIONS ── */}
+      {recentSubjects.length === 0 && oldSubjects.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -464,9 +579,43 @@ export default function TasksSubmitted() {
           </div>
         </motion.div>
       ) : (
-        subjects.map((subject, i) => (
-          <SubjectGroup key={subject.id} subject={subject} index={i} />
-        ))
+        <>
+          {recentSubjects.length > 0 ? (
+            <>
+              {/* Section label */}
+              <div style={{
+                fontSize: 11, fontWeight: 700, color: "#475569",
+                textTransform: "uppercase", letterSpacing: "0.1em",
+                marginBottom: 16, display: "flex", alignItems: "center", gap: 10,
+              }}>
+                <span style={{
+                  width: 6, height: 6, borderRadius: "50%",
+                  background: "#34d399", display: "inline-block",
+                }} />
+                Recent — Last {RECENT_DAYS} days
+              </div>
+              {recentSubjects.map((subject, i) => (
+                <SubjectGroup key={subject.id} subject={subject} index={i} />
+              ))}
+            </>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              style={{
+                textAlign: "center", padding: "40px 0 20px",
+                color: "#475569", fontSize: 14,
+              }}
+            >
+              <div style={{ fontSize: 32, marginBottom: 10 }}>✅</div>
+              <div>No recent submissions in the last {RECENT_DAYS} days.</div>
+              <div style={{ fontSize: 12, marginTop: 6 }}>Your older submissions are in the history below.</div>
+            </motion.div>
+          )}
+
+          {/* ── OLD TASK HISTORY ── */}
+          <OldTaskHistory subjects={oldSubjects} />
+        </>
       )}
     </div>
   );

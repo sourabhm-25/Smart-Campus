@@ -1090,15 +1090,28 @@ function HomeworkCard({ task, color, index, onAttempt }) {
   const deadline = formatDeadline(task.deadline);
   const qCount = normaliseQuestions(task.questions).length;
 
+  const now = new Date();
+  const deadlineDate = task.deadline ? new Date(task.deadline) : null;
+  const isOverdue = deadlineDate && deadlineDate < now;
+  const isTest = task.task_type === "test";
+
+  // Hard-lock: test past due and not submitted
+  const isTestLocked = isTest && isOverdue && !task.submitted;
+  // Homework past due: allow late submit
+  const isHomeworkLate = !isTest && isOverdue && !task.submitted;
+
   const statusConfig = task.submitted
     ? {
       label: task.submission_status === "late" ? "Submitted Late" : "Submitted",
-      color: "#34d399", bg: "rgba(52,211,153,0.08)",
-      border: "rgba(52,211,153,0.2)",
+      color: task.submission_status === "late" ? "#fb923c" : "#34d399",
+      bg: task.submission_status === "late" ? "rgba(251,146,60,0.08)" : "rgba(52,211,153,0.08)",
+      border: task.submission_status === "late" ? "rgba(251,146,60,0.2)" : "rgba(52,211,153,0.2)",
     }
-    : deadline?.overdue
-      ? { label: "Overdue", color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.2)" }
-      : { label: "Pending", color: "#fb923c", bg: "rgba(251,146,60,0.08)", border: "rgba(251,146,60,0.2)" };
+    : isTestLocked
+      ? { label: "🔒 Locked", color: "#f87171", bg: "rgba(248,113,113,0.08)", border: "rgba(248,113,113,0.2)" }
+      : isHomeworkLate
+        ? { label: "⏰ Late", color: "#fb923c", bg: "rgba(251,146,60,0.08)", border: "rgba(251,146,60,0.2)" }
+        : { label: "Pending", color: "#fb923c", bg: "rgba(251,146,60,0.08)", border: "rgba(251,146,60,0.2)" };
 
   return (
     <motion.div
@@ -1106,8 +1119,8 @@ function HomeworkCard({ task, color, index, onAttempt }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
       style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.07)",
+        background: isTestLocked ? "rgba(248,113,113,0.03)" : "rgba(255,255,255,0.03)",
+        border: isTestLocked ? "1px solid rgba(248,113,113,0.12)" : "1px solid rgba(255,255,255,0.07)",
         borderRadius: 16,
         overflow: "hidden",
         marginBottom: 12,
@@ -1119,7 +1132,7 @@ function HomeworkCard({ task, color, index, onAttempt }) {
       }}>
         {/* Color accent */}
         <div style={{
-          width: 4, background: task.submitted ? "#34d399" : (deadline?.urgent ? "#f87171" : color),
+          width: 4, background: isTestLocked ? "#f87171" : task.submitted ? "#34d399" : (deadline?.urgent ? "#f87171" : color),
           flexShrink: 0,
         }} />
 
@@ -1129,7 +1142,7 @@ function HomeworkCard({ task, color, index, onAttempt }) {
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{
-                fontSize: 15, fontWeight: 700, color: "#e2e8f0",
+                fontSize: 15, fontWeight: 700, color: isTestLocked ? "#94a3b8" : "#e2e8f0",
                 marginBottom: 6, lineHeight: 1.4,
               }}>
                 {task.title}
@@ -1186,7 +1199,48 @@ function HomeworkCard({ task, color, index, onAttempt }) {
               </div>
             ) : <div />}
 
-            {!task.submitted ? (
+            {/* CTA — three states */}
+            {task.submitted ? (
+              <div style={{
+                background: "rgba(52,211,153,0.07)",
+                border: "1px solid rgba(52,211,153,0.15)",
+                borderRadius: 8, padding: "7px 14px",
+                fontSize: 12, color: "#34d399",
+                display: "flex", alignItems: "center", gap: 6,
+              }}>
+                ✓ Submitted
+              </div>
+            ) : isTestLocked ? (
+              // Hard lock for test
+              <div style={{
+                background: "rgba(248,113,113,0.08)",
+                border: "1px solid rgba(248,113,113,0.2)",
+                borderRadius: 8, padding: "7px 16px",
+                fontSize: 12, color: "#f87171",
+                display: "flex", alignItems: "center", gap: 6,
+                fontWeight: 700,
+              }}>
+                🔒 Test Locked — Deadline Passed
+              </div>
+            ) : isHomeworkLate ? (
+              // Late homework — allow with warning
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => onAttempt(task)}
+                style={{
+                  background: "linear-gradient(135deg, rgba(251,146,60,0.8), rgba(251,146,60,1))",
+                  color: "#0a0f1a", border: "none", borderRadius: 10,
+                  padding: "9px 20px", fontSize: 12, fontWeight: 700,
+                  cursor: "pointer",
+                  display: "flex", alignItems: "center", gap: 6,
+                  boxShadow: "0 4px 12px rgba(251,146,60,0.3)",
+                }}
+              >
+                ⚠️ Submit Late →
+              </motion.button>
+            ) : (
+              // Normal pending
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
@@ -1202,18 +1256,34 @@ function HomeworkCard({ task, color, index, onAttempt }) {
               >
                 {task.task_type === "test" ? "Start Test →" : "Start Task →"}
               </motion.button>
-            ) : (
-              <div style={{
-                background: "rgba(52,211,153,0.07)",
-                border: "1px solid rgba(52,211,153,0.15)",
-                borderRadius: 8, padding: "7px 14px",
-                fontSize: 12, color: "#34d399",
-                display: "flex", alignItems: "center", gap: 6,
-              }}>
-                ✓ Submitted
-              </div>
             )}
           </div>
+
+          {/* Test lock explanation banner */}
+          {isTestLocked && (
+            <div style={{
+              fontSize: 11, color: "#f87171",
+              background: "rgba(248,113,113,0.06)",
+              border: "1px solid rgba(248,113,113,0.15)",
+              borderRadius: 8, padding: "8px 12px",
+              lineHeight: 1.5,
+            }}>
+              ⛔ This test has passed its deadline. Your score has been recorded as <strong>0 / F</strong>. Contact your teacher if you need a deadline extension.
+            </div>
+          )}
+
+          {/* Late homework info banner */}
+          {isHomeworkLate && (
+            <div style={{
+              fontSize: 11, color: "#fb923c",
+              background: "rgba(251,146,60,0.06)",
+              border: "1px solid rgba(251,146,60,0.15)",
+              borderRadius: 8, padding: "8px 12px",
+              lineHeight: 1.5,
+            }}>
+              ⚠️ This homework is past due. Late submissions are accepted but will be flagged for your teacher.
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
@@ -1312,21 +1382,32 @@ function SubjectSection({ subject, index, onAttempt }) {
           >
             <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", padding: "16px 20px" }}>
               {(() => {
+                const now = new Date();
                 const pending = subject.homeworkList.filter(h => !h.submitted);
-                return pending.length === 0 ? (
+                // Show: non-overdue tasks + overdue TESTS (lock UI) + overdue HOMEWORK (late submit)
+                // i.e., show everything that is not submitted
+                const activePending = pending.filter(h => {
+                  if (!h.deadline) return true;
+                  const d = new Date(h.deadline);
+                  // Show all unsubmitted tasks — overdue tests show lock UI, overdue homework shows late CTA
+                  return true;
+                });
+                return activePending.length === 0 ? (
                   <div style={{ color: "#334155", fontSize: 13, padding: "16px 0", textAlign: "center" }}>
                     ✓ All tasks submitted for this subject.
                   </div>
                 ) : (
-                  pending.map((task, i) => (
-                    <HomeworkCard
-                      key={task.id}
-                      task={task}
-                      color={subject.color}
-                      index={i}
-                      onAttempt={onAttempt}
-                    />
-                  ))
+                  <>
+                    {activePending.map((task, i) => (
+                      <HomeworkCard
+                        key={task.id}
+                        task={task}
+                        color={subject.color}
+                        index={i}
+                        onAttempt={onAttempt}
+                      />
+                    ))}
+                  </>
                 );
               })()}
             </div>
@@ -1499,30 +1580,40 @@ export default function TasksAssigned() {
               Check back after your teacher assigns tasks.
             </div>
           </motion.div>
-        ) : totalPending === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            style={{ color: "#475569", textAlign: "center", padding: "80px 0" }}
-          >
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: "#34d399" }}>All tasks submitted!</div>
-            <div style={{ fontSize: 13, marginTop: 8, color: "#475569" }}>
-              Head to <strong style={{ color: "#60a5fa" }}>Tasks Submitted</strong> to view your results.
-            </div>
-          </motion.div>
-        ) : (
-          subjects
-            .filter(subject => subject.unsubmitted > 0)
-            .map((subject, i) => (
-              <SubjectSection
-                key={subject.id}
-                subject={subject}
-                index={i}
-                onAttempt={setAttemptTask}
-              />
-            ))
-        )}
+        ) : (() => {
+            const now = new Date();
+            // Only show subjects that have at least one non-overdue, non-submitted task
+            const activeSubjects = subjects.filter(subject =>
+              subject.homeworkList.some(h => {
+                if (h.submitted) return false;
+                if (!h.deadline) return true;
+                const d = new Date(h.deadline);
+                return isNaN(d) || d >= now;
+              })
+            );
+            return activeSubjects.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                style={{ color: "#475569", textAlign: "center", padding: "80px 0" }}
+              >
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
+                <div style={{ fontSize: 16, fontWeight: 600, color: "#34d399" }}>All tasks submitted!</div>
+                <div style={{ fontSize: 13, marginTop: 8, color: "#475569" }}>
+                  Head to <strong style={{ color: "#60a5fa" }}>Tasks Submitted</strong> to view your results.
+                </div>
+              </motion.div>
+            ) : (
+              activeSubjects.map((subject, i) => (
+                <SubjectSection
+                  key={subject.id}
+                  subject={subject}
+                  index={i}
+                  onAttempt={setAttemptTask}
+                />
+              ))
+            );
+          })()}
       </div>
 
       {/* Full-screen Quiz overlay */}
