@@ -84,9 +84,9 @@ def _create_indexes():
         questions_collection.create_index([("question", ASCENDING)], background=True)
         questions_collection.create_index([("topic", ASCENDING)], background=True)
 
-        print("✅ MongoDB indexes created/verified")
+        print("[DB] MongoDB indexes created/verified")
     except OperationFailure as e:
-        print(f"⚠️  Index creation warning (non-fatal): {e}")
+        print(f"[DB] Index creation warning (non-fatal): {e}")
 
 
 # Create indexes on module import (runs once when FastAPI starts)

@@ -1,0 +1,88 @@
+{
+  "topic": "angles as we turn",
+  "subject": "Mathematics",
+  "grade": "5",
+  "task_type": "test",
+  "scoring": {
+    "total_marks": 10,
+    "grade_band": "elementary",
+    "marks_per_type": {
+      "short_answer": 3,
+      "mcq": 1,
+      "fill_in_the_blanks": 1,
+      "true_false": 1,
+      "matching": 2
+    },
+    "count_per_type": {
+      "short_answer": 2,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    },
+    "subtotal_per_type": {
+      "short_answer": 6,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    }
+  },
+  "retrieval_info": {
+    "chunks_used": 5,
+    "namespace": "grade5_math",
+    "index": "grade-5"
+  },
+  "questions": {
+    "short_answer": [
+      {
+        "question": "A robot is facing North and performs 3 quarter-turns clockwise to face a target. The programmer needs to know the total angle of rotation in degrees. Find the total degrees the robot turned. Show your working.",
+        "answer": "Step 1: One quarter-turn is equal to 90°. Step 2: 3 × 90 = 270. Answer: 270°.",
+        "marks": 3
+      },
+      {
+        "question": "A wind vane rotates a half-turn clockwise and then makes another 45° turn in the same direction. Find the total degrees the wind vane has moved from its starting position. Show your working.",
+        "answer": "Step 1: A half-turn is equal to 180°. Step 2: 180 + 45 = 225. Answer: 225°.",
+        "marks": 3
+      }
+    ],
+    "mcq": [
+      {
+        "question": "A figure skater performs exactly 2 full rotations during a jump. How many total degrees did the skater turn?",
+        "options": [
+          "a) 180°",
+          "b) 360°",
+          "c) 540°",
+          "d) 720°"
+        ],
+        "answer": "d",
+        "marks": 1
+      },
+      {
+        "question": "A steering wheel is turned 180° and then another 90° in the same direction. What is the total rotation in degrees?",
+        "options": [
+          "a) 90°",
+          "b) 180°",
+          "c) 270°",
+          "d) 360°"
+        ],
+        "answer": "c",
+        "marks": 1
+      }
+    ],
+    "fill_in_the_blanks": [
+      {
+        "question": "The minute hand of a clock moves from the 12 to the 3. This movement represents a turn of _______ degrees.",
+        "answer": "90",
+        "marks": 1
+      },
+      {
+        "question": "A wheel makes one full rotation clockwise. The total angle of this turn is _______ degrees.",
+        "answer": "360",
+        "marks": 1
+      }
+    ],
+    "true_false": [],
+    "matching": []
+  }
+}
