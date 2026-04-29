@@ -1,4 +1,10 @@
 # Backend/main.py
+import sys
+# Force UTF-8 stdout/stderr on Windows (prevents cp1252 emoji crash)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 import re
 import json
 from contextlib import asynccontextmanager
@@ -63,6 +69,7 @@ from routers.teacher_router import router as teacher_router
 from routers.parent_router import router as parent_router
 from routers.notification_router import router as notification_router
 from routers.submission_router import router as submission_router
+from routers.proctoring_router import router as proctoring_router
 
 # ── IMPORT SCHEDULER ──
 from services.deadline_scheduler import start_scheduler, stop_scheduler
@@ -113,6 +120,7 @@ app.include_router(class_router)
 app.include_router(teacher_router)
 app.include_router(parent_router)
 app.include_router(notification_router)
+app.include_router(proctoring_router)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
