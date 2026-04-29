@@ -1394,84 +1394,90 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
           background: "rgba(255,255,255,0.01)",
           gap: 12,
         }}>
-          <motion.button
-            whileHover={step > 0 ? { scale: 1.02 } : {}}
-            whileTap={step > 0 ? { scale: 0.97 } : {}}
-            onClick={goPrev}
-            disabled={step === 0}
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: 12, padding: "12px 24px",
-              fontSize: 13, fontWeight: 600,
-              color: step === 0 ? "#1e293b" : "#94a3b8",
-              cursor: step === 0 ? "not-allowed" : "pointer",
-              transition: "all 0.15s",
-              display: "flex", alignItems: "center", gap: 8,
-            }}
-          >
-            ← Back
-          </motion.button>
+          {/* Navigation Group (Left) */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <motion.button
+              whileHover={step > 0 ? { scale: 1.02 } : {}}
+              whileTap={step > 0 ? { scale: 0.97 } : {}}
+              onClick={goPrev}
+              disabled={step === 0}
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 12, padding: "12px 24px",
+                fontSize: 13, fontWeight: 600,
+                color: step === 0 ? "#1e293b" : "#94a3b8",
+                cursor: step === 0 ? "not-allowed" : "pointer",
+                transition: "all 0.15s",
+                display: "flex", alignItems: "center", gap: 8,
+              }}
+            >
+              ← Back
+            </motion.button>
 
-          {/* Center: quick status */}
-          <div style={{ fontSize: 12, color: "#334155", textAlign: "center" }}>
+            {step < total - 1 ? (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={goNext}
+                style={{
+                  background: currentAnswered ? color : "rgba(255,255,255,0.07)",
+                  color: currentAnswered ? "#0a0f1a" : "#334155",
+                  border: "none", borderRadius: 12,
+                  padding: "12px 28px", fontSize: 13, fontWeight: 700,
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  display: "flex", alignItems: "center", gap: 8,
+                }}
+              >
+                Next →
+              </motion.button>
+            ) : (
+              <motion.button
+                whileHover={allAnswered ? { scale: 1.03 } : {}}
+                whileTap={allAnswered ? { scale: 0.97 } : {}}
+                onClick={allAnswered && !submitting ? handleSubmit : undefined}
+                style={{
+                  background: allAnswered ? color : "rgba(255,255,255,0.05)",
+                  color: allAnswered ? "#0a0f1a" : "#1e293b",
+                  border: "none", borderRadius: 12,
+                  padding: "12px 32px", fontSize: 13, fontWeight: 700,
+                  cursor: allAnswered && !submitting ? "pointer" : "not-allowed",
+                  transition: "all 0.2s",
+                  display: "flex", alignItems: "center", gap: 8,
+                  boxShadow: allAnswered ? `0 4px 20px ${color}44` : "none",
+                }}
+              >
+                {submitting ? (
+                  <>
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 0.7, repeat: Infinity, ease: "linear" }}
+                      style={{
+                        width: 14, height: 14,
+                        border: "2px solid #0a0f1a",
+                        borderTopColor: "transparent",
+                        borderRadius: "50%",
+                        display: "inline-block",
+                      }}
+                    />
+                    Submitting…
+                  </>
+                ) : allAnswered ? "Submit Task ✓" : `Answer all (${answeredCount}/${total})`}
+              </motion.button>
+            )}
+          </div>
+
+          {/* Status Text (Right, clear of camera if in test mode) */}
+          <div style={{ 
+            fontSize: 12, color: "#334155", textAlign: "right", 
+            paddingRight: task.task_type === "test" ? 260 : 0 
+          }}>
             {allAnswered
               ? <span style={{ color: "#34d399" }}>✓ All questions answered</span>
               : <span>{total - answeredCount} question{total - answeredCount !== 1 ? "s" : ""} remaining</span>
             }
           </div>
-
-          {step < total - 1 ? (
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={goNext}
-              style={{
-                background: currentAnswered ? color : "rgba(255,255,255,0.07)",
-                color: currentAnswered ? "#0a0f1a" : "#334155",
-                border: "none", borderRadius: 12,
-                padding: "12px 28px", fontSize: 13, fontWeight: 700,
-                cursor: "pointer",
-                transition: "all 0.2s",
-                display: "flex", alignItems: "center", gap: 8,
-              }}
-            >
-              Next →
-            </motion.button>
-          ) : (
-            <motion.button
-              whileHover={allAnswered ? { scale: 1.03 } : {}}
-              whileTap={allAnswered ? { scale: 0.97 } : {}}
-              onClick={allAnswered && !submitting ? handleSubmit : undefined}
-              style={{
-                background: allAnswered ? color : "rgba(255,255,255,0.05)",
-                color: allAnswered ? "#0a0f1a" : "#1e293b",
-                border: "none", borderRadius: 12,
-                padding: "12px 32px", fontSize: 13, fontWeight: 700,
-                cursor: allAnswered && !submitting ? "pointer" : "not-allowed",
-                transition: "all 0.2s",
-                display: "flex", alignItems: "center", gap: 8,
-                boxShadow: allAnswered ? `0 4px 20px ${color}44` : "none",
-              }}
-            >
-              {submitting ? (
-                <>
-                  <motion.span
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 0.7, repeat: Infinity, ease: "linear" }}
-                    style={{
-                      width: 14, height: 14,
-                      border: "2px solid #0a0f1a",
-                      borderTopColor: "transparent",
-                      borderRadius: "50%",
-                      display: "inline-block",
-                    }}
-                  />
-                  Submitting…
-                </>
-              ) : allAnswered ? "Submit Task ✓" : `Answer all (${answeredCount}/${total})`}
-            </motion.button>
-          )}
         </div>
       )}
 
