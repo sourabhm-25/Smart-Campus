@@ -70,6 +70,7 @@ from routers.parent_router import router as parent_router
 from routers.notification_router import router as notification_router
 from routers.submission_router import router as submission_router
 from routers.proctoring_router import router as proctoring_router
+from routers.speaking_router import router as speaking_router
 
 # ── IMPORT SCHEDULER ──
 from services.deadline_scheduler import start_scheduler, stop_scheduler
@@ -121,6 +122,7 @@ app.include_router(teacher_router)
 app.include_router(parent_router)
 app.include_router(notification_router)
 app.include_router(proctoring_router)
+app.include_router(speaking_router)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

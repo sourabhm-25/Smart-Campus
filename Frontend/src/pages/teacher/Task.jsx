@@ -292,6 +292,13 @@ export default function Task() {
   const [saveResult, setSaveResult] = useState(null);
   const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
 
+  // ── Speaking-specific state ──
+  const [speakingPassage, setSpeakingPassage] = useState("");
+  const [speakingSaved, setSpeakingSaved] = useState(false);
+  const [speakingSaving, setSpeakingSaving] = useState(false);
+  const [speakingError, setSpeakingError] = useState(null);
+  const isSpeaking = taskType === "speaking" && subject.toLowerCase() === "english";
+
   const loadingMessages = [
     "Collecting textbook knowledge...",
     "Processing context via RAG...",
@@ -324,6 +331,15 @@ export default function Task() {
   const [customFillInBlanks, setCustomFillInBlanks] = useState("");
   const [customTrueFalse, setCustomTrueFalse] = useState("");
   const [showCustom, setShowCustom] = useState(false);
+
+  // Reset speaking form when type changes away from speaking
+  useEffect(() => {
+    if (!isSpeaking) {
+      setSpeakingPassage("");
+      setSpeakingSaved(false);
+      setSpeakingError(null);
+    }
+  }, [isSpeaking]);
 
   const grades = ["1","2","3","4","5","6","7","8","9","10"];
   const subjects = ["Mathematics","Science","English","History","Geography"];
@@ -453,6 +469,49 @@ export default function Task() {
     }
   };
 
+  // ── Speaking homework assign handler ──
+  const handleAssignSpeaking = async () => {
+    if (!speakingPassage.trim()) {
+      setSpeakingError("Please write the speaking prompt/passage.");
+      return;
+    }
+    if (!selectedClassId) {
+      setSpeakingError("No class found for Grade " + grade + ". Please ensure this grade exists.");
+      return;
+    }
+    if (!deadline) {
+      setSpeakingError("Please set a deadline.");
+      return;
+    }
+    setSpeakingSaving(true);
+    setSpeakingError(null);
+    setSpeakingSaved(false);
+    try {
+      const token = localStorage.getItem("access_token");
+      const deadlineUnix = new Date(deadline + "T23:59:00").getTime() / 1000;
+      const formData = new FormData();
+      formData.append("class_id", selectedClassId);
+      formData.append("subject", subject);
+      formData.append("topic", topic.trim() || "Speaking Task");
+      formData.append("grade", grade);
+      formData.append("passage", speakingPassage.trim());
+      formData.append("deadline_unix", deadlineUnix.toString());
+
+      const res = await fetch("http://127.0.0.1:8000/speaking/generate", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Failed to assign speaking homework.");
+      setSpeakingSaved(true);
+    } catch (err) {
+      setSpeakingError(err.message);
+    } finally {
+      setSpeakingSaving(false);
+    }
+  };
+
   return (
     <>
       <style>{css}</style>
@@ -538,6 +597,9 @@ export default function Task() {
                   >
                     <option value="homework">Homework</option>
                     <option value="test">Test</option>
+                    {subject.toLowerCase() === "english" && (
+                      <option value="speaking">🎤 Speaking Task</option>
+                    )}
                   </select>
                 </div>
                 {taskType === "test" && (
@@ -608,7 +670,8 @@ export default function Task() {
                 )}
               </div>
 
-              {/* Submit */}
+              {/* Submit — hidden for speaking type (uses its own flow) */}
+              {!isSpeaking && (
               <div style={{ paddingTop: 4 }}>
                 <button type="submit" className="btn-generate" disabled={loading}>
                   {loading ? (
@@ -628,6 +691,7 @@ export default function Task() {
                   )}
                 </button>
               </div>
+              )}
             </form>
 
             {/* Loader */}
@@ -646,6 +710,144 @@ export default function Task() {
             {/* Error */}
             {error && <div className="error-banner" style={{ marginTop: 20 }}>{error}</div>}
           </div>
+
+          {/* ── Speaking Homework Builder ── */}
+          {isSpeaking && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div className="card delay-1">
+                <p className="card-section-title">🎤 Speaking Task Configuration</p>
+                <div style={{ marginBottom: 16 }}>
+                  <label className="field-label" htmlFor="speaking-passage">
+                    Speaking Prompt / Passage
+                    <span style={{ color: "#9ca3af", fontWeight: 400, marginLeft: 8, fontSize: 11 }}>
+                      This is what the student will be asked to speak about
+                    </span>
+                  </label>
+                  <textarea
+                    id="speaking-passage"
+                    rows={5}
+                    className="field-input"
+                    style={{ resize: "vertical", lineHeight: 1.65 }}
+                    value={speakingPassage}
+                    onChange={e => { setSpeakingPassage(e.target.value); setSpeakingSaved(false); }}
+                    placeholder="e.g. Tell me about India in 3-4 lines.&#10;or: Describe your favourite season and why you like it."
+                  />
+                  <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 6 }}>
+                    {speakingPassage.length} characters · Students will see this prompt and record their voice.
+                  </div>
+                </div>
+
+                {/* Example prompts */}
+                <div style={{ marginBottom: 8 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#6366f1", marginBottom: 8, letterSpacing: "0.06em", textTransform: "uppercase" }}>Example Prompts</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {[
+                      "Tell me about India in 3-4 lines.",
+                      "Describe your favourite season.",
+                      "Talk about your family.",
+                      "What is your favourite subject and why?",
+                      "Describe a festival you celebrate.",
+                    ].map(ex => (
+                      <button
+                        key={ex}
+                        type="button"
+                        onClick={() => { setSpeakingPassage(ex); setSpeakingSaved(false); }}
+                        style={{
+                          fontSize: 12, fontWeight: 500,
+                          padding: "5px 12px", borderRadius: 100,
+                          background: speakingPassage === ex ? "#6366f1" : "#eef2ff",
+                          color: speakingPassage === ex ? "#fff" : "#4f46e5",
+                          border: "1.5px solid #c7d2fe",
+                          cursor: "pointer", transition: "all 0.15s",
+                        }}
+                      >
+                        {ex}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview card */}
+              {speakingPassage.trim() && (
+                <div style={{
+                  background: "linear-gradient(135deg, #f0fdf4, #ecfdf5)",
+                  border: "1.5px solid #86efac",
+                  borderRadius: 16, padding: "20px 24px",
+                }}
+                >
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#16a34a", marginBottom: 10, letterSpacing: "0.07em", textTransform: "uppercase" }}>Preview — What Students Will See</div>
+                  <div style={{ fontSize: 14, color: "#166534", lineHeight: 1.7, fontStyle: "italic" }}>🎤 "{speakingPassage}"</div>
+                  <div style={{ marginTop: 10, fontSize: 12, color: "#4ade80" }}>Students will tap Record, speak for up to 3 minutes, then submit. Gemini AI scores pronunciation, fluency, grammar, confidence, and content.</div>
+                </div>
+              )}
+
+              {/* Assign panel */}
+              <div className="assign-panel">
+                <p className="assign-title">Send Speaking Task to Students</p>
+                <p className="assign-sub">Set a deadline and send this speaking task to your class.</p>
+
+                <div className="assign-target">
+                  <div className="assign-target-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                      <line x1="12" y1="19" x2="12" y2="23"/>
+                      <line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="assign-target-label">Speaking Task for</p>
+                    {selectedClass ? (
+                      <p className="assign-target-value">
+                        {selectedClass.school} — Grade {selectedClass.grade}
+                        <span style={{ marginLeft: 10, fontSize: 12, opacity: 0.6 }}>
+                          {selectedClass.student_count} student{selectedClass.student_count !== 1 ? "s" : ""}
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="assign-target-no-class">No class found for Grade {grade}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="assign-row">
+                  <div>
+                    <label className="field-label-dark" htmlFor="speaking-deadline">Deadline Date</label>
+                    <input
+                      id="speaking-deadline"
+                      type="date"
+                      className="field-input-dark"
+                      value={deadline}
+                      onChange={e => setDeadline(e.target.value)}
+                    />
+                  </div>
+                  <button
+                    onClick={handleAssignSpeaking}
+                    disabled={speakingSaving || speakingSaved || !speakingPassage.trim()}
+                    className={`btn-send${speakingSaved ? " success" : ""}`}
+                  >
+                    {speakingSaving ? (
+                      <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" opacity=".25"/><path d="M21 12a9 9 0 01-9 9"/></svg> Sending…</>
+                    ) : speakingSaved ? (
+                      <><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg> Sent!</>
+                    ) : (
+                      <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> Send Speaking Task</>
+                    )}
+                  </button>
+                </div>
+
+                {speakingError && (
+                  <div className="save-result err" style={{ marginTop: 14 }}>{speakingError}</div>
+                )}
+                {speakingSaved && (
+                  <div className="save-result ok" style={{ marginTop: 14 }}>
+                    ✓ Speaking homework assigned to {selectedClass?.student_count || 0} students successfully!
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* ── Questions ── */}
           {questions && (

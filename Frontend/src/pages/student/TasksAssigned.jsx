@@ -68,6 +68,470 @@ function detectType(q) {
 }
 
 // ════════════════════════════════════════════════════════
+// SpeakingTask — full-screen audio recorder + AI evaluator
+// ════════════════════════════════════════════════════════
+function SpeakingTask({ task, color, onClose, onSubmitted }) {
+  const [hw, setHw] = useState(null);
+  const [hwLoading, setHwLoading] = useState(true);
+  const [hwError, setHwError] = useState(null);
+
+  const [phase, setPhase] = useState("idle"); // idle | recording | processing | result | error
+  const [recSeconds, setRecSeconds] = useState(0);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [result, setResult] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
+  const [bars, setBars] = useState(Array(32).fill(4));
+
+  const mediaRef = useRef(null);
+  const chunksRef = useRef([]);
+  const timerRef = useRef(null);
+  const analyserRef = useRef(null);
+  const animRef = useRef(null);
+  const streamRef = useRef(null);
+
+  // Fetch homework detail for speaking_passage
+  useEffect(() => {
+    fetch(`${API}/student/homework-detail/${task.id}`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+      .then(r => { if (!r.ok) throw new Error(`Server error ${r.status}`); return r.json(); })
+      .then(data => { setHw(data); setHwLoading(false); })
+      .catch(err => { setHwError(err.message); setHwLoading(false); });
+  }, [task.id]);
+
+  // Waveform animation
+  const startWaveform = (stream) => {
+    const ctx = new AudioContext();
+    const src = ctx.createMediaStreamSource(stream);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 64;
+    src.connect(analyser);
+    analyserRef.current = analyser;
+
+    const update = () => {
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(data);
+      setBars(Array.from(data).map(v => Math.max(4, (v / 255) * 80)));
+      animRef.current = requestAnimationFrame(update);
+    };
+    animRef.current = requestAnimationFrame(update);
+  };
+
+  const stopWaveform = () => {
+    if (animRef.current) cancelAnimationFrame(animRef.current);
+    setBars(Array(32).fill(4));
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      chunksRef.current = [];
+      const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : "audio/webm";
+      const mr = new MediaRecorder(stream, { mimeType: mime });
+      mediaRef.current = mr;
+
+      mr.ondataavailable = e => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+      mr.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: mime });
+        setAudioBlob(blob);
+        setAudioUrl(URL.createObjectURL(blob));
+      };
+
+      mr.start(250);
+      setPhase("recording");
+      setRecSeconds(0);
+
+      timerRef.current = setInterval(() => {
+        setRecSeconds(s => {
+          if (s >= 180) { stopRecording(); return s; }
+          return s + 1;
+        });
+      }, 1000);
+
+      startWaveform(stream);
+    } catch {
+      setPhase("error");
+      setSubmitError("Microphone access denied. Please allow microphone and try again.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (mediaRef.current && mediaRef.current.state !== "inactive") mediaRef.current.stop();
+    if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop());
+    stopWaveform();
+    setPhase("idle");
+  };
+
+  const submitAudio = async () => {
+    if (!audioBlob) return;
+    setPhase("processing");
+    setSubmitError(null);
+    try {
+      const formData = new FormData();
+      formData.append("homework_id", task.id);
+      formData.append("duration_seconds", String(recSeconds || 1));
+      formData.append("audio_file", audioBlob, "recording.webm");
+
+      const res = await fetch(`${API}/speaking/submit`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${getToken()}` },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail?.message || data.detail || "Submission failed");
+      }
+      setResult(data);
+      setPhase("result");
+      onSubmitted(task.id);
+    } catch (err) {
+      setPhase("error");
+      setSubmitError(err.message);
+    }
+  };
+
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+  const scoreColor = (pct) => {
+    if (pct >= 80) return "#34d399";
+    if (pct >= 60) return "#60a5fa";
+    if (pct >= 40) return "#fbbf24";
+    return "#f87171";
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      style={{
+        position: "fixed", inset: 0,
+        background: "#07101f",
+        zIndex: 1000,
+        display: "flex", flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
+      {/* Top bar */}
+      <div style={{
+        padding: "16px 32px",
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        flexShrink: 0,
+        background: "rgba(255,255,255,0.02)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <button
+            onClick={onClose}
+            style={{
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 10, color: "#94a3b8", fontSize: 13, fontWeight: 600,
+              padding: "8px 14px", cursor: "pointer",
+            }}
+          >
+            ← Exit
+          </button>
+          <div>
+            <div style={{ display: "flex", gap: 8 }}>
+              <span style={{ fontSize: 11, color, background: `${color}18`, borderRadius: 6, padding: "3px 10px", fontWeight: 700, textTransform: "uppercase" }}>
+                {task.subject}
+              </span>
+              <span style={{ fontSize: 11, color: "#a78bfa", background: "rgba(167,139,250,0.12)", borderRadius: 6, padding: "3px 10px", fontWeight: 700 }}>
+                🎤 Speaking
+              </span>
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#f1f5f9", marginTop: 4 }}>{task.title}</div>
+          </div>
+        </div>
+        {phase === "recording" && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <motion.div
+              animate={{ opacity: [1, 0] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+              style={{ width: 10, height: 10, borderRadius: "50%", background: "#ef4444" }}
+            />
+            <span style={{ color: "#ef4444", fontWeight: 700, fontSize: 16, fontVariantNumeric: "tabular-nums" }}>
+              {fmt(recSeconds)}
+            </span>
+            <span style={{ color: "#475569", fontSize: 12 }}>/ 3:00</span>
+          </div>
+        )}
+      </div>
+
+      {/* Main content */}
+      <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
+        {hwLoading && (
+          <div style={{ color: "#475569", display: "flex", alignItems: "center", gap: 12 }}>
+            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              style={{ width: 28, height: 28, border: `3px solid ${color}33`, borderTopColor: color, borderRadius: "50%" }} />
+            Loading task…
+          </div>
+        )}
+
+        {hwError && (
+          <div style={{ color: "#fca5a5", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "16px 24px" }}>
+            ⚠️ {hwError}
+          </div>
+        )}
+
+        {/* ── RESULT SCREEN ── */}
+        {phase === "result" && result && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ maxWidth: 600, width: "100%", display: "flex", flexDirection: "column", gap: 20 }}
+          >
+            {/* Score hero */}
+            <div style={{
+              background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: 20, padding: "32px 32px 24px", textAlign: "center",
+            }}>
+              <div style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>Your Speaking Score</div>
+              <div style={{ fontSize: 72, fontWeight: 900, color: scoreColor(result.grade_percentage), lineHeight: 1, letterSpacing: "-0.04em" }}>
+                {result.grade_percentage}%
+              </div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: scoreColor(result.grade_percentage), marginTop: 6 }}>
+                Grade {result.grade_letter}
+              </div>
+              <div style={{ fontSize: 13, color: "#475569", marginTop: 8 }}>
+                {result.scores.total} / {result.scores.max} points
+              </div>
+            </div>
+
+            {/* Score breakdown */}
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: "20px 24px" }}>
+              <div style={{ fontSize: 11, color: "#475569", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 16 }}>Score Breakdown</div>
+              {[
+                { label: "Content Relevance", val: result.scores.content_relevance, max: 3 },
+                { label: "Pronunciation",     val: result.scores.pronunciation,     max: 2 },
+                { label: "Fluency",           val: result.scores.fluency,           max: 2 },
+                { label: "Grammar",           val: result.scores.grammar,           max: 2 },
+                { label: "Confidence",        val: result.scores.confidence,        max: 1 },
+              ].map(({ label, val, max }) => (
+                <div key={label} style={{ marginBottom: 12 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                    <span style={{ fontSize: 12, color: "#94a3b8" }}>{label}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color }}>{val}/{max}</span>
+                  </div>
+                  <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(val / max) * 100}%` }}
+                      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ height: "100%", background: `linear-gradient(90deg, ${color}88, ${color})`, borderRadius: 3 }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Feedback */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {[
+                { label: "💪 Strengths", text: result.feedback.strengths, bg: "rgba(52,211,153,0.06)", border: "rgba(52,211,153,0.2)", col: "#34d399" },
+                { label: "📈 Improvements", text: result.feedback.improvements, bg: "rgba(96,165,250,0.06)", border: "rgba(96,165,250,0.2)", col: "#60a5fa" },
+                { label: "⭐ Encouragement", text: result.feedback.encouragement, bg: "rgba(167,139,250,0.06)", border: "rgba(167,139,250,0.2)", col: "#a78bfa" },
+              ].map(({ label, text, bg, border, col }) => (
+                <div key={label} style={{ background: bg, border: `1px solid ${border}`, borderRadius: 14, padding: "16px 20px" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: col, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</div>
+                  <div style={{ fontSize: 13, color: "#e2e8f0", lineHeight: 1.65 }}>{text || "—"}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Transcript */}
+            {result.transcript && result.transcript !== "[No speech detected]" && (
+              <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "16px 20px" }}>
+                <div style={{ fontSize: 11, color: "#475569", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>📝 AI Transcript</div>
+                <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.7, fontStyle: "italic" }}>"{result.transcript}"</div>
+              </div>
+            )}
+
+            <button
+              onClick={onClose}
+              style={{
+                background: `linear-gradient(135deg, ${color}cc, ${color})`,
+                color: "#0a0f1a", border: "none", borderRadius: 12,
+                padding: "14px 32px", fontSize: 14, fontWeight: 700,
+                cursor: "pointer", boxShadow: `0 4px 20px ${color}44`,
+              }}
+            >
+              Done ✓
+            </button>
+          </motion.div>
+        )}
+
+        {/* ── ERROR STATE ── */}
+        {phase === "error" && (
+          <div style={{ textAlign: "center", maxWidth: 420 }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>😕</div>
+            <div style={{ color: "#fca5a5", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "16px 24px", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
+              {submitError}
+            </div>
+            <button
+              onClick={() => { setPhase("idle"); setAudioBlob(null); setAudioUrl(null); }}
+              style={{ background: color, color: "#0a0f1a", border: "none", borderRadius: 10, padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}
+            >
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {/* ── PROCESSING ── */}
+        {phase === "processing" && (
+          <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+              style={{ width: 56, height: 56, border: `4px solid ${color}22`, borderTopColor: color, borderRadius: "50%" }}
+            />
+            <div style={{ fontSize: 15, color: "#94a3b8", fontWeight: 600 }}>Gemini AI is evaluating your speech…</div>
+            <div style={{ fontSize: 12, color: "#334155" }}>Analysing pronunciation, fluency, grammar, and confidence</div>
+          </div>
+        )}
+
+        {/* ── IDLE / RECORDING STATE ── */}
+        {(phase === "idle" || phase === "recording") && !hwLoading && !hwError && hw && (
+          <div style={{ maxWidth: 560, width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
+
+            {/* Passage card */}
+            <div style={{
+              background: "rgba(255,255,255,0.03)", border: `1px solid ${color}33`,
+              borderRadius: 20, padding: "24px 28px", width: "100%", boxSizing: "border-box",
+            }}>
+              <div style={{ fontSize: 11, color, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>
+                🎤 Speak About This
+              </div>
+              <div style={{ fontSize: 18, fontWeight: 600, color: "#e2e8f0", lineHeight: 1.7 }}>
+                {hw.speaking_passage || hw.title || "Speak about the given topic."}
+              </div>
+              <div style={{ marginTop: 12, fontSize: 12, color: "#334155" }}>
+                Tip: Speak clearly, at a natural pace, in complete sentences.
+              </div>
+            </div>
+
+            {/* Waveform visualizer */}
+            <div style={{
+              height: 80, display: "flex", alignItems: "center", gap: 3,
+              padding: "0 16px",
+            }}>
+              {bars.slice(0, 24).map((h, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ height: phase === "recording" ? h : 4 }}
+                  transition={{ duration: 0.08 }}
+                  style={{
+                    width: 6, borderRadius: 3,
+                    background: phase === "recording"
+                      ? `hsl(${200 + i * 5}, 80%, 65%)`
+                      : "rgba(255,255,255,0.06)",
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Playback (after recording, idle state) */}
+            {phase === "idle" && audioUrl && (
+              <div style={{ width: "100%", boxSizing: "border-box" }}>
+                <div style={{ fontSize: 12, color: "#475569", marginBottom: 8, textAlign: "center" }}>
+                  Recording ready · {fmt(recSeconds)}
+                </div>
+                <audio
+                  src={audioUrl}
+                  controls
+                  style={{
+                    width: "100%", borderRadius: 10,
+                    filter: "invert(1) hue-rotate(180deg) brightness(0.8)",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Controls */}
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+              {phase === "idle" && !audioBlob && (
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={startRecording}
+                  style={{
+                    background: `linear-gradient(135deg, #ef4444cc, #ef4444)`,
+                    color: "#fff", border: "none", borderRadius: 100,
+                    padding: "16px 40px", fontSize: 15, fontWeight: 700,
+                    cursor: "pointer", boxShadow: "0 4px 24px rgba(239,68,68,0.4)",
+                    display: "flex", alignItems: "center", gap: 10,
+                  }}
+                >
+                  🎙️ Start Recording
+                </motion.button>
+              )}
+
+              {phase === "recording" && (
+                <motion.button
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={stopRecording}
+                  style={{
+                    background: "rgba(239,68,68,0.15)", color: "#fca5a5",
+                    border: "2px solid rgba(239,68,68,0.4)", borderRadius: 100,
+                    padding: "14px 36px", fontSize: 15, fontWeight: 700,
+                    cursor: "pointer",
+                    display: "flex", alignItems: "center", gap: 10,
+                  }}
+                >
+                  ⏹ Stop Recording
+                </motion.button>
+              )}
+
+              {phase === "idle" && audioBlob && (
+                <>
+                  <button
+                    onClick={() => { setAudioBlob(null); setAudioUrl(null); setRecSeconds(0); }}
+                    style={{
+                      background: "rgba(255,255,255,0.05)", color: "#64748b",
+                      border: "1px solid rgba(255,255,255,0.1)", borderRadius: 100,
+                      padding: "12px 24px", fontSize: 13, fontWeight: 600, cursor: "pointer",
+                    }}
+                  >
+                    🔄 Re-record
+                  </button>
+                  <motion.button
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={submitAudio}
+                    style={{
+                      background: `linear-gradient(135deg, ${color}cc, ${color})`,
+                      color: "#0a0f1a", border: "none", borderRadius: 100,
+                      padding: "14px 36px", fontSize: 14, fontWeight: 700,
+                      cursor: "pointer", boxShadow: `0 4px 20px ${color}44`,
+                      display: "flex", alignItems: "center", gap: 8,
+                    }}
+                  >
+                    ✓ Submit for Evaluation
+                  </motion.button>
+                </>
+              )}
+            </div>
+
+            {/* Helper text */}
+            {phase === "idle" && !audioBlob && (
+              <div style={{ fontSize: 12, color: "#334155", textAlign: "center" }}>
+                Max recording time: 3 minutes · Minimum: 2 seconds
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+// ════════════════════════════════════════════════════════
 // PhotoUpload — camera / gallery input for text questions
 // ════════════════════════════════════════════════════════
 function PhotoUpload({ color, onPhotoSelected, currentPhoto }) {
@@ -1155,11 +1619,15 @@ function HomeworkCard({ task, color, index, onAttempt }) {
                 }}>
                   {task.task_type}
                 </span>
-                {qCount > 0 && (
+                {task.task_type === "speaking" ? (
+                  <span style={{ fontSize: 11, color: "#a78bfa", background: "rgba(167,139,250,0.1)", borderRadius: 6, padding: "2px 9px", fontWeight: 600 }}>
+                    🎤 Audio Submission
+                  </span>
+                ) : qCount > 0 ? (
                   <span style={{ fontSize: 11, color: "#475569" }}>
                     {qCount} question{qCount !== 1 ? "s" : ""}
                   </span>
-                )}
+                ) : null}
                 {task.teacher_name && (
                   <span style={{ fontSize: 11, color: "#334155" }}>
                     · {task.teacher_name}
@@ -1254,7 +1722,9 @@ function HomeworkCard({ task, color, index, onAttempt }) {
                   boxShadow: `0 4px 12px ${color}33`,
                 }}
               >
-                {task.task_type === "test" ? "Start Test →" : "Start Task →"}
+                {task.task_type === "test" ? "Start Test →"
+                  : task.task_type === "speaking" ? "🎤 Start Speaking →"
+                  : "Start Task →"}
               </motion.button>
             )}
           </div>
@@ -1616,9 +2086,17 @@ export default function TasksAssigned() {
           })()}
       </div>
 
-      {/* Full-screen Quiz overlay */}
+      {/* Full-screen Task overlay — routes by type */}
       <AnimatePresence>
-        {attemptTask && (
+        {attemptTask && attemptTask.task_type === "speaking" ? (
+          <SpeakingTask
+            key={attemptTask.id}
+            task={attemptTask}
+            color={getMeta(attemptTask.subject).color}
+            onClose={() => setAttemptTask(null)}
+            onSubmitted={handleSubmitted}
+          />
+        ) : attemptTask ? (
           <QuizStepper
             key={attemptTask.id}
             task={attemptTask}
@@ -1626,7 +2104,7 @@ export default function TasksAssigned() {
             onClose={() => setAttemptTask(null)}
             onSubmitted={handleSubmitted}
           />
-        )}
+        ) : null}
       </AnimatePresence>
     </>
   );

@@ -75,7 +75,7 @@ def student_dashboard(user=Depends(require_role("student"))):
 
             # All active homework for this subject/class that is NOT overdue (or has no deadline)
             all_hw = list(homework_collection.find(
-                {"class_id": cls["_id"], "subject": t["subject"], "status": "active"},
+                {"class_id": cls["_id"], "subject": t["subject"], "status": {"$ne": "closed"}},
                 {"_id": 1, "deadline": 1}
             ))
             # Exclude overdue tasks from pending consideration
@@ -192,7 +192,7 @@ def get_homework_by_subject(subject: str, user=Depends(require_role("student")))
     homework_list = list(homework_collection.find({
         "class_id": {"$in": class_ids},
         "subject": {"$regex": f"^{subject}$", "$options": "i"},
-        "status": "active"
+        "status": {"$ne": "closed"}
     }).sort("created_at", -1))
 
     # Batch-fetch submissions to avoid N+1
@@ -250,8 +250,9 @@ def get_all_homework(user=Depends(require_role("student"))):
 
     homework_list = list(homework_collection.find({
         "class_id": {"$in": class_ids},
-        "status": "active"
+        "status": {"$ne": "closed"}
     }).sort("created_at", -1))
+
 
     # ── N+1 fix: one query for all submissions ──
     hw_ids = [hw["_id"] for hw in homework_list]
@@ -313,7 +314,7 @@ def get_homework_detail(homework_id: str, user=Depends(require_role("student")))
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid homework ID")
 
-    hw = homework_collection.find_one({"_id": hw_oid, "status": "active"})
+    hw = homework_collection.find_one({"_id": hw_oid, "status": {"$ne": "closed"}})
     if not hw:
         raise HTTPException(status_code=404, detail="Homework not found")
 
@@ -338,6 +339,7 @@ def get_homework_detail(homework_id: str, user=Depends(require_role("student")))
         "deadline": deadline.isoformat() if isinstance(deadline, datetime) else deadline,
         "grade": hw.get("grade", ""),
         "school": hw.get("school", ""),
+        "speaking_passage": hw.get("speaking_passage", ""),
         "submitted": sub is not None,
         "submission_status": sub.get("status") if sub else None,
         "submission_score": sub.get("total_score") if sub else None,
@@ -814,7 +816,7 @@ def student_dashboard(user=Depends(require_role("student"))):
 
             # All active homework for this subject/class
             all_hw = list(homework_collection.find(
-                {"class_id": cls["_id"], "subject": t["subject"], "status": "active"},
+                {"class_id": cls["_id"], "subject": t["subject"], "status": {"$ne": "closed"}},
                 {"_id": 1, "deadline": 1}
             ))
             # Exclude overdue tasks from pending
@@ -937,7 +939,7 @@ def get_homework_by_subject(subject: str, user=Depends(require_role("student")))
     homework_list = list(homework_collection.find({
         "class_id": {"$in": class_ids},
         "subject": {"$regex": f"^{subject}$", "$options": "i"},
-        "status": "active"
+        "status": {"$ne": "closed"}
     }).sort("created_at", -1))
 
     result = []
@@ -973,7 +975,7 @@ def get_all_homework(user=Depends(require_role("student"))):
 
     homework_list = list(homework_collection.find({
         "class_id": {"$in": class_ids},
-        "status": "active"
+        "status": {"$ne": "closed"}
     }).sort("created_at", -1))
 
     result = []

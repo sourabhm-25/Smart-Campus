@@ -51,3 +51,7 @@ langchain-chroma
 
 # --- Other ---
 requests
+
+# --- Computer Vision & Proctoring ---
+ultralytics
+opencv-python
