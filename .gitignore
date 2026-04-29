@@ -18,3 +18,4 @@ Backend/venv/
 .DS_Store
 Thumbs.dbBackend/security_debug.log
 Backend/security_debug.log
+Backend/security_debug.log
