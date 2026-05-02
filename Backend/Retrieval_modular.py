@@ -53,6 +53,7 @@ class TaskRequest(BaseModel):
     custom_fill_in_the_blanks: Optional[int] = None
     custom_true_false: Optional[int] = None
     custom_matching: Optional[int] = None
+    custom_flashcards: Optional[int] = None
 
 
 class SaveQuestionsRequest(BaseModel):
@@ -245,14 +246,14 @@ print("✅ Smart retriever initialized")
 # -----------------------------
 # 6️⃣ Utility Functions
 # -----------------------------
-def extract_json(text: str) -> dict:
+def extract_json(text: str) -> dict | list:
     """Extract JSON from LLM output."""
     text = re.sub(r'```json\s*', '', text)
     text = re.sub(r'```\s*', '', text)
 
-    match = re.search(r'\{.*\}', text, re.DOTALL)
+    match = re.search(r'(\[.*\]|\{.*\})', text, re.DOTALL)
     if not match:
-        raise ValueError("No JSON object found in LLM output")
+        raise ValueError("No JSON object or array found in LLM output")
 
     return json.loads(match.group())
 
@@ -370,10 +371,19 @@ def generate_task(request: TaskRequest):
 
         # ── Step 5: LLM generation ─────────────────────────────────────────────
         rag_chain = prompt_template | llm | StrOutputParser()
-        raw_output = rag_chain.invoke({
-            "context": context_text,
-            "question": topic
-        })
+        try:
+            raw_output = rag_chain.invoke({
+                "context": context_text,
+                "question": topic
+            })
+        except Exception as e:
+            if "RESOURCE_EXHAUSTED" in str(e) or "429" in str(e):
+                raise HTTPException(
+                    status_code=429,
+                    detail="AI service rate limit exceeded. Please wait a moment and try again."
+                )
+            raise HTTPException(status_code=500, detail=f"Failed to generate questions: {str(e)}")
+            
         print(f"🧠 LLM output length: {len(raw_output)} chars")
 
         # ── Step 6: Parse JSON ─────────────────────────────────────────────────
@@ -389,6 +399,63 @@ def generate_task(request: TaskRequest):
             if count > 0 and key not in questions_data:
                 print(f"⚠️  LLM did not return '{key}' — defaulting to empty list")
                 questions_data[key] = []
+
+        # ── Step 6.5: Generate Flashcards ──────────────────────────────────────
+        flashcards = []
+        if request.custom_flashcards is not None and request.custom_flashcards > 0:
+            print(f"📇 Generating {request.custom_flashcards} flashcards...")
+            try:
+                from langchain_core.prompts import PromptTemplate
+                flashcard_prompt = PromptTemplate.from_template("""
+You are a master educator creating study flashcards for a grade {grade} student learning about "{topic}".
+
+Using ONLY the textbook content provided below, create {num_cards} flashcards.
+Some parts of this content might be irrelevant to the topic. Your job is to filter the noise and ONLY use the parts that are directly about "{topic}".
+
+TEXTBOOK CONTENT:
+---
+{context}
+---
+
+STRICT RULES — follow every one:
+1. Each "front" must ask about a CONCEPT, RULE, or REASONING — never ask for a specific number or named fact from a worked example.
+   BAD: "What is 680 divided by 68?" 
+   GOOD: "What shortcut makes dividing multiples of 10 easier?"
+   
+2. Each "back" must explain the WHY or HOW, not just state the answer.
+   BAD: "10."
+   GOOD: "Cancel matching zeros first — 680÷68 becomes 68÷68=1, then restore the zero → 10."
+
+3. Cover DIFFERENT concepts — no two cards should test the same underlying idea.
+   If the content has 5 worked examples of the same formula, create ONE card about the formula, not 5.
+
+4. Hint: A single important keyword from the answer.
+
+Return ONLY a valid JSON array, no markdown, no preamble:
+[
+  {{
+    "front": "conceptual question",
+    "back": "explanation with why/how",
+    "hint": "one trigger word"
+  }}
+]
+""")
+                fc_chain = flashcard_prompt | llm | StrOutputParser()
+                fc_output = fc_chain.invoke({
+                    "grade": request.grade,
+                    "topic": topic,
+                    "num_cards": request.custom_flashcards,
+                    "context": context_text
+                })
+                flashcards = extract_json(fc_output)
+            except Exception as e:
+                if "RESOURCE_EXHAUSTED" in str(e) or "429" in str(e):
+                    raise HTTPException(
+                        status_code=429,
+                        detail="AI service rate limit exceeded while generating flashcards. Please wait a moment and try again."
+                    )
+                print(f"⚠️ Failed to generate flashcards: {e}")
+                flashcards = []
 
         # ── Step 7: Apply deterministic scoring ───────────────────────────────
         scoring_result = apply_scoring(questions_data, request.grade)
@@ -425,6 +492,7 @@ def generate_task(request: TaskRequest):
                 "index": index_name
             },
             "questions": scoring_result.questions,
+            "flashcards": flashcards,
         }
 
         with open(filename, "w", encoding="utf-8") as f:
@@ -447,6 +515,7 @@ def generate_task(request: TaskRequest):
             "grade": request.grade,
             "task_type": request.task_type,
             "questions_json": scoring_result.questions,
+            "flashcards": flashcards,
             "scoring": {
                 "total_marks": scoring_result.total_marks,
                 "grade_band": scoring_result.grade_band,

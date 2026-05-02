@@ -647,6 +647,9 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
   const [warningMessage, setWarningMessage] = useState(null);
   const [testStarted, setTestStarted] = useState(task?.task_type !== "test");
   const [aiReady, setAiReady] = useState(false);
+  const [flashcardGatePassed, setFlashcardGatePassed] = useState(false);
+  const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(0);
+  const [flashcardFlipped, setFlashcardFlipped] = useState(false);
   const autoSubmitRef = useRef();
 
   useEffect(() => {
@@ -657,6 +660,9 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
 
   useEffect(() => {
     if (timeLeft === null || result || submitting) return;
+    if (!testStarted) return;
+    if (hw?.flashcards?.length > 0 && !flashcardGatePassed) return;
+    
     if (timeLeft <= 0) {
       if (autoSubmitRef.current) autoSubmitRef.current();
       return;
@@ -665,7 +671,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
       setTimeLeft(prev => prev - 1);
     }, 1000);
     return () => clearInterval(timerId);
-  }, [timeLeft, result, submitting]);
+  }, [timeLeft, result, submitting, testStarted, flashcardGatePassed, hw]);
 
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
@@ -1547,6 +1553,109 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
           >
             {aiReady ? "Start Test & Enter Fullscreen" : "Loading AI Models..."}
           </button>
+        </div>
+      )}
+
+      {/* ── Flashcard Gate Overlay ── */}
+      {hw?.flashcards?.length > 0 && testStarted && !flashcardGatePassed && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9998,
+          background: "rgba(8,14,26,0.98)", backdropFilter: "blur(10px)",
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          padding: 40, textAlign: "center",
+        }}>
+          <h2 style={{ color: "#e2e8f0", fontSize: 24, marginBottom: 12 }}>Review Your Flashcards</h2>
+          <p style={{ color: "#94a3b8", fontSize: 15, maxWidth: 500, marginBottom: 30 }}>
+            Read and flip the flashcards below to review key concepts before starting.
+          </p>
+          
+          {hw.flashcards[currentFlashcardIndex] && (
+            <div 
+              onClick={() => setFlashcardFlipped(!flashcardFlipped)}
+              style={{ perspective: 1200, maxWidth: 480, width: "100%", height: 320, marginBottom: 30, cursor: "pointer" }}
+            >
+              <motion.div
+                animate={{ rotateY: flashcardFlipped ? 180 : 0 }}
+                transition={{ duration: 0.6, type: "spring", stiffness: 260, damping: 20 }}
+                style={{ width: "100%", height: "100%", transformStyle: "preserve-3d", position: "relative" }}
+              >
+                {/* Front Face */}
+                <div style={{ 
+                  backfaceVisibility: "hidden", position: "absolute", inset: 0,
+                  background: "#fff", padding: 40, borderRadius: 24,
+                  display: "flex", flexDirection: "column", justifyContent: "center",
+                  color: "#0f172a", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.4)"
+                }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#8b5cf6", marginBottom: 16, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    {`Hint: ${hw.flashcards[currentFlashcardIndex].hint}`}
+                  </div>
+                  <div style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.5 }}>
+                    {hw.flashcards[currentFlashcardIndex].front}
+                  </div>
+                  <div style={{ marginTop: "auto", fontSize: 12, color: "#64748b", fontWeight: 500 }}>
+                    (Click card to flip)
+                  </div>
+                </div>
+
+                {/* Back Face */}
+                <div style={{ 
+                  backfaceVisibility: "hidden", position: "absolute", inset: 0,
+                  background: `linear-gradient(135deg, ${color}33, ${color}11)`, border: `1px solid ${color}66`,
+                  padding: 40, borderRadius: 24, transform: "rotateY(180deg)",
+                  display: "flex", flexDirection: "column", justifyContent: "center",
+                  color: "#f8fafc", textAlign: "center", boxShadow: `0 20px 40px ${color}22`
+                }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: color, marginBottom: 16, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                    Answer
+                  </div>
+                  <div style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.5 }}>
+                    {hw.flashcards[currentFlashcardIndex].back}
+                  </div>
+                  <div style={{ marginTop: "auto", fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>
+                    (Click to view question)
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            {currentFlashcardIndex > 0 && (
+              <button 
+                onClick={() => { setCurrentFlashcardIndex(i => i - 1); setFlashcardFlipped(false); }}
+                style={{
+                  background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+                  color: "#e2e8f0", padding: "12px 24px", borderRadius: 12, fontSize: 14, fontWeight: 600, cursor: "pointer",
+                }}
+              >
+                Previous
+              </button>
+            )}
+            <div style={{ color: "#64748b", fontSize: 14, fontWeight: 600 }}>
+              {currentFlashcardIndex + 1} / {hw.flashcards.length}
+            </div>
+            {currentFlashcardIndex < hw.flashcards.length - 1 ? (
+              <button 
+                onClick={() => { setCurrentFlashcardIndex(i => i + 1); setFlashcardFlipped(false); }}
+                style={{
+                  background: color, color: "#0a0f1a", border: "none",
+                  padding: "12px 24px", borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: "pointer",
+                }}
+              >
+                Next Card
+              </button>
+            ) : (
+              <button 
+                onClick={() => setFlashcardGatePassed(true)}
+                style={{
+                  background: "#34d399", color: "#0a0f1a", border: "none",
+                  padding: "12px 24px", borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: "pointer",
+                }}
+              >
+                Proceed to Task
+              </button>
+            )}
+          </div>
         </div>
       )}
     </motion.div>

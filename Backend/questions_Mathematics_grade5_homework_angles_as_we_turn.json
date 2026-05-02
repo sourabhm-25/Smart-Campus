@@ -1,0 +1,95 @@
+{
+  "topic": "angles as we turn",
+  "subject": "Mathematics",
+  "grade": "5",
+  "task_type": "homework",
+  "scoring": {
+    "total_marks": 10,
+    "grade_band": "elementary",
+    "marks_per_type": {
+      "short_answer": 3,
+      "mcq": 1,
+      "fill_in_the_blanks": 1,
+      "true_false": 1,
+      "matching": 2
+    },
+    "count_per_type": {
+      "short_answer": 2,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    },
+    "subtotal_per_type": {
+      "short_answer": 6,
+      "mcq": 2,
+      "fill_in_the_blanks": 2,
+      "true_false": 0,
+      "matching": 0
+    }
+  },
+  "retrieval_info": {
+    "chunks_used": 5,
+    "namespace": "grade5_math",
+    "index": "grade-5"
+  },
+  "questions": {
+    "short_answer": [
+      {
+        "question": "Sam has a robot that starts facing North. The robot makes a 90° clockwise rotation and then another 180° turn. Find the final direction the robot is facing. Show your working.",
+        "answer": "Step 1: A 90° clockwise rotation from North results in the robot facing East. Step 2: A 180° turn from East is a half-circle rotation to the opposite direction. Answer: The robot is facing West.",
+        "marks": 3
+      },
+      {
+        "question": "An engineer is testing a rotating sensor that has turned 270° from its start position. The sensor must complete one full rotation of 360° to finish the test. Calculate how many degrees remain for the rotation. Show your working.",
+        "answer": "Step 1: Identify that a full rotation is 360°. Step 2: Subtract the current rotation from the total: 360° - 270° = 90°. Answer: 90°.",
+        "marks": 3
+      }
+    ],
+    "mcq": [
+      {
+        "question": "A skateboarder performs a trick by spinning 540° in the air. How many full turns and half turns did the skateboarder complete?",
+        "options": [
+          "a) 1 full turn",
+          "b) 1 full turn and 1 quarter turn",
+          "c) 1 full turn and 1 half turn",
+          "d) 2 full turns"
+        ],
+        "answer": "c",
+        "marks": 1
+      },
+      {
+        "question": "A circular pizza is divided into 6 equal slices. What is the angle of the turn for each slice?",
+        "options": [
+          "a) 30°",
+          "b) 60°",
+          "c) 90°",
+          "d) 45°"
+        ],
+        "answer": "b",
+        "marks": 1
+      }
+    ],
+    "fill_in_the_blanks": [
+      {
+        "question": "A clock hand moves from the 12 mark to the 6 mark. This movement represents a turn of _______ degrees.",
+        "answer": "180",
+        "marks": 1
+      },
+      {
+        "question": "If a car wheel makes two complete rotations, the total angle it has turned is _______ degrees.",
+        "answer": "720",
+        "marks": 1
+      }
+    ],
+    "true_false": [],
+    "matching": []
+  },
+  "flashcards": [
+    {
+      "front": "How many 1/2 turns make 1 turn?",
+      "back": "It takes two 1/2 turns to make 1 turn because two halves make a whole.",
+      "hint": "Two"
+    }
+  ]
+}

@@ -340,6 +340,7 @@ def get_homework_detail(homework_id: str, user=Depends(require_role("student")))
         "grade": hw.get("grade", ""),
         "school": hw.get("school", ""),
         "speaking_passage": hw.get("speaking_passage", ""),
+        "flashcards": hw.get("flashcards", []),
         "submitted": sub is not None,
         "submission_status": sub.get("status") if sub else None,
         "submission_score": sub.get("total_score") if sub else None,

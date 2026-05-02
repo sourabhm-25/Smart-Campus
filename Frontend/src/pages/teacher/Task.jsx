@@ -286,6 +286,7 @@ export default function Task() {
   const [taskType, setTaskType] = useState("homework");
   const [testTime, setTestTime] = useState(30);
   const [questions, setQuestions] = useState(null);
+  const [flashcards, setFlashcards] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -330,6 +331,7 @@ export default function Task() {
   const [customMcq, setCustomMcq] = useState("");
   const [customFillInBlanks, setCustomFillInBlanks] = useState("");
   const [customTrueFalse, setCustomTrueFalse] = useState("");
+  const [customFlashcards, setCustomFlashcards] = useState("");
   const [showCustom, setShowCustom] = useState(false);
 
   // Reset speaking form when type changes away from speaking
@@ -409,6 +411,7 @@ export default function Task() {
     setLoading(true);
     setError(null);
     setQuestions(null);
+    setFlashcards(null);
     setSaveResult(null);
 
     try {
@@ -418,15 +421,17 @@ export default function Task() {
       if (customMcq !== "")            body.custom_mcq               = parseInt(customMcq);
       if (customFillInBlanks !== "")   body.custom_fill_in_the_blanks = parseInt(customFillInBlanks);
       if (customTrueFalse !== "" && customTrueFalse !== "0") body.custom_true_false = parseInt(customTrueFalse);
+      if (customFlashcards !== "" && customFlashcards !== "0") body.custom_flashcards = parseInt(customFlashcards);
 
       const res = await axios.post("http://127.0.0.1:8000/generate-task", body);
       if (res.data.retrieval_info?.chunks) {
         console.log("📄 Pinecone Chunks:", res.data.retrieval_info.chunks);
       }
       setQuestions(res.data.questions_json);
+      setFlashcards(res.data.flashcards);
     } catch (err) {
       console.error(err);
-      setError("Failed to generate questions. Please check your server.");
+      setError(err.response?.data?.detail || "Failed to generate questions. Please check your server.");
     } finally {
       setLoading(false);
     }
@@ -453,6 +458,7 @@ export default function Task() {
         title: topic.trim(),
         description: `Task generated for ${topic}`,
         questions,
+        flashcards,
         deadline: deadline + "T23:59:00",
         task_type: taskType,
       };
@@ -654,6 +660,7 @@ export default function Task() {
                         { label: "MCQ",           val: customMcq,         set: setCustomMcq,         max: 20 },
                         { label: "Fill-in-Blank", val: customFillInBlanks,set: setCustomFillInBlanks, max: 10 },
                         { label: "True / False",  val: customTrueFalse,  set: setCustomTrueFalse,   max: 10, placeholder: "0 (excluded by default)" },
+                        { label: "Flashcards",    val: customFlashcards, set: setCustomFlashcards,  max: 10, placeholder: "0 (optional)" },
                       ].map(({ label, val, set, max, placeholder }) => (
                         <div key={label}>
                           <label className="field-label" style={{ fontSize: 12 }}>{label}</label>
@@ -906,6 +913,20 @@ export default function Task() {
                     <div key={i} className="q-card purple">
                       <p className="q-question">{i + 1}. {q.question}</p>
                       <p className="q-answer">Answer: <span>{q.answer}</span></p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Flashcards */}
+              {flashcards?.length > 0 && (
+                <div className="q-type-card teal" style={{ background: '#fdf4ff', borderColor: '#e879f9' }}>
+                  <p className="q-type-title" style={{ color: '#c026d3' }}>Flashcards</p>
+                  {flashcards.map((f, i) => (
+                    <div key={i} className="q-card" style={{ background: '#fff', borderColor: '#f0abfc' }}>
+                      <p className="q-question" style={{ fontSize: '13px', color: '#9333ea', fontWeight: 'bold' }}>Hint: {f.hint}</p>
+                      <p className="q-question">{i + 1}. {f.front}</p>
+                      <p className="q-answer">Back: <span>{f.back}</span></p>
                     </div>
                   ))}
                 </div>
