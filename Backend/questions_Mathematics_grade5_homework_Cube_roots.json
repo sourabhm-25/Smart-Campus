@@ -4,7 +4,7 @@
   "grade": "5",
   "task_type": "homework",
   "scoring": {
-    "total_marks": 10,
+    "total_marks": 6,
     "grade_band": "elementary",
     "marks_per_type": {
       "short_answer": 3,
@@ -14,15 +14,15 @@
       "matching": 2
     },
     "count_per_type": {
-      "short_answer": 2,
-      "mcq": 2,
+      "short_answer": 1,
+      "mcq": 1,
       "fill_in_the_blanks": 2,
       "true_false": 0,
       "matching": 0
     },
     "subtotal_per_type": {
-      "short_answer": 6,
-      "mcq": 2,
+      "short_answer": 3,
+      "mcq": 1,
       "fill_in_the_blanks": 2,
       "true_false": 0,
       "matching": 0
@@ -36,65 +36,49 @@
   "questions": {
     "short_answer": [
       {
-        "question": "A sculptor has a cube-shaped ice block with a volume of 216 cubic centimetres. He needs to find the side length to plan his carving. Find the length of one side. Show your working.",
-        "answer": "Step 1: We need to find ∛216. Step 2: 6 × 6 × 6 = 216, so ∛216 = 6. Answer: The side length is 6 centimetres.",
-        "marks": 3
-      },
-      {
-        "question": "A gift shop uses cube-shaped boxes with a volume of 512 cubic inches. The manager needs to know the height to fit them on a shelf. Find the height of the box. Show your working.",
-        "answer": "Step 1: Find ∛512. Step 2: 8 × 8 × 8 = 512, so ∛512 = 8. Answer: The height of the box is 8 inches.",
+        "question": "A gift box is shaped like a cube and has a volume of 216 cubic centimetres. Sarah needs to find the length of one side to buy ribbon. Find the side length of the box. Show your working.",
+        "answer": "Step 1: We need to find ∛216. Step 2: 6 × 6 × 6 = 216, so ∛216 = 6. Answer: The side length is 6 cm.",
         "marks": 3
       }
     ],
     "mcq": [
       {
-        "question": "A cubic storage box has a volume of 64 cubic centimetres. What is the length of one side?",
-        "options": [
-          "a) 8 cm",
-          "b) 4 cm",
-          "c) 16 cm",
-          "d) 32 cm"
-        ],
-        "answer": "b",
-        "marks": 1
-      },
-      {
-        "question": "A small dice is shaped like a cube with a volume of 8 cubic millimetres. What is the side length?",
-        "options": [
-          "a) 4 mm",
-          "b) 1 mm",
-          "c) 2 mm",
-          "d) 3 mm"
-        ],
-        "answer": "c",
+        "question": "A cubic water tank holds 343 cubic metres of water. What is the height of the tank?",
+        "options": {
+          "A": "7 m",
+          "B": "49 m",
+          "C": "6 m",
+          "D": "8 m"
+        },
+        "answer": "A",
         "marks": 1
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "A construction crew built a cube-shaped room with a volume of 27 cubic metres. The length of one wall is _______ metres.\nA) 3   B) 9   C) 6   D) 4",
-        "options": [
-          "A) 3",
-          "B) 9",
-          "C) 6",
-          "D) 4"
-        ],
-        "answer": "A",
+        "question": "A sculptor carves a cube of ice with a volume of 729 cubic inches. The length of one side of this ice cube is _______ inches.",
+        "answer": "9",
         "marks": 1
       },
       {
-        "question": "A large cube-shaped aquarium has a volume of 1,000 cubic litres. The length of one side of the aquarium is _______ decimetres.\nA) 10   B) 20   C) 100   D) 5",
-        "options": [
-          "A) 10",
-          "B) 20",
-          "C) 100",
-          "D) 5"
-        ],
-        "answer": "A",
+        "question": "When we calculate the cube root of 64, the final result is _______.",
+        "answer": "4",
         "marks": 1
       }
     ],
     "true_false": [],
     "matching": []
-  }
+  },
+  "flashcards": [
+    {
+      "front": "How can you use repeated multiplication to verify the cube root of a value like 1,000?",
+      "back": "To verify a cube root, you multiply a factor by itself three times. Since 10 × 10 × 10 = 1,000, 10 is confirmed as the cube root because it is the base value that produces the total product.",
+      "hint": "Triple"
+    },
+    {
+      "front": "What is the relationship between a base factor and a product like 8 in cube root reasoning?",
+      "back": "The cube root is the specific value that, when used as a factor three times (2 × 2 × 2), results in the perfect cube. For the number 8, the cube root is 2.",
+      "hint": "Base"
+    }
+  ]
 }

@@ -187,18 +187,31 @@ def apply_scoring(questions_data: dict, grade: str) -> ScoringResult:
                 print(f"⚠️  Skipping {qtype.value}[{idx}]: empty question text")
                 continue
 
-            # Edge case: MCQ missing options or options not a list
+            # Edge case: MCQ missing options or options not a list/dict
             if qtype == QuestionType.MCQ:
                 opts = q.get("options")
-                if not isinstance(opts, list) or len(opts) < 2:
-                    print(f"⚠️  Skipping MCQ[{idx}]: invalid options → {opts}")
+                if isinstance(opts, dict):
+                    # Keep dict but ensure it has 4 options
+                    keys = list(opts.keys())
+                    if len(keys) < 4:
+                        for i in range(len(keys), 4):
+                            opts[chr(65+i)] = "—"
+                    elif len(keys) > 4:
+                        opts = {k: opts[k] for k in keys[:4]}
+                    q["options"] = opts
+                elif isinstance(opts, list):
+                    if len(opts) < 2:
+                        print(f"⚠️  Skipping MCQ[{idx}]: invalid options → {opts}")
+                        continue
+                    # Normalize options to exactly 4 if LLM returned 3 or 5
+                    if len(opts) < 4:
+                        opts += ["—"] * (4 - len(opts))
+                        q["options"] = opts[:4]
+                    elif len(opts) > 4:
+                        q["options"] = opts[:4]
+                else:
+                    print(f"⚠️  Skipping MCQ[{idx}]: invalid options format → {type(opts)}")
                     continue
-                # Normalize options to exactly 4 if LLM returned 3 or 5
-                if len(opts) < 4:
-                    opts += ["—"] * (4 - len(opts))
-                    q["options"] = opts[:4]
-                elif len(opts) > 4:
-                    q["options"] = opts[:4]
 
             # Edge case: true_false answer not boolean-like
             if qtype == QuestionType.TRUE_FALSE:

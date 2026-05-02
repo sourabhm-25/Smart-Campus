@@ -272,6 +272,29 @@ const css = `
   .q-type-title.teal   { color:#0f766e; }
   .q-type-title.purple { color:#7c3aed; }
 
+  /* ── edit controls ── */
+  .q-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .btn-icon { background: none; border: none; cursor: pointer; color: #94a3b8; transition: color 0.2s, background 0.2s; padding: 4px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+  .btn-icon:hover { color: #ef4444; background: #fee2e2; }
+  
+  .inline-input {
+    width: 100%; border: 1px dashed transparent; background: transparent;
+    font-family: inherit; font-size: inherit; color: inherit; font-weight: inherit;
+    padding: 4px 6px; margin: -4px -6px; border-radius: 6px;
+    transition: all 0.2s; outline: none;
+  }
+  textarea.inline-input { resize: vertical; min-height: 28px; line-height: 1.55; }
+  .inline-input:hover { border-color: #cbd5e1; background: rgba(255,255,255,0.5); }
+  .inline-input:focus { border-color: #6366f1; background: #fff; border-style: solid; box-shadow: 0 0 0 2px rgba(99,102,241,0.1); }
+
+  .btn-add-q {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    background: rgba(255,255,255,0.6); border: 1.5px dashed #cbd5e1; color: #475569;
+    cursor: pointer; transition: all 0.2s; margin-top: 8px; width: 100%; justify-content: center;
+  }
+  .btn-add-q:hover { background: #fff; border-color: #94a3b8; color: #1e293b; }
+
   @media (max-width: 640px) {
     .q-options { grid-template-columns: 1fr; }
     .assign-panel { padding: 24px 18px; }
@@ -405,6 +428,75 @@ export default function Task() {
     fetchDefaults();
   }, [grade]);
 
+  const handleUpdateQuestion = (type, index, field, value) => {
+    setQuestions(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev };
+      if (!updated[type]) updated[type] = [];
+      updated[type] = [...updated[type]];
+      updated[type][index] = { ...updated[type][index], [field]: value };
+      return updated;
+    });
+  };
+
+  const handleUpdateMcqOption = (index, optionKey, value) => {
+    setQuestions(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev };
+      updated.mcq = [...(updated.mcq || [])];
+      updated.mcq[index] = {
+        ...updated.mcq[index],
+        options: { ...updated.mcq[index].options, [optionKey]: value }
+      };
+      return updated;
+    });
+  };
+
+  const handleDeleteQuestion = (type, index) => {
+    setQuestions(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev };
+      updated[type] = (updated[type] || []).filter((_, i) => i !== index);
+      return updated;
+    });
+  };
+
+  const handleAddQuestion = (type) => {
+    setQuestions(prev => {
+      if (!prev) return prev;
+      const updated = { ...prev };
+      if (!updated[type]) updated[type] = [];
+      updated[type] = [...updated[type]];
+      if (type === 'mcq') {
+        updated[type].push({ question: "", options: { "A": "", "B": "", "C": "", "D": "" }, answer: "" });
+      } else {
+        updated[type].push({ question: "", answer: "" });
+      }
+      return updated;
+    });
+  };
+
+  const handleUpdateFlashcard = (index, field, value) => {
+    setFlashcards(prev => {
+      if (!prev) return prev;
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const handleDeleteFlashcard = (index) => {
+    setFlashcards(prev => prev ? prev.filter((_, i) => i !== index) : prev);
+  };
+
+  const handleAddFlashcard = () => {
+    setFlashcards(prev => {
+      const updated = prev ? [...prev] : [];
+      updated.push({ front: "", back: "", hint: "" });
+      return updated;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!grade || !subject || !topic.trim()) return;
@@ -427,8 +519,13 @@ export default function Task() {
       if (res.data.retrieval_info?.chunks) {
         console.log("📄 Pinecone Chunks:", res.data.retrieval_info.chunks);
       }
-      setQuestions(res.data.questions_json);
-      setFlashcards(res.data.flashcards);
+      setQuestions({
+        short_answer: res.data.questions_json.short_answer || [],
+        mcq: res.data.questions_json.mcq || [],
+        fill_in_the_blanks: res.data.questions_json.fill_in_the_blanks || [],
+        true_false: res.data.questions_json.true_false || []
+      });
+      setFlashcards(res.data.flashcards || []);
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.detail || "Failed to generate questions. Please check your server.");
@@ -862,73 +959,138 @@ export default function Task() {
               <h2 className="section-heading">Generated Questions</h2>
 
               {/* Short Answer */}
-              {questions.short_answer?.length > 0 && (
+              {questions.short_answer && (
                 <div className="q-type-card blue">
                   <p className="q-type-title blue">Short Answer</p>
                   {questions.short_answer.map((q, i) => (
                     <div key={i} className="q-card blue">
-                      <p className="q-question">{i + 1}. {q.question}</p>
-                      <p className="q-answer">Answer: <span>{q.answer}</span></p>
+                      <div className="q-header-row">
+                        <span style={{fontWeight: 600, fontSize: 13, color: '#3b82f6'}}>Question {i + 1}</span>
+                        <button type="button" className="btn-icon" onClick={() => handleDeleteQuestion('short_answer', i)} title="Delete Question">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        </button>
+                      </div>
+                      <div className="q-question" style={{ display: 'flex', gap: '6px' }}>
+                        <span style={{marginTop: '5px'}}>{i + 1}.</span>
+                        <textarea className="inline-input" rows={2} value={q.question} onChange={e => handleUpdateQuestion('short_answer', i, 'question', e.target.value)} placeholder="Enter question..." />
+                      </div>
+                      <div className="q-answer" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        Answer: <input type="text" className="inline-input" style={{flex: 1, color: '#059669', fontWeight: 600}} value={q.answer} onChange={e => handleUpdateQuestion('short_answer', i, 'answer', e.target.value)} placeholder="Enter answer..." />
+                      </div>
                     </div>
                   ))}
+                  <button type="button" className="btn-add-q" onClick={() => handleAddQuestion('short_answer')}>+ Add Short Answer</button>
                 </div>
               )}
 
               {/* MCQ */}
-              {questions.mcq?.length > 0 && (
+              {questions.mcq && (
                 <div className="q-type-card orange">
                   <p className="q-type-title orange">Multiple Choice</p>
                   {questions.mcq.map((q, i) => (
                     <div key={i} className="q-card orange">
-                      <p className="q-question">{i + 1}. {q.question}</p>
+                      <div className="q-header-row">
+                        <span style={{fontWeight: 600, fontSize: 13, color: '#f97316'}}>Question {i + 1}</span>
+                        <button type="button" className="btn-icon" onClick={() => handleDeleteQuestion('mcq', i)} title="Delete Question">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        </button>
+                      </div>
+                      <div className="q-question" style={{ display: 'flex', gap: '6px' }}>
+                        <span style={{marginTop: '5px'}}>{i + 1}.</span>
+                        <textarea className="inline-input" rows={2} value={q.question} onChange={e => handleUpdateQuestion('mcq', i, 'question', e.target.value)} placeholder="Enter question..." />
+                      </div>
                       <div className="q-options">
                         {Object.entries(q.options).map(([k, v]) => (
-                          <div key={k} className="q-option">{k}: {v}</div>
+                          <div key={k} className="q-option" style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                            <span style={{fontWeight: 600}}>{k}:</span>
+                            <input type="text" className="inline-input" style={{flex: 1}} value={v} onChange={e => handleUpdateMcqOption(i, k, e.target.value)} placeholder={`Option ${k}`} />
+                          </div>
                         ))}
                       </div>
-                      <p className="q-answer">Answer: <span>{q.answer}</span></p>
+                      <div className="q-answer" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        Answer: <input type="text" className="inline-input" style={{width: '60px', color: '#059669', fontWeight: 600}} value={q.answer} onChange={e => handleUpdateQuestion('mcq', i, 'answer', e.target.value)} placeholder="e.g. A" />
+                      </div>
                     </div>
                   ))}
+                  <button type="button" className="btn-add-q" onClick={() => handleAddQuestion('mcq')}>+ Add MCQ</button>
                 </div>
               )}
 
               {/* Fill in the Blanks */}
-              {questions.fill_in_the_blanks?.length > 0 && (
+              {questions.fill_in_the_blanks && (
                 <div className="q-type-card teal">
                   <p className="q-type-title teal">Fill in the Blanks</p>
                   {questions.fill_in_the_blanks.map((q, i) => (
                     <div key={i} className="q-card teal">
-                      <p className="q-question">{i + 1}. {q.question}</p>
-                      <p className="q-answer">Answer: <span>{q.answer}</span></p>
+                      <div className="q-header-row">
+                        <span style={{fontWeight: 600, fontSize: 13, color: '#14b8a6'}}>Question {i + 1}</span>
+                        <button type="button" className="btn-icon" onClick={() => handleDeleteQuestion('fill_in_the_blanks', i)} title="Delete Question">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        </button>
+                      </div>
+                      <div className="q-question" style={{ display: 'flex', gap: '6px' }}>
+                        <span style={{marginTop: '5px'}}>{i + 1}.</span>
+                        <textarea className="inline-input" rows={2} value={q.question} onChange={e => handleUpdateQuestion('fill_in_the_blanks', i, 'question', e.target.value)} placeholder="Enter question..." />
+                      </div>
+                      <div className="q-answer" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        Answer: <input type="text" className="inline-input" style={{flex: 1, color: '#059669', fontWeight: 600}} value={q.answer} onChange={e => handleUpdateQuestion('fill_in_the_blanks', i, 'answer', e.target.value)} placeholder="Enter answer..." />
+                      </div>
                     </div>
                   ))}
+                  <button type="button" className="btn-add-q" onClick={() => handleAddQuestion('fill_in_the_blanks')}>+ Add Fill-in-Blank</button>
                 </div>
               )}
 
               {/* True/False */}
-              {questions.true_false?.length > 0 && (
+              {questions.true_false && (
                 <div className="q-type-card purple">
                   <p className="q-type-title purple">True / False</p>
                   {questions.true_false.map((q, i) => (
                     <div key={i} className="q-card purple">
-                      <p className="q-question">{i + 1}. {q.question}</p>
-                      <p className="q-answer">Answer: <span>{q.answer}</span></p>
+                      <div className="q-header-row">
+                        <span style={{fontWeight: 600, fontSize: 13, color: '#a855f7'}}>Question {i + 1}</span>
+                        <button type="button" className="btn-icon" onClick={() => handleDeleteQuestion('true_false', i)} title="Delete Question">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        </button>
+                      </div>
+                      <div className="q-question" style={{ display: 'flex', gap: '6px' }}>
+                        <span style={{marginTop: '5px'}}>{i + 1}.</span>
+                        <textarea className="inline-input" rows={2} value={q.question} onChange={e => handleUpdateQuestion('true_false', i, 'question', e.target.value)} placeholder="Enter question..." />
+                      </div>
+                      <div className="q-answer" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        Answer: <input type="text" className="inline-input" style={{flex: 1, color: '#059669', fontWeight: 600}} value={q.answer} onChange={e => handleUpdateQuestion('true_false', i, 'answer', e.target.value)} placeholder="True or False..." />
+                      </div>
                     </div>
                   ))}
+                  <button type="button" className="btn-add-q" onClick={() => handleAddQuestion('true_false')}>+ Add True/False</button>
                 </div>
               )}
 
               {/* Flashcards */}
-              {flashcards?.length > 0 && (
+              {flashcards && (
                 <div className="q-type-card teal" style={{ background: '#fdf4ff', borderColor: '#e879f9' }}>
                   <p className="q-type-title" style={{ color: '#c026d3' }}>Flashcards</p>
                   {flashcards.map((f, i) => (
                     <div key={i} className="q-card" style={{ background: '#fff', borderColor: '#f0abfc' }}>
-                      <p className="q-question" style={{ fontSize: '13px', color: '#9333ea', fontWeight: 'bold' }}>Hint: {f.hint}</p>
-                      <p className="q-question">{i + 1}. {f.front}</p>
-                      <p className="q-answer">Back: <span>{f.back}</span></p>
+                      <div className="q-header-row">
+                        <span style={{fontWeight: 600, fontSize: 13, color: '#c026d3'}}>Flashcard {i + 1}</span>
+                        <button type="button" className="btn-icon" onClick={() => handleDeleteFlashcard(i)} title="Delete Flashcard">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        </button>
+                      </div>
+                      <div className="q-question" style={{ fontSize: '13px', color: '#9333ea', fontWeight: 'bold', display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        Hint: <input type="text" className="inline-input" style={{flex: 1, color: '#9333ea'}} value={f.hint} onChange={e => handleUpdateFlashcard(i, 'hint', e.target.value)} placeholder="Hint..." />
+                      </div>
+                      <div className="q-question" style={{ display: 'flex', gap: '6px' }}>
+                        <span style={{marginTop: '5px'}}>{i + 1}.</span>
+                        <textarea className="inline-input" rows={2} value={f.front} onChange={e => handleUpdateFlashcard(i, 'front', e.target.value)} placeholder="Front of flashcard..." />
+                      </div>
+                      <div className="q-answer" style={{ display: 'flex', gap: '6px' }}>
+                        Back: <textarea className="inline-input" rows={2} style={{flex: 1, color: '#059669', fontWeight: 600}} value={f.back} onChange={e => handleUpdateFlashcard(i, 'back', e.target.value)} placeholder="Back of flashcard..." />
+                      </div>
                     </div>
                   ))}
+                  <button type="button" className="btn-add-q" onClick={handleAddFlashcard}>+ Add Flashcard</button>
                 </div>
               )}
 

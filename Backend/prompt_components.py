@@ -769,20 +769,74 @@ These belong on an English or Science paper. They MUST NOT appear on a Maths pap
 If you cannot think of a computation for a slot — write a harder sum instead.
 """
             output_format_examples = """
-Each question object should include:
-- short_answer:      {{"question": "Riya has a cube-shaped fish tank with volume 512 litres. Find the side length. Show your working.", "answer": "Step 1: Find ∛512. Step 2: 8 × 8 × 8 = 512. Answer: 8 litres.", "marks": X}}
-- mcq:               {{"question": "A cubic box has volume 125 cm³. What is the side length?", "options": ["a) 5 cm", "b) 25 cm", "c) 15 cm", "d) 10 cm"], "answer": "a", "marks": X}}
-- fill_in_the_blanks:{{"question": "A cube-shaped box has a volume of 125 cm³. The side length of this box is _______ cm.", "answer": "5", "marks": X}}
-- true_false:        {{"question": "∛64 = 4", "answer": "false", "marks": X}}"""
+STRICT JSON STRUCTURE REQUIRED:
+{{
+  "short_answer": [
+    {{
+      "question": "Riya has a cube-shaped fish tank with volume 512 litres. Find the side length. Show your working.",
+      "answer": "Step 1: Find ∛512. Step 2: 8 × 8 × 8 = 512. Answer: 8 litres.",
+      "marks": "X"
+    }}
+  ],
+  "mcq": [
+    {{
+      "question": "A cubic box has volume 125 cm³. What is the side length?",
+      "options": {{"A": "5 cm", "B": "25 cm", "C": "15 cm", "D": "10 cm"}},
+      "answer": "A",
+      "marks": "X"
+    }}
+  ],
+  "fill_in_the_blanks": [
+    {{
+      "question": "A cube-shaped box has a volume of 125 cm³. The side length of this box is _______ cm.",
+      "answer": "5",
+      "marks": "X"
+    }}
+  ],
+  "true_false": [
+    {{
+      "question": "∛64 = 4",
+      "answer": "false",
+      "marks": "X"
+    }}
+  ]
+}}"""
         else:
             math_override = ""
             rule_7 = ""
             output_format_examples = """
-Each question object should include:
-- For short_answer:      {{"question": "...", "answer": "...", "marks": X}}
-- For mcq:               {{"question": "...", "options": ["a) ...", "b) ...", "c) ...", "d) ..."], "answer": "a", "marks": X}}
-- For fill_in_the_blanks:{{"question": "...", "answer": "...", "marks": X}}
-- For true_false:        {{"question": "...", "answer": "true/false", "marks": X}}"""
+STRICT JSON STRUCTURE REQUIRED:
+{{
+  "short_answer": [
+    {{
+      "question": "...",
+      "answer": "...",
+      "marks": "X"
+    }}
+  ],
+  "mcq": [
+    {{
+      "question": "...",
+      "options": {{"A": "...", "B": "...", "C": "...", "D": "..."}},
+      "answer": "A",
+      "marks": "X"
+    }}
+  ],
+  "fill_in_the_blanks": [
+    {{
+      "question": "...",
+      "answer": "...",
+      "marks": "X"
+    }}
+  ],
+  "true_false": [
+    {{
+      "question": "...",
+      "answer": "true",
+      "marks": "X"
+    }}
+  ]
+}}"""
 
         # Combine all components into final template
         math_intro = "Think exactly like a school mathematics teacher setting an exam paper." if is_math else ""
