@@ -36,60 +36,54 @@
   "questions": {
     "short_answer": [
       {
-        "question": "Sam has a robot that starts facing North. The robot makes a 90° clockwise rotation and then another 180° turn. Find the final direction the robot is facing. Show your working.",
-        "answer": "Step 1: A 90° clockwise rotation from North results in the robot facing East. Step 2: A 180° turn from East is a half-circle rotation to the opposite direction. Answer: The robot is facing West.",
+        "question": "Leo has a toy robot that faces North. It turns 90° clockwise and then turns another 180° clockwise. Find the total degrees the robot turned. Show your working.",
+        "answer": "Step 1: Add the first turn of 90° to the second turn of 180°. Step 2: 90 + 180 = 270. Answer: The total turn is 270 degrees.",
         "marks": 3
       },
       {
-        "question": "An engineer is testing a rotating sensor that has turned 270° from its start position. The sensor must complete one full rotation of 360° to finish the test. Calculate how many degrees remain for the rotation. Show your working.",
-        "answer": "Step 1: Identify that a full rotation is 360°. Step 2: Subtract the current rotation from the total: 360° - 270° = 90°. Answer: 90°.",
+        "question": "Maya is watching a lighthouse lamp rotate in a full circle of 360°. The lamp has already turned 125° from the starting point. Find how many more degrees the lamp must turn to finish the circle. Show your working.",
+        "answer": "Step 1: Subtract the degrees already turned from the full circle of 360°. Step 2: 360 - 125 = 235. Answer: The lamp must turn 235 degrees more.",
         "marks": 3
       }
     ],
     "mcq": [
       {
-        "question": "A skateboarder performs a trick by spinning 540° in the air. How many full turns and half turns did the skateboarder complete?",
-        "options": [
-          "a) 1 full turn",
-          "b) 1 full turn and 1 quarter turn",
-          "c) 1 full turn and 1 half turn",
-          "d) 2 full turns"
-        ],
-        "answer": "c",
+        "question": "A professional ice skater performs a half-turn jump in the air. How many degrees did the skater rotate during the jump?",
+        "options": {
+          "A": "90°",
+          "B": "180°",
+          "C": "270°",
+          "D": "360°"
+        },
+        "answer": "B",
         "marks": 1
       },
       {
-        "question": "A circular pizza is divided into 6 equal slices. What is the angle of the turn for each slice?",
-        "options": [
-          "a) 30°",
-          "b) 60°",
-          "c) 90°",
-          "d) 45°"
-        ],
-        "answer": "b",
+        "question": "A driver turns a steering wheel exactly a quarter of a full circle. How many degrees did the driver turn the wheel?",
+        "options": {
+          "A": "45°",
+          "B": "90°",
+          "C": "180°",
+          "D": "360°"
+        },
+        "answer": "B",
         "marks": 1
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "A clock hand moves from the 12 mark to the 6 mark. This movement represents a turn of _______ degrees.",
+        "question": "A clock hand moves from the 12 to the 6 to make a straight line. This represents a turn of _______ degrees.",
         "answer": "180",
         "marks": 1
       },
       {
-        "question": "If a car wheel makes two complete rotations, the total angle it has turned is _______ degrees.",
-        "answer": "720",
+        "question": "An owl turns its head exactly three-quarters of a full circle. The owl has turned _______ degrees.",
+        "answer": "270",
         "marks": 1
       }
     ],
     "true_false": [],
     "matching": []
   },
-  "flashcards": [
-    {
-      "front": "How many 1/2 turns make 1 turn?",
-      "back": "It takes two 1/2 turns to make 1 turn because two halves make a whole.",
-      "hint": "Two"
-    }
-  ]
+  "flashcards": []
 }
