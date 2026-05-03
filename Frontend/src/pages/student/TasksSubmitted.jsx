@@ -20,11 +20,12 @@ const getMeta = (name = "") =>
   SUBJECT_META[name.toLowerCase()] || { icon: "📚", color: "#94a3b8" };
 
 function gradeColor(grade) {
-  if (!grade) return "#94a3b8";
-  if (grade.startsWith("A")) return "#34d399";
-  if (grade.startsWith("B")) return "#60a5fa";
-  if (grade.startsWith("C")) return "#fbbf24";
-  if (grade.startsWith("D")) return "#fb923c";
+  if (!grade || typeof grade !== "string") return "#94a3b8";
+  const g = grade.toUpperCase();
+  if (g.startsWith("A")) return "#34d399";
+  if (g.startsWith("B")) return "#60a5fa";
+  if (g.startsWith("C")) return "#fbbf24";
+  if (g.startsWith("D")) return "#fb923c";
   return "#f87171";
 }
 
@@ -60,8 +61,17 @@ function ScoreRing({ pct, color, size = 56 }) {
 // ── Submitted task card ──────────────────────────────────
 function SubmittedCard({ task, color, index }) {
   const [expanded, setExpanded] = useState(false);
-  const pct = task.percentage ?? Math.round(((task.submission_score ?? 0) / (task.total_marks || 1)) * 100);
-  const grade = task.grade || "";
+  let pct = task.percentage ?? Math.round(((task.submission_score ?? 0) / (task.total_marks || 1)) * 100);
+  if (isNaN(pct)) pct = 0;
+  
+  let grade = task.grade;
+  // If the grade is missing or is just a class grade number (e.g. "10", 10), we fallback to calculating it.
+  if (!grade || !isNaN(grade) || !/^[A-F][+-]?$/.test(String(grade).toUpperCase())) {
+    grade = pct >= 90 ? "A+" : pct >= 80 ? "A" : pct >= 70 ? "B+" : pct >= 60 ? "B" : pct >= 50 ? "C" : pct >= 40 ? "D" : "F";
+  } else {
+    grade = String(grade).toUpperCase();
+  }
+  
   const gColor = gradeColor(grade);
 
   const submittedAt = task.submitted_at
@@ -244,7 +254,7 @@ function SubjectGroup({ subject, index }) {
   const [open, setOpen] = useState(true);
   const { color } = subject;
   const avgPct = subject.tasks > 0
-    ? Math.round(subject.homeworkList.reduce((s, h) => s + (h.percentage ?? 0), 0) / subject.tasks)
+    ? Math.round(subject.homeworkList.reduce((s, h) => s + (isNaN(h.percentage) ? 0 : (h.percentage ?? 0)), 0) / subject.tasks)
     : 0;
 
   return (
@@ -448,7 +458,7 @@ export default function TasksSubmitted() {
         // Group by subject
         const grouped = {};
         for (const hw of enriched) {
-          const key = (hw.subject || "General").trim();
+          const key = (hw.subject ? String(hw.subject) : "General").trim();
           if (!grouped[key]) {
             const meta = getMeta(key);
             grouped[key] = { id: key.toLowerCase().replace(/\s+/g, "-"), name: key, icon: meta.icon, color: meta.color, tasks: 0, homeworkList: [] };
@@ -511,7 +521,7 @@ export default function TasksSubmitted() {
 
   const totalSubmitted = subjects.reduce((s, sub) => s + sub.tasks, 0);
   const overallPct = totalSubmitted > 0
-    ? Math.round(subjects.reduce((s, sub) => s + sub.homeworkList.reduce((a, h) => a + (h.percentage ?? 0), 0), 0) / totalSubmitted)
+    ? Math.round(subjects.reduce((s, sub) => s + sub.homeworkList.reduce((a, h) => a + (isNaN(h.percentage) ? 0 : (h.percentage ?? 0)), 0), 0) / totalSubmitted)
     : 0;
 
   if (loading) return (
