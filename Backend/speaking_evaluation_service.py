@@ -56,6 +56,9 @@ class ScoreBreakdown(BaseModel):
     grammar: int
     confidence: int
     total: int
+    # ── new field: tells the frontend why the total is 0 even if other
+    #    scores look good, so the UI can show a clear explanation.
+    content_gate_triggered: bool = False
 
     @field_validator("content_relevance")
     @classmethod
@@ -136,14 +139,31 @@ TOPIC:
 "{topic}"
 
 TASK:
-Listen to the audio carefully and evaluate the student's spoken response.
+1. Listen to the audio carefully.
+2. TRANSCRIBE EXACTLY AND ONLY THE WORDS YOU HEAR IN THE AUDIO.
+3. NEVER invent, guess, or hallucinate a response based on the prompt or topic. If the audio contains only silence, background noise, or no recognizable speech, you MUST output transcript: "[No speech detected]" and score everything as 0.
+4. If valid speech is detected, evaluate the student's spoken response based on the rubric.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  CRITICAL CONTENT GATE RULE (read first):
+  • Evaluate ALL five dimensions regardless of topic relevance.
+  • BUT: if content_relevance == 0 (student spoke about a completely
+    different topic, or was silent), the "total" field MUST be 0.
+  • Even if the student had perfect pronunciation, fluency, grammar and
+    confidence while talking about the wrong topic, their total is 0.
+  • Still report the true pronunciation/fluency/grammar/confidence scores
+    so the student can see what they did well mechanically — but total = 0.
+  • Set content_gate_triggered = true when this rule fires.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 SCORING RUBRIC (be fair and constructive — these scores help students improve):
+
 1. content_relevance (0–3): Did the student speak about the given prompt/topic?
    - 3: Fully relevant, accurate content, answered the prompt well
    - 2: Mostly relevant, one minor factual error or slight drift
    - 1: Vaguely related, mostly off-topic or incomplete
-   - 0: No relevant content or completely silent
+   - 0: Completely off-topic (e.g., spoke about themselves when asked about India),
+        completely silent, or no relevant content at all
 
 2. pronunciation (0–2): Can the words be clearly understood?
    - 2: Clear and understandable throughout
@@ -164,11 +184,16 @@ SCORING RUBRIC (be fair and constructive — these scores help students improve)
    - 1: Reasonably confident delivery
    - 0: Very nervous, inaudible, or extremely rushed
 
+TOTAL CALCULATION:
+  • If content_relevance >= 1: total = sum of all five scores (max 10)
+  • If content_relevance == 0: total = 0  ← CONTENT GATE (still show other scores)
+
 IMPORTANT RULES:
-- If the audio is silent, return all zeros and transcript = "[No speech detected]"
+- CRITICAL: DO NOT HALLUCINATE. If the student did not speak, do not invent a response for them.
+- If the audio is silent, contains only background noise, or no actual words are spoken, you MUST return all zeros and transcript = "[No speech detected]".
 - If audio is corrupted or inaudible, return error_code = "AUDIO_UNPROCESSABLE"
-- Transcribe EXACTLY what was said, including filler words (um, uh, like)
-- total = sum of all five scores (max 10)
+- Transcribe EXACTLY what was said, including filler words (um, uh, like).
+- grade_letter and grade_percentage are computed from total (not raw sum)
 - grade_letter: A=9-10, B=7-8, C=5-6, D=3-4, F=0-2
 - grade_percentage = (total / 10) * 100
 
@@ -181,11 +206,12 @@ Return ONLY valid JSON, no markdown, no explanation:
     "fluency": <int>,
     "grammar": <int>,
     "confidence": <int>,
-    "total": <int>
+    "total": <int>,
+    "content_gate_triggered": <bool>
   }},
   "feedback": {{
-    "strengths": "<1-2 specific things done well, for grade {grade} level>",
-    "improvements": "<1-2 specific, actionable improvements>",
+    "strengths": "<if content gate triggered, acknowledge their mechanical skills (pronunciation/fluency/grammar) but note the topic mismatch clearly. Otherwise, 1-2 specific things done well, for grade {grade} level>",
+    "improvements": "<if content gate triggered, make the first improvement: speak about the assigned topic. Otherwise, 1-2 specific, actionable improvements>",
     "encouragement": "<one warm, motivating sentence for a {level_desc}>"
   }},
   "grade_letter": "<A/B/C/D/F>",
@@ -353,6 +379,48 @@ async def _call_gemini(
 
 
 def _validate_and_repair_scores(raw: dict) -> dict:
+    """
+    Validates Gemini's output and applies the content gate server-side.
+
+    CONTENT GATE (server-side enforcement):
+      Even if Gemini ignores the prompt instruction and returns a non-zero
+      total when content_relevance == 0, we override it here.  This is the
+      authoritative enforcement point — the prompt instruction is advisory,
+      this function is mandatory.
+    """
+    if not isinstance(raw.get("transcript"), str):
+        raw["transcript"] = ""
+
+    transcript_lower = raw["transcript"].strip().lower()
+    is_silent = (
+        not transcript_lower
+        or "[no speech detected]" in transcript_lower
+        or "no speech detected" in transcript_lower
+        or "audio is silent" in transcript_lower
+        or transcript_lower == "[]"
+    )
+
+    if is_silent:
+        return {
+            "transcript": "[No speech detected]",
+            "scores": {
+                "content_relevance": 0,
+                "pronunciation": 0,
+                "fluency": 0,
+                "grammar": 0,
+                "confidence": 0,
+                "total": 0,
+                "content_gate_triggered": True
+            },
+            "feedback": {
+                "strengths": "None.",
+                "improvements": "No speech was detected in the recording. Please ensure your microphone is working and speak clearly.",
+                "encouragement": "Don't worry, check your microphone and try again!"
+            },
+            "grade_letter": "F",
+            "grade_percentage": 0.0
+        }
+
     required_keys = {"transcript", "scores", "feedback", "grade_letter", "grade_percentage"}
     missing = required_keys - set(raw.keys())
     if missing:
@@ -376,7 +444,19 @@ def _validate_and_repair_scores(raw: dict) -> dict:
         val = int(scores.get(key, 0))
         repaired_scores[key] = max(lo, min(hi, val))
 
-    repaired_scores["total"] = sum(repaired_scores[k] for k in limits)
+    # ── CONTENT GATE ──────────────────────────────────────────────────────
+    # If the student spoke about a completely irrelevant topic, their total
+    # is 0.  Other dimension scores are preserved and returned to the
+    # frontend (so the student sees their mechanical speaking quality) but
+    # they do NOT count toward the grade.
+    content_gate_triggered = repaired_scores["content_relevance"] == 0
+    if content_gate_triggered:
+        repaired_scores["total"] = 0
+    else:
+        repaired_scores["total"] = sum(repaired_scores[k] for k in limits)
+    # ──────────────────────────────────────────────────────────────────────
+
+    repaired_scores["content_gate_triggered"] = content_gate_triggered
 
     total = repaired_scores["total"]
     grade_percentage = round((total / MAX_SCORE) * 100, 1)
@@ -399,10 +479,17 @@ def _validate_and_repair_scores(raw: dict) -> dict:
     for fkey in ("strengths", "improvements", "encouragement"):
         if fkey not in feedback or not isinstance(feedback[fkey], str):
             feedback[fkey] = ""
-    raw["feedback"] = feedback
 
-    if not isinstance(raw.get("transcript"), str):
-        raw["transcript"] = ""
+    # If the gate fired but Gemini didn't tailor the feedback, inject a
+    # clear override so the student always knows why they got 0.
+    if content_gate_triggered and feedback.get("improvements"):
+        if "topic" not in feedback["improvements"].lower():
+            feedback["improvements"] = (
+                "Make sure to speak about the assigned topic. "
+                + feedback["improvements"]
+            )
+
+    raw["feedback"] = feedback
 
     return raw
 

@@ -646,11 +646,26 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
   const [warnings, setWarnings] = useState(0);
   const [warningMessage, setWarningMessage] = useState(null);
   const [testStarted, setTestStarted] = useState(task?.task_type !== "test");
+  const [cameraActive, setCameraActive] = useState(true);
   const [aiReady, setAiReady] = useState(false);
   const [flashcardGatePassed, setFlashcardGatePassed] = useState(false);
   const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(0);
   const [flashcardFlipped, setFlashcardFlipped] = useState(false);
   const autoSubmitRef = useRef();
+
+  const requestFS = useCallback(async () => {
+    try {
+      const el = document.documentElement;
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+        if (el.requestFullscreen) await el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
+        else if (el.mozRequestFullScreen) await el.mozRequestFullScreen();
+        else if (el.msRequestFullscreen) await el.msRequestFullscreen();
+      }
+    } catch (err) {
+      console.warn("Fullscreen request failed", err);
+    }
+  }, []);
 
   useEffect(() => {
     if (hw?.task_type === "test" && hw?.time_limit) {
@@ -710,6 +725,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
   const goPrev = () => step > 0 && goTo(step - 1);
 
   const handleSubmit = async () => {
+    setCameraActive(false); // ✅ Kill camera instantly before submit process starts
     setSubmitting(true);
     setSubmitError(null);
     try {
@@ -789,6 +805,16 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     });
   }, [submitting, result]);
 
+  // Nuclear fallback — whenever result is set (any submission path), kill camera
+  useEffect(() => {
+    if (result) setCameraActive(false);
+  }, [result]);
+
+  // Also kill on unmount — covers edge cases like parent closing the overlay
+  useEffect(() => {
+    return () => setCameraActive(false);
+  }, []);
+
   // Fullscreen Lockdown for Tests
   useEffect(() => {
     if (task.task_type !== "test") return;
@@ -796,15 +822,6 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     if (!testStarted) return; // Wait until they click Start Test
 
     // Request fullscreen
-    const requestFS = async () => {
-      try {
-        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
-          await document.documentElement.requestFullscreen();
-        }
-      } catch (err) {
-        console.warn("Fullscreen request failed", err);
-      }
-    };
     requestFS();
 
     let hiddenTimeout = null;
@@ -823,21 +840,34 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     };
 
     const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) handleViolation("You exited fullscreen mode.");
+      const isFullscreen = document.fullscreenElement || 
+                           document.webkitFullscreenElement || 
+                           document.mozFullScreenElement || 
+                           document.msFullscreenElement;
+      if (!isFullscreen) handleViolation("You exited fullscreen mode.");
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+    document.addEventListener("MSFullscreenChange", handleFullscreenChange);
 
     return () => {
       if (hiddenTimeout) clearTimeout(hiddenTimeout);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
+      if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
       }
     };
-  }, [task.task_type, submitting, result]);
+  }, [task.task_type, submitting, result, testStarted, handleViolation, requestFS]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -1503,9 +1533,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
           <button
             onClick={() => {
               setWarningMessage(null);
-              if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(() => {});
-              }
+              requestFS();
             }}
             style={{
               background: "#ef4444", color: "#fff", border: "none",
@@ -1519,7 +1547,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
       )}
 
       {/* ── AI Proctoring Camera ── */}
-      {task.task_type === "test" && !submitting && !result && !warningMessage && (
+      {task.task_type === "test" && cameraActive && !warningMessage && (
         <ProctoringCamera onViolation={handleViolation} onReady={() => setAiReady(true)} />
       )}
 
@@ -1539,9 +1567,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
             disabled={!aiReady}
             onClick={() => {
               setTestStarted(true);
-              if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(() => {});
-              }
+              requestFS();
             }}
             style={{
               background: aiReady ? color : "rgba(255,255,255,0.1)", 

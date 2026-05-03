@@ -51,6 +51,9 @@ export default function ProctoringCamera({ onViolation, onReady, onRiskUpdate })
   const riskScore        = useRef(0);
   const lastCheckTime    = useRef(Date.now());
   const gazeAwayStreak   = useRef(0);   // consecutive gaze-away detections
+  const streamRef        = useRef(null);
+  const faceTimerRef     = useRef(null);
+  const detectorRef      = useRef(null);
 
   const [statusFace,  setStatusFace]  = useState("Initializing…");
   const [statusYolo,  setStatusYolo]  = useState("⏳ Loading YOLOv8s…");
@@ -145,10 +148,49 @@ export default function ProctoringCamera({ onViolation, onReady, onRiskUpdate })
   useEffect(() => {
     let detector;
 
+    const hardStopCamera = () => {
+      console.log("🔥 HARD STOP CAMERA");
+      loopActive.current = false;
+      if (yoloTimerRef.current) clearInterval(yoloTimerRef.current);
+      if (faceTimerRef.current) clearTimeout(faceTimerRef.current);
+      
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => {
+          track.stop();
+          console.log("stopped track:", track.kind);
+        });
+        streamRef.current = null;
+      }
+      if (videoRef.current) {
+        try { videoRef.current.pause(); } catch(e){}
+        videoRef.current.srcObject = null;
+        try { videoRef.current.load(); } catch(e){}
+      }
+      if (detectorRef.current) {
+        try { detectorRef.current.close?.(); } catch (e) {}
+        try { detectorRef.current.dispose?.(); } catch (e) {}
+        detectorRef.current = null;
+      }
+    };
+
+    const killAllWebcams = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        console.log("devices:", devices);
+
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+        }
+      } catch (e) {
+        console.warn("Failed to kill webcams", e);
+      }
+    };
+
     const init = async () => {
       try {
         setStatusFace("Requesting camera…");
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        streamRef.current = stream;
         if (videoRef.current) videoRef.current.srcObject = stream;
 
         setStatusFace("Loading face AI…");
@@ -159,6 +201,7 @@ export default function ProctoringCamera({ onViolation, onReady, onRiskUpdate })
           faceDetection.SupportedModels.MediaPipeFaceDetector,
           { runtime: "tfjs", maxFaces: 3 }
         );
+        detectorRef.current = detector;
 
         setStatusFace("Proctoring Active");
         if (onReady) onReady();
@@ -252,17 +295,14 @@ export default function ProctoringCamera({ onViolation, onReady, onRiskUpdate })
         }
       }
 
-      setTimeout(faceLoop, FACE_INTERVAL_MS);
+      faceTimerRef.current = setTimeout(faceLoop, FACE_INTERVAL_MS);
     };
 
     init();
 
     return () => {
-      loopActive.current = false;
-      clearInterval(yoloTimerRef.current);
-      if (videoRef.current?.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(t => t.stop());
-      }
+      hardStopCamera();
+      killAllWebcams();
     };
   }, [addRisk, sendFrameToYolo]);
 

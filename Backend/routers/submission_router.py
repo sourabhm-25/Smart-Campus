@@ -145,18 +145,18 @@ async def submit_homework(
     if task_type == "test" and is_overdue:
         # Hard-lock: auto-insert a zero submission so teacher can see the miss
         questions = _normalize_questions(hw.get("questions", []))
-        total_marks = sum(int(q.get("marks", q.get("max_marks", 1))) for q in questions)
+        total_marks = len(questions)
         zero_answers = [
             {
                 "question_index": i,
                 "question": q.get("question") or q.get("text", f"Q{i+1}"),
                 "correct_answer": q.get("answer") or q.get("correct_answer", ""),
-                "marks": int(q.get("marks", q.get("max_marks", 1))),
+                "marks": 1,
                 "student_answer": "",
                 "has_photo": False,
                 "evaluation": {
                     "score": 0,
-                    "max_score": int(q.get("marks", q.get("max_marks", 1))),
+                    "max_score": 1,
                     "feedback": "Not attempted — test deadline passed.",
                     "confidence": 1.0,
                     "low_confidence": False,
@@ -205,17 +205,15 @@ async def submit_homework(
     # ── Evaluate each answer ──────────────────────────────────────────────
     evaluated_answers = []
     total_score  = 0
-    total_marks  = 0
+    total_marks  = len(questions)
 
-    for ans_item in answers_payload:
-        idx = ans_item.get("question_index", 0)
-        if idx >= len(questions):
-            continue
-
-        q = questions[idx]
+    for idx, q in enumerate(questions):
         q_text       = q.get("question") or q.get("text") or f"Question {idx + 1}"
         correct_ans  = q.get("answer") or q.get("correct_answer") or ""
-        marks        = int(q.get("marks", q.get("max_marks", 1)))
+        marks        = 1  # Force exactly 1 mark per question
+        
+        # Find matching answer from payload
+        ans_item = next((a for a in answers_payload if a.get("question_index") == idx), {})
         q_type       = (ans_item.get("type") or q.get("type") or "short_answer").lower()
 
         # Rubric: prefer stored rubric, auto-generate if missing
@@ -257,7 +255,6 @@ async def submit_homework(
             )
 
         total_score += eval_result.get("score", 0)
-        total_marks += marks
 
         evaluated_answers.append({
             "question_index": idx,
@@ -567,13 +564,15 @@ def _evaluate_text_answer(
 # ─────────────────────────────────────────────────────────────────────────────
 def _normalize_questions(raw) -> list:
     if isinstance(raw, list):
-        return raw
+        return [q for q in raw if str(q.get("type", "")).lower() != "flashcard"]
     if isinstance(raw, dict):
         all_q = []
         for key, val in raw.items():
+            if str(key).lower() == "flashcard": continue
             if isinstance(val, list):
                 for q in val:
-                    all_q.append({**q, "type": q.get("type", key)})
+                    if str(q.get("type", key)).lower() != "flashcard":
+                        all_q.append({**q, "type": q.get("type", key)})
         return all_q
     return []
 
