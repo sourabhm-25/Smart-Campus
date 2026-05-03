@@ -17,7 +17,7 @@ const SUBJECT_META = {
   geography:   { icon: "🗺️", color: "#22d3ee" },
 };
 const getMeta = (name = "") =>
-  SUBJECT_META[name.toLowerCase()] || { icon: "📚", color: "#94a3b8" };
+  SUBJECT_META[name.toLowerCase()] || { icon: "📚", color: "#071521" };
 
 function gradeColor(grade) {
   if (!grade || typeof grade !== "string") return "#94a3b8";
@@ -103,7 +103,7 @@ function SubmittedCard({ task, color, index }) {
         <div style={{ flex: 1, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: "#e2e8f0", marginBottom: 6, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#071521", marginBottom: 6, lineHeight: 1.4 }}>
                 {task.title}
               </div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
@@ -114,7 +114,7 @@ function SubmittedCard({ task, color, index }) {
                   {task.task_type}
                 </span>
                 {submittedAt && (
-                  <span style={{ fontSize: 11, color: "#475569" }}>Submitted {submittedAt}</span>
+                  <span style={{ fontSize: 11, color: "#071521" }}>Submitted {submittedAt}</span>
                 )}
                 {(task.is_late || task.submission_status === "late" || task.status === "late") && !task.deadline_missed && (
                   <span style={{
@@ -143,7 +143,7 @@ function SubmittedCard({ task, color, index }) {
                 }}>
                   {grade || "—"}
                 </div>
-                <div style={{ fontSize: 10, color: "#475569", marginTop: 3 }}>Grade</div>
+                <div style={{ fontSize: 10, color: "#071521", marginTop: 3 }}>Grade</div>
               </div>
             </div>
           </div>
@@ -161,7 +161,7 @@ function SubmittedCard({ task, color, index }) {
                   style={{ height: "100%", background: `linear-gradient(90deg, ${color}88, ${gColor})`, borderRadius: 99 }}
                 />
               </div>
-              <div style={{ fontSize: 11, color: "#475569", marginTop: 4 }}>
+              <div style={{ fontSize: 11, color: "#071521", marginTop: 4 }}>
                 {task.submission_score ?? "?"} / {task.total_marks ?? "?"} marks
               </div>
             </div>
@@ -213,7 +213,7 @@ function SubmittedCard({ task, color, index }) {
                 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 4, lineHeight: 1.5 }}>
+                      <div style={{ fontSize: 12, color: "#071521", marginBottom: 4, lineHeight: 1.5 }}>
                         <span style={{
                           fontSize: 10, color, background: `${color}18`,
                           borderRadius: 4, padding: "1px 7px", fontWeight: 700,
@@ -293,8 +293,8 @@ function SubjectGroup({ subject, index }) {
             {subject.icon}
           </div>
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#e2e8f0" }}>{subject.name}</div>
-            <div style={{ fontSize: 12, color: "#475569", marginTop: 2 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#071521" }}>{subject.name}</div>
+            <div style={{ fontSize: 12, color: "#071521", marginTop: 2 }}>
               {subject.tasks} submitted · Avg {avgPct}%
             </div>
           </div>
@@ -374,10 +374,10 @@ function OldTaskHistory({ subjects }) {
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: 20 }}>📂</span>
           <div style={{ textAlign: "left" }}>
-            <div style={{ fontSize: 15, fontWeight: 700, color: "#e2e8f0" }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#071521" }}>
               Old Task History
             </div>
-            <div style={{ fontSize: 12, color: "#475569", marginTop: 2 }}>
+            <div style={{ fontSize: 12, color: "#071521", marginTop: 2 }}>
               {totalOld} past task{totalOld !== 1 ? "s" : ""} · Click to {open ? "collapse" : "expand"}
             </div>
           </div>
@@ -558,12 +558,12 @@ export default function TasksSubmitted() {
         <h1 style={{
           fontFamily: "'Sora', sans-serif",
           fontWeight: 800, fontSize: 24,
-          color: "#f1f5f9", margin: "0 0 8px",
+          color: "#071521", margin: "0 0 8px",
         }}>
           Tasks Submitted
         </h1>
         {totalSubmitted > 0 && (
-          <div style={{ fontSize: 13, color: "#475569", display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ fontSize: 13, color: "#071521", display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ color: "#34d399", fontWeight: 600 }}>{totalSubmitted} task{totalSubmitted !== 1 ? "s" : ""} completed</span>
             <span>·</span>
             <span>Overall avg
@@ -580,7 +580,7 @@ export default function TasksSubmitted() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          style={{ color: "#475569", textAlign: "center", padding: "80px 0" }}
+          style={{ color: "#071521", textAlign: "center", padding: "80px 0" }}
         >
           <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
           <div style={{ fontSize: 16, fontWeight: 600, color: "#334155" }}>No submitted tasks yet.</div>
@@ -594,7 +594,7 @@ export default function TasksSubmitted() {
             <>
               {/* Section label */}
               <div style={{
-                fontSize: 11, fontWeight: 700, color: "#475569",
+                fontSize: 11, fontWeight: 700, color: "#071521",
                 textTransform: "uppercase", letterSpacing: "0.1em",
                 marginBottom: 16, display: "flex", alignItems: "center", gap: 10,
               }}>
@@ -614,7 +614,7 @@ export default function TasksSubmitted() {
               animate={{ opacity: 1 }}
               style={{
                 textAlign: "center", padding: "40px 0 20px",
-                color: "#475569", fontSize: 14,
+                color: "#071521", fontSize: 14,
               }}
             >
               <div style={{ fontSize: 32, marginBottom: 10 }}>✅</div>

@@ -22,7 +22,7 @@ const SUBJECT_META = {
   geography: { icon: "🗺️", color: "#22d3ee" },
 };
 const getMeta = (name = "") =>
-  SUBJECT_META[name.toLowerCase()] || { icon: "📚", color: "#94a3b8" };
+  SUBJECT_META[name.toLowerCase()] || { icon: "📚", color: "#37383aff" };
 
 // ─────────────────────────────
 // Helpers
@@ -230,7 +230,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
             onClick={onClose}
             style={{
               background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
-              borderRadius: 10, color: "#94a3b8", fontSize: 13, fontWeight: 600,
+              borderRadius: 10, color: "#1a1a1bff", fontSize: 13, fontWeight: 600,
               padding: "8px 14px", cursor: "pointer",
             }}
           >
@@ -245,7 +245,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
                 🎤 Speaking
               </span>
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: "#f1f5f9", marginTop: 4 }}>{task.title}</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#44494eff", marginTop: 4 }}>{task.title}</div>
           </div>
         </div>
         {phase === "recording" && (
@@ -258,7 +258,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
             <span style={{ color: "#ef4444", fontWeight: 700, fontSize: 16, fontVariantNumeric: "tabular-nums" }}>
               {fmt(recSeconds)}
             </span>
-            <span style={{ color: "#475569", fontSize: 12 }}>/ 3:00</span>
+            <span style={{ color: "#071521", fontSize: 12 }}>/ 3:00</span>
           </div>
         )}
       </div>
@@ -266,7 +266,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
       {/* Main content */}
       <div style={{ flex: 1, overflow: "auto", display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 24px" }}>
         {hwLoading && (
-          <div style={{ color: "#475569", display: "flex", alignItems: "center", gap: 12, margin: "auto 0" }}>
+          <div style={{ color: "#071521", display: "flex", alignItems: "center", gap: 12, margin: "auto 0" }}>
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               style={{ width: 28, height: 28, border: `3px solid ${color}33`, borderTopColor: color, borderRadius: "50%" }} />
             Loading task…
@@ -291,31 +291,31 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
               background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: 20, padding: "32px 32px 24px", textAlign: "center",
             }}>
-              <div style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>Your Speaking Score</div>
+              <div style={{ fontSize: 14, color: "#071521", marginBottom: 12 }}>Your Speaking Score</div>
               <div style={{ fontSize: 72, fontWeight: 900, color: scoreColor(result.grade_percentage), lineHeight: 1, letterSpacing: "-0.04em" }}>
                 {result.grade_percentage}%
               </div>
               <div style={{ fontSize: 28, fontWeight: 800, color: scoreColor(result.grade_percentage), marginTop: 6 }}>
                 Grade {result.grade_letter}
               </div>
-              <div style={{ fontSize: 13, color: "#475569", marginTop: 8 }}>
+              <div style={{ fontSize: 13, color: "#071521", marginTop: 8 }}>
                 {result.scores.total} / {result.scores.max} points
               </div>
             </div>
 
             {/* Score breakdown */}
             <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 16, padding: "20px 24px" }}>
-              <div style={{ fontSize: 11, color: "#475569", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 16 }}>Score Breakdown</div>
+              <div style={{ fontSize: 11, color: "#071521", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 16 }}>Score Breakdown</div>
               {[
                 { label: "Content Relevance", val: result.scores.content_relevance, max: 3 },
-                { label: "Pronunciation",     val: result.scores.pronunciation,     max: 2 },
-                { label: "Fluency",           val: result.scores.fluency,           max: 2 },
-                { label: "Grammar",           val: result.scores.grammar,           max: 2 },
-                { label: "Confidence",        val: result.scores.confidence,        max: 1 },
+                { label: "Pronunciation", val: result.scores.pronunciation, max: 2 },
+                { label: "Fluency", val: result.scores.fluency, max: 2 },
+                { label: "Grammar", val: result.scores.grammar, max: 2 },
+                { label: "Confidence", val: result.scores.confidence, max: 1 },
               ].map(({ label, val, max }) => (
                 <div key={label} style={{ marginBottom: 12 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                    <span style={{ fontSize: 12, color: "#94a3b8" }}>{label}</span>
+                    <span style={{ fontSize: 12, color: "#313437ff" }}>{label}</span>
                     <span style={{ fontSize: 12, fontWeight: 700, color }}>{val}/{max}</span>
                   </div>
                   <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
@@ -339,7 +339,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
               ].map(({ label, text, bg, border, col }) => (
                 <div key={label} style={{ background: bg, border: `1px solid ${border}`, borderRadius: 14, padding: "16px 20px" }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: col, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</div>
-                  <div style={{ fontSize: 13, color: "#e2e8f0", lineHeight: 1.65 }}>{text || "—"}</div>
+                  <div style={{ fontSize: 13, color: "#091c35ff", lineHeight: 1.65 }}>{text || "—"}</div>
                 </div>
               ))}
             </div>
@@ -347,8 +347,8 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
             {/* Transcript */}
             {result.transcript && result.transcript !== "[No speech detected]" && (
               <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "16px 20px" }}>
-                <div style={{ fontSize: 11, color: "#475569", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>📝 AI Transcript</div>
-                <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.7, fontStyle: "italic" }}>"{result.transcript}"</div>
+                <div style={{ fontSize: 11, color: "#031c3fff", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>📝 AI Transcript</div>
+                <div style={{ fontSize: 13, color: "#102a4fff", lineHeight: 1.7, fontStyle: "italic" }}>"{result.transcript}"</div>
               </div>
             )}
 
@@ -390,7 +390,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
               transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
               style={{ width: 56, height: 56, border: `4px solid ${color}22`, borderTopColor: color, borderRadius: "50%" }}
             />
-            <div style={{ fontSize: 15, color: "#94a3b8", fontWeight: 600 }}>Gemini AI is evaluating your speech…</div>
+            <div style={{ fontSize: 15, color: "#041123ff", fontWeight: 600 }}>Gemini AI is evaluating your speech…</div>
             <div style={{ fontSize: 12, color: "#334155" }}>Analysing pronunciation, fluency, grammar, and confidence</div>
           </div>
         )}
@@ -407,7 +407,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
               <div style={{ fontSize: 11, color, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>
                 🎤 Speak About This
               </div>
-              <div style={{ fontSize: 18, fontWeight: 600, color: "#e2e8f0", lineHeight: 1.7 }}>
+              <div style={{ fontSize: 18, fontWeight: 600, color: "#14253cff", lineHeight: 1.7 }}>
                 {hw.speaking_passage || hw.title || "Speak about the given topic."}
               </div>
               <div style={{ marginTop: 12, fontSize: 12, color: "#334155" }}>
@@ -438,7 +438,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
             {/* Playback (after recording, idle state) */}
             {phase === "idle" && audioUrl && (
               <div style={{ width: "100%", boxSizing: "border-box" }}>
-                <div style={{ fontSize: 12, color: "#475569", marginBottom: 8, textAlign: "center" }}>
+                <div style={{ fontSize: 12, color: "#071521", marginBottom: 8, textAlign: "center" }}>
                   Recording ready · {fmt(recSeconds)}
                 </div>
                 <audio
@@ -461,7 +461,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
                   onClick={startRecording}
                   style={{
                     background: `linear-gradient(135deg, #ef4444cc, #ef4444)`,
-                    color: "#fff", border: "none", borderRadius: 100,
+                    color: "#530606ff", border: "none", borderRadius: 100,
                     padding: "16px 40px", fontSize: 15, fontWeight: 700,
                     cursor: "pointer", boxShadow: "0 4px 24px rgba(239,68,68,0.4)",
                     display: "flex", alignItems: "center", gap: 10,
@@ -493,7 +493,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
                   <button
                     onClick={() => { setAudioBlob(null); setAudioUrl(null); setRecSeconds(0); }}
                     style={{
-                      background: "rgba(255,255,255,0.05)", color: "#64748b",
+                      background: "rgba(255,255,255,0.05)", color: "#525252ff",
                       border: "1px solid rgba(255,255,255,0.1)", borderRadius: 100,
                       padding: "12px 24px", fontSize: 13, fontWeight: 600, cursor: "pointer",
                     }}
@@ -548,7 +548,7 @@ function PhotoUpload({ color, onPhotoSelected, currentPhoto }) {
   return (
     <div style={{ marginTop: 12 }}>
       <div style={{
-        fontSize: 11, color: "#475569", marginBottom: 8,
+        fontSize: 11, color: "#071521", marginBottom: 8,
         textTransform: "uppercase", letterSpacing: "0.07em",
       }}>
         — or attach a photo of your handwritten answer —
@@ -572,7 +572,7 @@ function PhotoUpload({ color, onPhotoSelected, currentPhoto }) {
               position: "absolute", top: 6, right: 6,
               background: "rgba(0,0,0,0.7)", border: "none",
               borderRadius: "50%", width: 24, height: 24,
-              color: "#fff", fontSize: 14, cursor: "pointer",
+              color: "#071521", fontSize: 14, cursor: "pointer",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}
           >×</button>
@@ -590,7 +590,7 @@ function PhotoUpload({ color, onPhotoSelected, currentPhoto }) {
               padding: "10px 18px", borderRadius: 10, cursor: "pointer",
               background: `${color}12`,
               border: `1px solid ${color}33`,
-              color: "#94a3b8", fontSize: 13, fontWeight: 600,
+              color: "#071521", fontSize: 13, fontWeight: 600,
               transition: "all 0.15s",
             }}
           >
@@ -607,7 +607,7 @@ function PhotoUpload({ color, onPhotoSelected, currentPhoto }) {
               padding: "10px 18px", borderRadius: 10, cursor: "pointer",
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.1)",
-              color: "#94a3b8", fontSize: 13, fontWeight: 600,
+              color: "#071521", fontSize: 13, fontWeight: 600,
               transition: "all 0.15s",
             }}
           >
@@ -677,7 +677,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     if (timeLeft === null || result || submitting) return;
     if (!testStarted) return;
     if (hw?.flashcards?.length > 0 && !flashcardGatePassed) return;
-    
+
     if (timeLeft <= 0) {
       if (autoSubmitRef.current) autoSubmitRef.current();
       return;
@@ -792,7 +792,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
 
   const handleViolation = useCallback((reason = null) => {
     if (submitting || result) return;
-    
+
     setWarnings(prev => {
       const next = prev + 1;
       if (next >= 3) {
@@ -840,10 +840,10 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     };
 
     const handleFullscreenChange = () => {
-      const isFullscreen = document.fullscreenElement || 
-                           document.webkitFullscreenElement || 
-                           document.mozFullScreenElement || 
-                           document.msFullscreenElement;
+      const isFullscreen = document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
       if (!isFullscreen) handleViolation("You exited fullscreen mode.");
     };
 
@@ -861,7 +861,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
       document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
       document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
       if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => { });
         else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
         else if (document.msExitFullscreen) document.msExitFullscreen();
@@ -920,7 +920,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
               style={{
                 background: "rgba(255,255,255,0.06)",
                 border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 10, color: "#94a3b8",
+                borderRadius: 10, color: "#071521",
                 fontSize: 13, fontWeight: 600,
                 padding: "8px 14px", cursor: "pointer",
                 display: "flex", alignItems: "center", gap: 6,
@@ -959,7 +959,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                 {task.subject}
               </span>
               <span style={{
-                fontSize: 11, color: "#475569",
+                fontSize: 11, color: "#071521",
                 background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: "3px 10px",
                 textTransform: "capitalize",
               }}>
@@ -987,7 +987,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                 );
               })()}
             </div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: "#f1f5f9", marginTop: 4 }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#071521", marginTop: 4 }}>
               {task.title}
             </div>
           </div>
@@ -1002,7 +1002,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
             textAlign: "center",
           }}>
             <div style={{ fontSize: 18, fontWeight: 800, color }}>
-              {step + 1}<span style={{ fontSize: 12, color: "#475569", fontWeight: 500 }}>/{total}</span>
+              {step + 1}<span style={{ fontSize: 12, color: "#071521", fontWeight: 500 }}>/{total}</span>
             </div>
             <div style={{ fontSize: 10, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>
               {answeredCount} answered
@@ -1038,7 +1038,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                 borderRadius: "50%",
               }}
             />
-            <div style={{ color: "#475569", fontSize: 14 }}>Loading questions…</div>
+            <div style={{ color: "#071521", fontSize: 14 }}>Loading questions…</div>
           </div>
         )}
 
@@ -1057,7 +1057,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                   onClick={onClose}
                   style={{
                     background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: 8, padding: "8px 20px", color: "#94a3b8",
+                    borderRadius: 8, padding: "8px 20px", color: "#071521",
                     fontSize: 13, cursor: "pointer",
                   }}
                 >
@@ -1072,7 +1072,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
         {!loading && !fetchError && !result && total === 0 && (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
             <div style={{ fontSize: 48 }}>📭</div>
-            <div style={{ fontSize: 15, color: "#475569" }}>No questions found for this task.</div>
+            <div style={{ fontSize: 15, color: "#071521" }}>No questions found for this task.</div>
             <div style={{ fontSize: 12, color: "#334155" }}>Contact your teacher for more information.</div>
           </div>
         )}
@@ -1188,7 +1188,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
 
                   {/* Question text */}
                   <div style={{
-                    fontSize: 18, fontWeight: 600, color: "#e2e8f0",
+                    fontSize: 18, fontWeight: 600, color: "#071521",
                     lineHeight: 1.7, marginBottom: 28,
                     paddingLeft: 16,
                     borderLeft: `3px solid ${color}55`,
@@ -1201,7 +1201,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                     const options = current.options || current.choices || [];
                     const letters = ["A", "B", "C", "D", "E"];
                     if (options.length === 0) return (
-                      <div style={{ color: "#475569", fontSize: 13 }}>⚠️ No options provided for this MCQ.</div>
+                      <div style={{ color: "#071521", fontSize: 13 }}>⚠️ No options provided for this MCQ.</div>
                     );
                     return (
                       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -1335,7 +1335,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                           border: `1.5px solid ${(answers[step] ?? "").trim() ? color + "55" : "rgba(255,255,255,0.1)"}`,
                           borderRadius: 12,
                           padding: "14px 18px",
-                          fontSize: 14, color: "#e2e8f0",
+                          fontSize: 14, color: "#071521",
                           resize: "vertical", outline: "none",
                           fontFamily: "inherit", lineHeight: 1.65,
                           boxSizing: "border-box",
@@ -1364,7 +1364,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                             border: `1.5px solid ${(answers[step] ?? "").trim() ? color + "55" : "rgba(255,255,255,0.1)"}`,
                             borderRadius: 12,
                             padding: "14px 18px",
-                            fontSize: 14, color: "#e2e8f0",
+                            fontSize: 14, color: "#071521",
                             resize: "vertical", outline: "none",
                             fontFamily: "inherit", lineHeight: 1.65,
                             boxSizing: "border-box",
@@ -1505,9 +1505,9 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
           </div>
 
           {/* Status Text (Right, clear of camera if in test mode) */}
-          <div style={{ 
-            fontSize: 12, color: "#334155", textAlign: "right", 
-            paddingRight: task.task_type === "test" ? 260 : 0 
+          <div style={{
+            fontSize: 12, color: "#334155", textAlign: "right",
+            paddingRight: task.task_type === "test" ? 260 : 0
           }}>
             {allAnswered
               ? <span style={{ color: "#34d399" }}>✓ All questions answered</span>
@@ -1527,7 +1527,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
         }}>
           <div style={{ fontSize: 64, marginBottom: 20 }}>⚠️</div>
           <h2 style={{ color: "#ef4444", fontSize: 24, marginBottom: 12 }}>Test Rule Violation</h2>
-          <p style={{ color: "#e2e8f0", fontSize: 16, maxWidth: 500, lineHeight: 1.6, marginBottom: 32 }}>
+          <p style={{ color: "#071521", fontSize: 16, maxWidth: 500, lineHeight: 1.6, marginBottom: 32 }}>
             {warningMessage}
           </p>
           <button
@@ -1536,7 +1536,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
               requestFS();
             }}
             style={{
-              background: "#ef4444", color: "#fff", border: "none",
+              background: "#ef4444", color: "#071521", border: "none",
               padding: "14px 28px", borderRadius: 12, fontSize: 15, fontWeight: 700,
               cursor: "pointer", boxShadow: "0 4px 20px rgba(239,68,68,0.4)",
             }}
@@ -1559,8 +1559,8 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
           padding: 40, textAlign: "center",
         }}>
-          <h2 style={{ color: "#e2e8f0", fontSize: 24, marginBottom: 12 }}>Test Preparation</h2>
-          <p style={{ color: "#94a3b8", fontSize: 15, maxWidth: 500, marginBottom: 30 }}>
+          <h2 style={{ color: "#071521", fontSize: 24, marginBottom: 12 }}>Test Preparation</h2>
+          <p style={{ color: "#071521", fontSize: 15, maxWidth: 500, marginBottom: 30 }}>
             This test requires camera access for AI proctoring. Please allow camera permissions in your browser.
           </p>
           <button
@@ -1570,9 +1570,9 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
               requestFS();
             }}
             style={{
-              background: aiReady ? color : "rgba(255,255,255,0.1)", 
-              color: aiReady ? "#0a0f1a" : "#94a3b8", 
-              border: "none", padding: "14px 28px", borderRadius: 12, 
+              background: aiReady ? color : "rgba(255,255,255,0.1)",
+              color: aiReady ? "#0a0f1a" : "#94a3b8",
+              border: "none", padding: "14px 28px", borderRadius: 12,
               fontSize: 15, fontWeight: 700, cursor: aiReady ? "pointer" : "not-allowed",
               transition: "all 0.2s"
             }}
@@ -1590,13 +1590,13 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
           display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
           padding: 40, textAlign: "center",
         }}>
-          <h2 style={{ color: "#e2e8f0", fontSize: 24, marginBottom: 12 }}>Review Your Flashcards</h2>
-          <p style={{ color: "#94a3b8", fontSize: 15, maxWidth: 500, marginBottom: 30 }}>
+          <h2 style={{ color: "#071521", fontSize: 24, marginBottom: 12 }}>Review Your Flashcards</h2>
+          <p style={{ color: "#071521", fontSize: 15, maxWidth: 500, marginBottom: 30 }}>
             Read and flip the flashcards below to review key concepts before starting.
           </p>
-          
+
           {hw.flashcards[currentFlashcardIndex] && (
-            <div 
+            <div
               onClick={() => setFlashcardFlipped(!flashcardFlipped)}
               style={{ perspective: 1200, maxWidth: 480, width: "100%", height: 320, marginBottom: 30, cursor: "pointer" }}
             >
@@ -1606,7 +1606,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                 style={{ width: "100%", height: "100%", transformStyle: "preserve-3d", position: "relative" }}
               >
                 {/* Front Face */}
-                <div style={{ 
+                <div style={{
                   backfaceVisibility: "hidden", position: "absolute", inset: 0,
                   background: "#fff", padding: 40, borderRadius: 24,
                   display: "flex", flexDirection: "column", justifyContent: "center",
@@ -1624,7 +1624,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                 </div>
 
                 {/* Back Face */}
-                <div style={{ 
+                <div style={{
                   backfaceVisibility: "hidden", position: "absolute", inset: 0,
                   background: `linear-gradient(135deg, ${color}33, ${color}11)`, border: `1px solid ${color}66`,
                   padding: 40, borderRadius: 24, transform: "rotateY(180deg)",
@@ -1637,7 +1637,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                   <div style={{ fontSize: 22, fontWeight: 600, lineHeight: 1.5 }}>
                     {hw.flashcards[currentFlashcardIndex].back}
                   </div>
-                  <div style={{ marginTop: "auto", fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>
+                  <div style={{ marginTop: "auto", fontSize: 12, color: "#071521", fontWeight: 500 }}>
                     (Click to view question)
                   </div>
                 </div>
@@ -1647,11 +1647,11 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
 
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             {currentFlashcardIndex > 0 && (
-              <button 
+              <button
                 onClick={() => { setCurrentFlashcardIndex(i => i - 1); setFlashcardFlipped(false); }}
                 style={{
                   background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
-                  color: "#e2e8f0", padding: "12px 24px", borderRadius: 12, fontSize: 14, fontWeight: 600, cursor: "pointer",
+                  color: "#071521", padding: "12px 24px", borderRadius: 12, fontSize: 14, fontWeight: 600, cursor: "pointer",
                 }}
               >
                 Previous
@@ -1661,7 +1661,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
               {currentFlashcardIndex + 1} / {hw.flashcards.length}
             </div>
             {currentFlashcardIndex < hw.flashcards.length - 1 ? (
-              <button 
+              <button
                 onClick={() => { setCurrentFlashcardIndex(i => i + 1); setFlashcardFlipped(false); }}
                 style={{
                   background: color, color: "#0a0f1a", border: "none",
@@ -1671,7 +1671,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                 Next Card
               </button>
             ) : (
-              <button 
+              <button
                 onClick={() => setFlashcardGatePassed(true)}
                 style={{
                   background: "#34d399", color: "#0a0f1a", border: "none",
@@ -1765,7 +1765,7 @@ function HomeworkCard({ task, color, index, onAttempt }) {
                     🎤 Audio Submission
                   </span>
                 ) : qCount > 0 ? (
-                  <span style={{ fontSize: 11, color: "#475569" }}>
+                  <span style={{ fontSize: 11, color: "#071521" }}>
                     {qCount} question{qCount !== 1 ? "s" : ""}
                   </span>
                 ) : null}
@@ -1865,7 +1865,7 @@ function HomeworkCard({ task, color, index, onAttempt }) {
               >
                 {task.task_type === "test" ? "Start Test →"
                   : task.task_type === "speaking" ? "🎤 Start Speaking →"
-                  : "Start Task →"}
+                    : "Start Task →"}
               </motion.button>
             )}
           </div>
@@ -1946,10 +1946,10 @@ function SubjectSection({ subject, index, onAttempt }) {
             {subject.icon}
           </div>
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#e2e8f0" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#071521" }}>
               {subject.name}
             </div>
-            <div style={{ fontSize: 12, color: "#475569", marginTop: 2 }}>
+            <div style={{ fontSize: 12, color: "#071521", marginTop: 2 }}>
               {subject.tasks} Assignment{subject.tasks !== 1 ? "s" : ""}
               {subject.unsubmitted > 0 && (
                 <span style={{ color: "#fb923c" }}> · {subject.unsubmitted} pending</span>
@@ -1964,7 +1964,7 @@ function SubjectSection({ subject, index, onAttempt }) {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {subject.unsubmitted > 0 && (
             <div style={{
-              background: "#ef4444", color: "#fff",
+              background: "#ef4444", color: "#071521",
               fontSize: 11, fontWeight: 700,
               borderRadius: 99, padding: "3px 12px",
               animation: "pulse 2s ease infinite",
@@ -2165,12 +2165,12 @@ export default function TasksAssigned() {
           <h1 style={{
             fontFamily: "'Sora', sans-serif",
             fontWeight: 800, fontSize: 24,
-            color: "#f1f5f9", margin: "0 0 8px",
+            color: "#071521", margin: "0 0 8px",
           }}>
             Tasks Assigned
           </h1>
           {totalTasks > 0 && (
-            <div style={{ fontSize: 13, color: "#475569" }}>
+            <div style={{ fontSize: 13, color: "#071521" }}>
               {totalPending > 0
                 ? <><span style={{ color: "#fb923c", fontWeight: 600 }}>{totalPending} pending</span>{" task"}{totalPending !== 1 ? "s" : ""} to complete</>
                 : <span style={{ color: "#34d399", fontWeight: 600 }}>All caught up ✓</span>
@@ -2183,7 +2183,7 @@ export default function TasksAssigned() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            style={{ color: "#475569", textAlign: "center", padding: "80px 0" }}
+            style={{ color: "#071521", textAlign: "center", padding: "80px 0" }}
           >
             <div style={{ fontSize: 48, marginBottom: 16 }}>📭</div>
             <div style={{ fontSize: 16, fontWeight: 600, color: "#334155" }}>No homework assigned yet.</div>
@@ -2192,39 +2192,39 @@ export default function TasksAssigned() {
             </div>
           </motion.div>
         ) : (() => {
-            const now = new Date();
-            // Only show subjects that have at least one non-overdue, non-submitted task
-            const activeSubjects = subjects.filter(subject =>
-              subject.homeworkList.some(h => {
-                if (h.submitted) return false;
-                if (!h.deadline) return true;
-                const d = new Date(h.deadline);
-                return isNaN(d) || d >= now;
-              })
-            );
-            return activeSubjects.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                style={{ color: "#475569", textAlign: "center", padding: "80px 0" }}
-              >
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-                <div style={{ fontSize: 16, fontWeight: 600, color: "#34d399" }}>All tasks submitted!</div>
-                <div style={{ fontSize: 13, marginTop: 8, color: "#475569" }}>
-                  Head to <strong style={{ color: "#60a5fa" }}>Tasks Submitted</strong> to view your results.
-                </div>
-              </motion.div>
-            ) : (
-              activeSubjects.map((subject, i) => (
-                <SubjectSection
-                  key={subject.id}
-                  subject={subject}
-                  index={i}
-                  onAttempt={setAttemptTask}
-                />
-              ))
-            );
-          })()}
+          const now = new Date();
+          // Only show subjects that have at least one non-overdue, non-submitted task
+          const activeSubjects = subjects.filter(subject =>
+            subject.homeworkList.some(h => {
+              if (h.submitted) return false;
+              if (!h.deadline) return true;
+              const d = new Date(h.deadline);
+              return isNaN(d) || d >= now;
+            })
+          );
+          return activeSubjects.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              style={{ color: "#071521", textAlign: "center", padding: "80px 0" }}
+            >
+              <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
+              <div style={{ fontSize: 16, fontWeight: 600, color: "#34d399" }}>All tasks submitted!</div>
+              <div style={{ fontSize: 13, marginTop: 8, color: "#071521" }}>
+                Head to <strong style={{ color: "#60a5fa" }}>Tasks Submitted</strong> to view your results.
+              </div>
+            </motion.div>
+          ) : (
+            activeSubjects.map((subject, i) => (
+              <SubjectSection
+                key={subject.id}
+                subject={subject}
+                index={i}
+                onAttempt={setAttemptTask}
+              />
+            ))
+          );
+        })()}
       </div>
 
       {/* Full-screen Task overlay — routes by type */}

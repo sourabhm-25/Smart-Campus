@@ -62,7 +62,7 @@ export default function Profile() {
   }
 
   return (
-    <div style={{ padding: "40px 32px", maxWidth: 600 }}>
+    <div style={{ padding: "40px 32px", maxWidth: 600, color: "#071521" }}>
 
       <motion.h1
         initial={{ opacity: 0, y: 10 }}
@@ -70,27 +70,29 @@ export default function Profile() {
         transition={{ duration: 0.4 }}
         style={{
           fontFamily: "'Sora', sans-serif",
-          fontWeight: 700,
-          fontSize: 22,
+          fontWeight: 900,
+          fontSize: 32,
           marginBottom: 28,
+          color: "#071521"
         }}
       >
         My Profile
       </motion.h1>
 
       <div style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.07)",
-        borderRadius: 18,
-        padding: "28px",
+        background: "#FFFFFF",
+        border: "4px solid #071521",
+        borderRadius: 32,
+        padding: "32px",
         display: "flex",
         flexDirection: "column",
         gap: 18,
+        boxShadow: "6px 6px 0px #071521",
       }}>
 
         {["name", "email", "grade", "board"].map((field) => (
           <div key={field} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <label style={{ fontSize: 12, color: "#64748b" }}>
+            <label style={{ fontSize: 14, color: "#1C3F57", fontWeight: 800 }}>
               {field.toUpperCase()}
             </label>
 
@@ -100,15 +102,19 @@ export default function Profile() {
                 value={formData[field] || ""}
                 onChange={handleChange}
                 style={{
-                  padding: "10px 12px",
-                  borderRadius: 10,
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  background: "rgba(255,255,255,0.05)",
-                  color: "#e2e8f0",
+                  padding: "10px 16px",
+                  borderRadius: 16,
+                  border: "3px solid #071521",
+                  background: "#FFF5D6",
+                  color: "#071521",
+                  fontWeight: 800,
+                  fontSize: 16,
+                  boxShadow: "inset 2px 2px 0px rgba(7,21,33,0.1)",
+                  outline: "none",
                 }}
               />
             ) : (
-              <div style={{ fontSize: 14 }}>
+              <div style={{ fontSize: 16, fontWeight: 900, color: "#071521" }}>
                 {student[field]}
               </div>
             )}
@@ -118,34 +124,38 @@ export default function Profile() {
         <div style={{ marginTop: 20 }}>
           {editing ? (
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleSave}
               style={{
-                background: "#6366f1",
-                border: "none",
-                padding: "10px 18px",
-                borderRadius: 10,
-                color: "#fff",
-                fontWeight: 600,
+                background: "#EFA83F",
+                border: "3px solid #071521",
+                padding: "12px 24px",
+                borderRadius: 16,
+                color: "#071521",
+                fontWeight: 900,
                 cursor: "pointer",
+                boxShadow: "2px 2px 0px #071521",
+                fontSize: 16
               }}
             >
               Save Changes
             </motion.button>
           ) : (
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setEditing(true)}
               style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                padding: "10px 18px",
-                borderRadius: 10,
-                color: "#e2e8f0",
-                fontWeight: 600,
+                background: "#6FA8DC",
+                border: "3px solid #071521",
+                padding: "12px 24px",
+                borderRadius: 16,
+                color: "#071521",
+                fontWeight: 900,
                 cursor: "pointer",
+                boxShadow: "2px 2px 0px #071521",
+                fontSize: 16
               }}
             >
               Edit Profile

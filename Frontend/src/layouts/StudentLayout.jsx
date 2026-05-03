@@ -1,14 +1,15 @@
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { Home, ClipboardList, CheckCircle, Kanban, Bell, User } from "lucide-react";
 
 const navItems = [
-  { label: "Dashboard", icon: "🏠", path: "/student" },
-  { label: "Tasks Assigned", icon: "📋", path: "/student/tasks" },
-  { label: "Tasks Submitted", icon: "✅", path: "/student/submitted" },
-  { label: "Kanban Board", icon: "📌", path: "/student/kanban" },
-  { label: "Notifications", icon: "🔔", path: "/student/notifications" },
-  { label: "Profile", icon: "👤", path: "/student/profile" },
+  { label: "Dashboard", icon: <Home size={22} strokeWidth={3} />, path: "/student" },
+  { label: "Tasks Assigned", icon: <ClipboardList size={22} strokeWidth={3} />, path: "/student/tasks" },
+  { label: "Tasks Submitted", icon: <CheckCircle size={22} strokeWidth={3} />, path: "/student/submitted" },
+  { label: "Kanban Board", icon: <Kanban size={22} strokeWidth={3} />, path: "/student/kanban" },
+  { label: "Notifications", icon: <Bell size={22} strokeWidth={3} />, path: "/student/notifications" },
+  { label: "Profile", icon: <User size={22} strokeWidth={3} />, path: "/student/profile" },
 ];
 
 const StudentLayout = () => {
@@ -27,16 +28,16 @@ const StudentLayout = () => {
     <div style={{
       display: "flex",
       height: "100vh",
-      background: "radial-gradient(ellipse 80% 60% at 50% 0%, #1e1b4b 0%, #0f0e23 55%, #080714 100%)",
+      background: "#FFF5D6",
       fontFamily: "'DM Sans', sans-serif",
-      color: "#e2e8f0",
+      color: "#071521",
       overflow: "hidden",
     }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@600;700;800&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 99px; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #F6B94C; border-radius: 99px; border: 2px solid #FFF5D6; }
         ::-webkit-scrollbar-track { background: transparent; }
         a { text-decoration: none; }
       `}</style>
@@ -47,9 +48,9 @@ const StudentLayout = () => {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         style={{
           height: "100vh",
-          background: "rgba(255,255,255,0.025)",
-          borderRight: "1px solid rgba(255,255,255,0.07)",
-          backdropFilter: "blur(20px)",
+          background: "#FFECA8",
+          borderRight: "4px solid #071521",
+          borderRadius: "0 40px 40px 0",
           display: "flex",
           flexDirection: "column",
           flexShrink: 0,
@@ -62,7 +63,7 @@ const StudentLayout = () => {
         <div style={{
           padding: collapsed ? "22px 0" : "22px 18px",
           display: "flex", alignItems: "center", gap: 10,
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          borderBottom: "4px solid #071521",
           justifyContent: collapsed ? "center" : "flex-start",
           flexShrink: 0,
         }}>
@@ -79,7 +80,7 @@ const StudentLayout = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.18 }}
-                style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff", letterSpacing: "-0.02em", whiteSpace: "nowrap" }}>
+                style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 18, color: "#071521", letterSpacing: "-0.02em", whiteSpace: "nowrap" }}>
                 SmartCampus
               </motion.span>
             )}
@@ -101,26 +102,27 @@ const StudentLayout = () => {
                     alignItems: "center",
                     gap: 11,
                     padding: collapsed ? "11px 0" : "11px 13px",
-                    borderRadius: 11,
+                    borderRadius: 24,
                     justifyContent: collapsed ? "center" : "flex-start",
                     position: "relative",
                     cursor: "pointer",
-                    background: active ? "rgba(99,102,241,0.18)" : "transparent",
-                    border: active ? "1px solid rgba(99,102,241,0.32)" : "1px solid transparent",
-                    transition: "background 0.2s, border-color 0.2s",
+                    background: "transparent",
+                    transition: "all 0.2s",
                   }}>
 
-                  {/* Sliding active bar */}
+                  {/* Sliding active pill */}
                   {active && (
                     <motion.div
                       layoutId="activeBar"
                       style={{
-                        position: "absolute", left: 0, top: "18%", bottom: "18%",
-                        width: 3, borderRadius: 99,
-                        background: "#6366f1",
-                        boxShadow: "0 0 10px #6366f1",
+                        position: "absolute", inset: 0,
+                        borderRadius: 24,
+                        background: "#F6B94C",
+                        border: "3px solid #071521",
+                        boxShadow: "4px 4px 0px #0B1E2D",
+                        zIndex: 0,
                       }}
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
                     />
                   )}
 
@@ -139,11 +141,12 @@ const StudentLayout = () => {
                         exit={{ opacity: 0, x: -8 }}
                         transition={{ duration: 0.15 }}
                         style={{
-                          fontSize: 14,
-                          fontWeight: active ? 700 : 500,
-                          color: active ? "#c7d2fe" : "#64748b",
+                          fontSize: 16,
+                          fontWeight: active ? 800 : 600,
+                          color: active ? "#071521" : "#102A3C",
                           whiteSpace: "nowrap",
                           transition: "color 0.2s",
+                          zIndex: 1,
                         }}>
                         {item.label}
                       </motion.span>
@@ -156,21 +159,21 @@ const StudentLayout = () => {
         </nav>
 
         {/* Collapse toggle */}
-        <div style={{ padding: "12px 8px", borderTop: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
+        <div style={{ padding: "16px", borderTop: "4px solid #071521", flexShrink: 0 }}>
           <motion.button
-            whileHover={{ background: "rgba(255,255,255,0.07)" }}
-            whileTap={{ scale: 0.94 }}
+            whileHover={{ y: -2, boxShadow: "4px 4px 0px #071521" }}
+            whileTap={{ scale: 0.94, y: 0, boxShadow: "0px 0px 0px #071521" }}
             onClick={() => setCollapsed(!collapsed)}
             style={{
-              width: "100%", padding: "9px",
-              borderRadius: 11,
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "#475569", fontSize: 13, fontWeight: 600,
+              width: "100%", padding: "12px",
+              borderRadius: 24,
+              background: "#6FA8DC",
+              border: "3px solid #071521",
+              color: "#071521", fontSize: 14, fontWeight: 800,
               cursor: "pointer",
               display: "flex", alignItems: "center",
               justifyContent: "center", gap: 8,
-              transition: "background 0.2s",
+              transition: "all 0.2s",
             }}>
             <motion.span
               animate={{ rotate: collapsed ? 180 : 0 }}
@@ -196,18 +199,19 @@ const StudentLayout = () => {
         <div style={{
           flexShrink: 0,
           backdropFilter: "blur(16px)",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-          padding: "14px 32px",
-          background: "rgba(8,7,20,0.55)",
+          borderBottom: "4px solid #071521",
+          padding: "16px 32px",
+          background: "rgba(255,245,214,0.85)",
           display: "flex", alignItems: "center", justifyContent: "space-between",
+          zIndex: 50,
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontSize: 16 }}>{currentPage?.icon}</span>
-            <span style={{ fontSize: 14, fontWeight: 600, color: "#94a3b8" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 20 }}>{currentPage?.icon}</span>
+            <span style={{ fontSize: 18, fontWeight: 800, color: "#071521", fontFamily: "'Sora', sans-serif" }}>
               {currentPage?.label ?? "SmartCampus"}
             </span>
           </div>
-          <span style={{ fontSize: 12, color: "#334155", fontWeight: 500 }}>Thu, Feb 19 · 2026</span>
+          <span style={{ fontSize: 14, color: "#1C3F57", fontWeight: 700 }}>Thu, Feb 19 · 2026</span>
         </div>
 
         {/* Page — animated on route change */}

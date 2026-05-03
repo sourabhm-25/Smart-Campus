@@ -6,10 +6,10 @@ const API = "http://localhost:8000";
 const getToken = () => localStorage.getItem("access_token");
 
 const STATUS_STYLE = {
-  submitted:  { bg: "rgba(52,211,153,0.12)", border: "rgba(52,211,153,0.3)",  text: "#6ee7b7", label: "Submitted" },
-  late:       { bg: "rgba(251,191,36,0.12)",  border: "rgba(251,191,36,0.3)",  text: "#fde68a", label: "Late" },
-  evaluated:  { bg: "rgba(99,102,241,0.12)",  border: "rgba(99,102,241,0.3)",  text: "#a5b4fc", label: "Graded" },
-  pending:    { bg: "rgba(239,68,68,0.10)",   border: "rgba(239,68,68,0.25)",  text: "#fca5a5", label: "Due" },
+  submitted:  { bg: "#B7DBFF", border: "#071521", text: "#071521", label: "Submitted" },
+  late:       { bg: "#F6B94C", border: "#071521", text: "#071521", label: "Late" },
+  evaluated:  { bg: "#6FA8DC", border: "#071521", text: "#071521", label: "Graded" },
+  pending:    { bg: "#EFA83F", border: "#071521", text: "#071521", label: "Due" },
 };
 
 function formatDeadline(iso) {
@@ -62,7 +62,7 @@ export default function SubjectTasks() {
   }, [subjectId]);
 
   return (
-    <div style={{ padding: "40px 32px" }}>
+    <div style={{ padding: "40px 32px", color: "#071521" }}>
 
       <motion.h1
         initial={{ opacity: 0, y: 10 }}
@@ -70,9 +70,10 @@ export default function SubjectTasks() {
         transition={{ duration: 0.4 }}
         style={{
           fontFamily: "'Sora', sans-serif",
-          fontWeight: 700,
-          fontSize: 22,
+          fontWeight: 900,
+          fontSize: 32,
           marginBottom: 28,
+          color: "#071521"
         }}
       >
         {formattedTitle} Homework
@@ -104,16 +105,17 @@ export default function SubjectTasks() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
                 whileHover={{
-                  borderColor: "#6366f150",
-                  boxShadow: "0 8px 24px rgba(99,102,241,0.15)",
+                  borderColor: "#071521",
+                  boxShadow: "4px 4px 0px #071521",
                   y: -4,
+                  scale: 1.01
                 }}
                 style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  borderRadius: 16,
-                  padding: "18px 22px",
-                  transition: "all 0.25s",
+                  background: "#FFFFFF",
+                  border: "3px solid #071521",
+                  borderRadius: 20,
+                  padding: "20px 24px",
+                  transition: "all 0.2s",
                   cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
@@ -122,24 +124,24 @@ export default function SubjectTasks() {
               >
                 {/* Left: task info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 4, fontSize: 14 }}>
+                  <div style={{ fontWeight: 800, marginBottom: 6, fontSize: 18, color: "#071521" }}>
                     {task.title}
                   </div>
                   {task.description && (
-                    <div style={{ fontSize: 12, color: "#64748b", marginBottom: 6, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <div style={{ fontSize: 14, color: "#1C3F57", fontWeight: 600, marginBottom: 8, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {task.description}
                     </div>
                   )}
-                  <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
                     {task.teacher_name && (
-                      <span style={{ fontSize: 11, color: "#475569" }}>👤 {task.teacher_name}</span>
+                      <span style={{ fontSize: 12, color: "#1C3F57", fontWeight: 700 }}>👤 {task.teacher_name}</span>
                     )}
                     {deadline && (
-                      <span style={{ fontSize: 11, color: deadline.color, fontWeight: 600 }}>
+                      <span style={{ fontSize: 12, color: deadline.color, fontWeight: 800 }}>
                         🕒 {deadline.text}
                       </span>
                     )}
-                    <span style={{ fontSize: 11, color: "#475569", textTransform: "capitalize" }}>
+                    <span style={{ fontSize: 12, color: "#1C3F57", fontWeight: 700, textTransform: "capitalize" }}>
                       📋 {task.task_type || "homework"}
                     </span>
                   </div>
@@ -147,14 +149,15 @@ export default function SubjectTasks() {
 
                 {/* Right: status badge */}
                 <div style={{
-                  padding: "5px 12px",
+                  padding: "6px 14px",
                   borderRadius: 99,
-                  fontSize: 11,
-                  fontWeight: 700,
+                  fontSize: 12,
+                  fontWeight: 900,
                   background: style.bg,
-                  border: `1px solid ${style.border}`,
+                  border: `2px solid ${style.border}`,
                   color: style.text,
                   flexShrink: 0,
+                  boxShadow: "2px 2px 0px #071521"
                 }}>
                   {style.label}
                   {submissionStatus === "evaluated" && task.submission_score != null

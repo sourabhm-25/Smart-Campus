@@ -46,7 +46,7 @@ export default function Notifications() {
   };
 
   return (
-    <div style={{ padding: "40px 32px" }}>
+    <div style={{ padding: "40px 32px", color: "#071521" }}>
 
       {/* Heading */}
       <motion.h1
@@ -55,9 +55,10 @@ export default function Notifications() {
         transition={{ duration: 0.4 }}
         style={{
           fontFamily: "'Sora', sans-serif",
-          fontWeight: 700,
-          fontSize: 22,
+          fontWeight: 900,
+          fontSize: 32,
           marginBottom: 28,
+          color: "#071521"
         }}
       >
         Notifications
@@ -65,11 +66,11 @@ export default function Notifications() {
 
       {/* Loading */}
       {loading ? (
-        <div style={{ color: "#64748b", fontSize: 14 }}>
+        <div style={{ color: "#071521", fontSize: 16, fontWeight: 800 }}>
           Loading notifications...
         </div>
       ) : notifications.length === 0 ? (
-        <div style={{ color: "#64748b", fontSize: 14 }}>
+        <div style={{ color: "#071521", fontSize: 16, fontWeight: 800 }}>
           You're all caught up 🎉
         </div>
       ) : (
@@ -82,23 +83,25 @@ export default function Notifications() {
               transition={{ delay: i * 0.06 }}
               whileHover={{
                 y: -4,
-                borderColor: "#6366f150",
-                boxShadow: "0 8px 24px rgba(99,102,241,0.15)",
+                borderColor: "#071521",
+                boxShadow: "4px 4px 0px #071521",
+                scale: 1.01
               }}
               onClick={() => markAsRead(notif)}
               style={{
-                background: "rgba(255,255,255,0.03)",
+                background: "#FFFFFF",
                 border: !notif.read
-                  ? "1px solid rgba(99,102,241,0.4)"
-                  : "1px solid rgba(255,255,255,0.07)",
-                borderRadius: 16,
+                  ? "3px solid #EFA83F"
+                  : "3px solid #071521",
+                borderRadius: 20,
                 padding: "18px 22px",
                 cursor: "pointer",
-                transition: "all 0.25s",
+                transition: "all 0.2s",
                 position: "relative",
                 display: "flex",
                 gap: 14,
                 alignItems: "flex-start",
+                boxShadow: "2px 2px 0px #071521"
               }}
             >
               {/* Icon */}
@@ -108,20 +111,20 @@ export default function Notifications() {
 
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
-                  fontWeight: !notif.read ? 700 : 500,
-                  color: !notif.read ? "#e2e8f0" : "#94a3b8",
-                  marginBottom: 4,
-                  fontSize: 14,
+                  fontWeight: 900,
+                  color: !notif.read ? "#071521" : "#1C3F57",
+                  marginBottom: 6,
+                  fontSize: 16,
                   textTransform: "capitalize",
                 }}>
                   {notif.type?.replace(/_/g, " ") || "Notification"}
                 </div>
 
-                <div style={{ fontSize: 13, color: "#94a3b8", marginBottom: 6, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 14, color: "#1C3F57", fontWeight: 600, marginBottom: 8, lineHeight: 1.5 }}>
                   {notif.payload?.message || notif.payload?.subject || ""}
                 </div>
 
-                <div style={{ fontSize: 11, color: "#475569" }}>
+                <div style={{ fontSize: 12, color: "#1C3F57", fontWeight: 700 }}>
                   {notif.created_at ? new Date(notif.created_at).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : ""}
                 </div>
               </div>
@@ -129,10 +132,10 @@ export default function Notifications() {
               {/* Unread dot */}
               {!notif.read && (
                 <div style={{
-                  width: 8, height: 8,
+                  width: 12, height: 12,
                   borderRadius: "50%",
-                  background: "#6366f1",
-                  boxShadow: "0 0 8px #6366f1",
+                  background: "#F6B94C",
+                  border: "2px solid #071521",
                   flexShrink: 0,
                   marginTop: 6,
                 }} />
