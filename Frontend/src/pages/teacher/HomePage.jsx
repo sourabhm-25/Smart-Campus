@@ -165,9 +165,9 @@ export default function TeacherHomePage() {
             <motion.div
               animate={{ rotate: [0, -8, 8, -4, 0] }}
               transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 6 }}
-              style={{ fontSize: 20, marginRight: 8, cursor: "pointer" }}
+              style={{ marginRight: 8, cursor: "pointer", display: "flex", alignItems: "center" }}
               onClick={() => navigate("/teacher")}>
-              🎓
+              <img src="/logo.png" alt="Logo" style={{ width: 24, height: 24, objectFit: "contain" }} />
             </motion.div>
 
             {/* Links */}

@@ -555,10 +555,11 @@ const TeacherLayout = () => {
               width: 34, height: 34, borderRadius: 10, flexShrink: 0,
               background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 18, cursor: "pointer",
+              cursor: "pointer",
               boxShadow: "0 4px 16px rgba(99,102,241,0.4)",
+              overflow: "hidden",
             }}>
-            🎓
+            <img src="/logo.png" alt="Logo" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
           </motion.div>
           <AnimatePresence>
             {!collapsed && (

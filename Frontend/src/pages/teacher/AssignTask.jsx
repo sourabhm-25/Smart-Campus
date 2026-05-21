@@ -2,7 +2,7 @@ import React from 'react'
 import PillNav from '../../components/PillNav';
 
 
-import logo from "../public/logo.png";
+import logo from "../../../public/logo.png";
 
 const AssignTask = () => {
   return (

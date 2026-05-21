@@ -67,12 +67,13 @@ const StudentLayout = () => {
           justifyContent: collapsed ? "center" : "flex-start",
           flexShrink: 0,
         }}>
-          <motion.span
+          <motion.img
+            src="/logo.png"
+            alt="Logo"
             animate={{ rotate: [0, -8, 8, -4, 0] }}
             transition={{ duration: 2, repeat: Infinity, repeatDelay: 8 }}
-            style={{ fontSize: 22, flexShrink: 0, display: "block" }}>
-            🎓
-          </motion.span>
+            style={{ width: 28, height: 28, flexShrink: 0, display: "block", objectFit: "contain" }}
+          />
           <AnimatePresence>
             {!collapsed && (
               <motion.span

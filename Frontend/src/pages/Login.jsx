@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import googleIcon from "../assets/google-icon.svg";
@@ -79,11 +79,26 @@ const colorMap = {
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   // --- State ---
   const [step, setStep] = useState(1);
   const [role, setRole] = useState("");
   const [isRegister, setIsRegister] = useState(false);
+
+  // Sync state with URL search parameters
+  useEffect(() => {
+    const paramRole = searchParams.get("role");
+    const paramMode = searchParams.get("mode");
+    if (paramRole) {
+      setRole(paramRole);
+      setStep(2);
+    } else {
+      setRole("");
+      setStep(1);
+    }
+    setIsRegister(paramMode === "register");
+  }, [searchParams]);
 
   // Form fields
   const [name, setName] = useState("");
@@ -365,44 +380,227 @@ export default function Login() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-gradient-to-br from-background-dark via-[#1a2235] to-background-dark font-display text-slate-100 antialiased">
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/20 blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-mentorship-purple/10 blur-[120px]"></div>
-      </div>
+    <>
+      <style>{`
+        .auth-page {
+          position: relative;
+          background: #ffffff;
+          color: #13233a;
+        }
+        .auth-page::before,
+        .auth-page::after {
+          content: "";
+          position: fixed;
+          z-index: 0;
+          pointer-events: none;
+          filter: blur(1px);
+        }
+        .auth-page::before {
+          width: 42vw;
+          height: 42vw;
+          left: -16vw;
+          top: 12vh;
+          border-radius: 38% 62% 55% 45%;
+          background: rgba(244, 217, 142, 0.28);
+          border: 4px solid rgba(20, 20, 138, 0.12);
+        }
+        .auth-page::after {
+          width: 34vw;
+          height: 34vw;
+          right: -12vw;
+          bottom: -8vw;
+          border-radius: 64% 36% 44% 56%;
+          background: rgba(216, 160, 196, 0.2);
+          border: 4px solid rgba(139, 183, 216, 0.16);
+        }
+        .auth-header {
+          background: #ffffff;
+          border-bottom: 4px solid #273c75;
+          box-shadow: 0 8px 0 #f4d98e;
+        }
+        .auth-logo-mark {
+          width: 64px;
+          height: 64px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: transparent;
+          border-radius: 0;
+          box-shadow: none;
+        }
+        .auth-logo-mark img {
+          width: 64px;
+          height: 64px;
+          object-fit: contain;
+        }
+        .auth-page h1,
+        .auth-page h2,
+        .auth-page h3,
+        .auth-page label {
+          color: #273c75 !important;
+        }
+        .auth-page p,
+        .auth-page .text-slate-400,
+        .auth-page .text-slate-500,
+        .auth-page .text-gray-400 {
+          color: #42526b !important;
+        }
+        .auth-chunky-card,
+        .auth-page .glass-panel {
+          position: relative;
+          background: rgba(255, 255, 255, 0.96) !important;
+          border: 4px solid #273c75 !important;
+          border-radius: 8px !important;
+          box-shadow: 14px 14px 0 #8bb7d8, 0 24px 60px rgba(39, 60, 117, 0.1) !important;
+          backdrop-filter: none !important;
+        }
+        .auth-chunky-card::before,
+        .auth-page .glass-panel::before {
+          content: "";
+          position: absolute;
+          width: 96px;
+          height: 42px;
+          right: 22px;
+          top: -22px;
+          border-radius: 999px;
+          background: #f4d98e;
+          border: 4px solid #273c75;
+          transform: rotate(5deg);
+          z-index: -1;
+        }
+        .auth-asset {
+          position: absolute;
+          pointer-events: none;
+          user-select: none;
+          z-index: 0;
+          filter: drop-shadow(8px 10px 0 rgba(39,60,117,0.1));
+        }
+        .auth-asset.book {
+          width: min(22vw, 210px);
+          left: clamp(16px, 5vw, 70px);
+          bottom: clamp(70px, 8vw, 120px);
+          transform: rotate(-7deg);
+        }
+        .role-card {
+          background: #ffffff !important;
+          border: 4px solid #273c75 !important;
+          border-radius: 8px !important;
+          box-shadow: 8px 8px 0 var(--role-shadow, #d8a0c4);
+          color: #13233a !important;
+        }
+        .role-card:nth-child(1) { --role-shadow: #8bb7d8; }
+        .role-card:nth-child(2) { --role-shadow: #d8a0c4; }
+        .role-card:nth-child(3) { --role-shadow: #f4d98e; }
+        .role-card h3 {
+          color: #273c75 !important;
+        }
+        .role-card:hover {
+          transform: translateY(-6px) rotate(-1deg);
+        }
+        .auth-page input,
+        .auth-page select,
+        .auth-picker-button {
+          background: #ffffff !important;
+          color: #273c75 !important;
+          border: 3px solid #273c75 !important;
+          border-radius: 8px !important;
+          box-shadow: 5px 5px 0 rgba(216, 160, 196, 0.42);
+        }
+        .auth-page input::placeholder {
+          color: #77859a !important;
+        }
+        .auth-page .material-symbols-outlined {
+          color: #273c75;
+        }
+        .auth-toggle {
+          background: #fbefd0 !important;
+          border: 3px solid #273c75;
+          border-radius: 8px !important;
+        }
+        .auth-toggle button {
+          color: #273c75 !important;
+          border-radius: 6px !important;
+        }
+        .auth-toggle .is-active {
+          background: #d8a0c4 !important;
+          color: #273c75 !important;
+          box-shadow: 4px 4px 0 #273c75;
+        }
+        .auth-primary-btn {
+          background: #f4d98e !important;
+          color: #273c75 !important;
+          border: 4px solid #273c75 !important;
+          border-radius: 8px !important;
+          box-shadow: 7px 7px 0 #d8a0c4 !important;
+        }
+        .auth-primary-btn:disabled {
+          background: #e2e8f0 !important;
+          color: #64748b !important;
+          border-color: #94a3b8 !important;
+          box-shadow: none !important;
+        }
+        .auth-google-btn {
+          background: #ffffff !important;
+          color: #273c75 !important;
+          border: 3px solid #273c75 !important;
+          border-radius: 8px !important;
+          box-shadow: 5px 5px 0 #8bb7d8;
+        }
+        .auth-page footer {
+          background: #ffffff;
+          border-top: 3px solid #273c75 !important;
+          color: #42526b !important;
+        }
+        @media (max-width: 900px) {
+          .auth-asset {
+            display: none;
+          }
+          .auth-logo-mark,
+          .auth-logo-mark img {
+            width: 54px;
+            height: 54px;
+          }
+          .auth-chunky-card,
+          .auth-page .glass-panel {
+            box-shadow: 8px 8px 0 #8bb7d8 !important;
+          }
+        }
+      `}</style>
+      <div className="auth-page relative flex min-h-screen w-full flex-col overflow-x-hidden font-display antialiased">
+      <img className="auth-asset book" src="/open-book-bulb.png" alt="" aria-hidden="true" />
 
       {/* Header */}
-      <header className="flex items-center justify-between border-b border-white/10 px-6 py-4 md:px-10 lg:px-20 backdrop-blur-md z-10">
+      <header className="auth-header flex items-center justify-between px-6 py-4 md:px-10 lg:px-20 z-10">
         <div className="flex items-center gap-3">
-          <div className="bg-primary p-1.5 rounded-lg shadow-lg shadow-primary/20">
-            <span
-              className="material-symbols-outlined text-white text-2xl"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              school
-            </span>
+          <div className="auth-logo-mark">
+            <img src="/logo.png" alt="Smart Campus Logo" />
           </div>
-          <h2 className="text-slate-100 text-xl font-extrabold tracking-tight">
+          <h2 className="text-xl font-extrabold tracking-tight">
             Smart Campus
           </h2>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {step === 2 && (
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               onClick={handleBack}
-              className="flex items-center justify-center rounded-xl h-10 w-10 bg-slate-800 hover:bg-primary/20 transition-colors text-slate-300"
+              className="auth-google-btn flex items-center gap-2 px-3 py-2 transition-all text-sm font-bold"
+              title="Change Role"
             >
-              <span className="material-symbols-outlined text-xl">arrow_back</span>
+              <span className="material-symbols-outlined text-lg">arrow_back</span>
+              <span className="hidden sm:inline">Change Role</span>
             </motion.button>
           )}
-          {step === 1 && (
-            <button className="text-slate-400 hover:text-white transition-colors">
-              <span className="material-symbols-outlined">help_outline</span>
-            </button>
-          )}
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={() => navigate('/')}
+            className="auth-google-btn flex items-center gap-2 px-3 py-2 transition-all text-sm font-bold"
+          >
+            <span className="material-symbols-outlined text-lg">home</span>
+            <span>Back to Home</span>
+          </motion.button>
         </div>
       </header>
 
@@ -417,7 +615,7 @@ export default function Login() {
             exit="exit"
             className="flex flex-1 items-center justify-center p-6 md:p-12 z-10"
           >
-            <div className="w-full max-w-[1024px] bg-white/[0.03] border border-white/10 rounded-2xl p-8 md:p-12 backdrop-blur-xl shadow-2xl">
+            <div className="auth-chunky-card w-full max-w-[1024px] p-8 md:p-12">
               {/* Title */}
               <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
@@ -441,6 +639,7 @@ export default function Login() {
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setRole(r.id)}
                       className={`
+                        role-card
                         group relative flex flex-col items-center text-center p-8
                         border rounded-2xl transition-all duration-300 cursor-pointer
                         ${isSelected
@@ -501,7 +700,7 @@ export default function Login() {
                   onClick={handleContinue}
                   disabled={!role}
                   className={`
-                    w-full max-w-md font-bold py-4 px-8 rounded-xl transition-all flex items-center justify-center gap-3
+                    auth-primary-btn w-full max-w-md font-bold py-4 px-8 transition-all flex items-center justify-center gap-3
                     ${role
                       ? "bg-primary hover:bg-blue-600 text-white shadow-lg shadow-primary/20 cursor-pointer"
                       : "bg-gray-700/50 text-gray-500 cursor-not-allowed"
@@ -536,14 +735,10 @@ export default function Login() {
             exit="exit"
             className="flex-1 flex items-center justify-center p-6 lg:p-12 relative z-10"
           >
-            {/* Background blurs */}
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-
             <div className="w-full max-w-[480px] space-y-8 relative z-10">
               {/* Title */}
               <div className="text-center space-y-2">
-                <h1 className="text-3xl font-extrabold tracking-tight text-white">
+                <h1 className="text-3xl font-extrabold tracking-tight">
                   {isRegister ? "Create Account" : "Welcome Back"}
                 </h1>
                 <p className="text-slate-400">
@@ -554,23 +749,23 @@ export default function Login() {
               </div>
 
               {/* Glass Panel */}
-              <div className="glass-panel p-8 rounded-2xl shadow-2xl space-y-6">
+              <div className="glass-panel p-8 space-y-6">
                 {/* Login / Register Toggle */}
-                <div className="flex p-1 bg-slate-800/50 rounded-xl">
+                <div className="auth-toggle flex p-1">
                   <button
                     onClick={() => !loading && setIsRegister(false)}
-                    className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 ${!isRegister
-                      ? "bg-slate-700 shadow-sm text-white"
-                      : "text-slate-400 hover:text-slate-200"
+                    className={`flex-1 py-2.5 text-sm font-semibold transition-all duration-300 ${!isRegister
+                      ? "is-active"
+                      : ""
                       }`}
                   >
                     Login
                   </button>
                   <button
                     onClick={() => !loading && setIsRegister(true)}
-                    className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-300 ${isRegister
-                      ? "bg-slate-700 shadow-sm text-white"
-                      : "text-slate-400 hover:text-slate-200"
+                    className={`flex-1 py-2.5 text-sm font-semibold transition-all duration-300 ${isRegister
+                      ? "is-active"
+                      : ""
                       }`}
                   >
                     Register
@@ -763,7 +958,7 @@ export default function Login() {
                             <button
                               type="button"
                               onClick={() => setShowGradePicker(!showGradePicker)}
-                              className="w-full flex items-center justify-between pl-12 pr-4 py-3.5 bg-slate-800 rounded-xl text-left transition-all hover:bg-slate-700/80 border border-transparent focus:border-primary relative"
+                              className="auth-picker-button w-full flex items-center justify-between pl-12 pr-4 py-3.5 text-left transition-all relative"
                             >
                               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">
                                 class
@@ -829,7 +1024,7 @@ export default function Login() {
                             <button
                               type="button"
                               onClick={() => setShowSubjectPicker(!showSubjectPicker)}
-                              className="w-full flex items-center justify-between pl-12 pr-4 py-3.5 bg-slate-800 rounded-xl text-left transition-all hover:bg-slate-700/80 border border-transparent focus:border-primary relative"
+                              className="auth-picker-button w-full flex items-center justify-between pl-12 pr-4 py-3.5 text-left transition-all relative"
                             >
                               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">
                                 menu_book
@@ -953,7 +1148,7 @@ export default function Login() {
                     type="submit"
                     disabled={loading || googleLoading}
                     className={`
-                      w-full py-4 font-bold rounded-xl shadow-lg transition-all duration-300
+                      auth-primary-btn w-full py-4 font-bold shadow-lg transition-all duration-300
                       ${loading
                         ? "bg-gray-700/50 text-gray-400 cursor-wait"
                         : "bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white shadow-primary/20 cursor-pointer active:scale-[0.98]"
@@ -997,7 +1192,7 @@ export default function Login() {
                     <div className="w-full border-t border-slate-800"></div>
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-[#1b1f27] px-2 text-slate-500">
+                    <span className="bg-white px-2 text-slate-500">
                       {isRegister ? "Or register with" : "Or login with"}
                     </span>
                   </div>
@@ -1012,8 +1207,7 @@ export default function Login() {
                   disabled={googleLoading || loading}
                   className={`
                     w-full flex items-center justify-center gap-3 py-3.5 px-6
-                    rounded-xl border border-slate-700/80 bg-slate-800/60
-                    hover:bg-slate-700/70 hover:border-slate-600
+                    auth-google-btn
                     transition-all duration-200 group
                     ${googleLoading ? "cursor-wait opacity-70" : "cursor-pointer"}
                   `}
@@ -1103,5 +1297,6 @@ export default function Login() {
         <p>© 2024 Smart Campus Educational Systems. All rights reserved.</p>
       </footer>
     </div>
+    </>
   );
 }
