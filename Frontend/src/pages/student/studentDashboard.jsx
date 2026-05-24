@@ -164,15 +164,46 @@ export default function StudentDashboard() {
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@600;700;800&display=swap');
         * { box-sizing: border-box; }
         button { cursor: pointer; font-family: inherit; }
+        .student-dashboard-page {
+          min-height: 100vh;
+          background:
+            radial-gradient(circle at 12% 10%, rgba(216,160,196,0.24), transparent 26%),
+            radial-gradient(circle at 86% 18%, rgba(139,183,216,0.26), transparent 28%);
+        }
+        .student-hero-strip {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          padding: 24px;
+          border: 4px solid #071521;
+          border-radius: 8px;
+          background: linear-gradient(135deg, #ffe792, #d8e8f4);
+          box-shadow: 10px 10px 0 #d8a0c4;
+          margin-bottom: 36px;
+        }
+        .student-stat-grid { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important; }
+        .student-main-grid { grid-template-columns: minmax(0, 1fr) minmax(280px, 300px) !important; }
+        .student-subject-row { grid-template-columns: 36px minmax(0, 1fr) minmax(80px, 120px) 54px !important; }
+        @media (max-width: 920px) {
+          .student-dashboard-page { padding: 24px 18px 44px !important; }
+          .student-main-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 620px) {
+          .student-dashboard-page { padding: 18px 14px 36px !important; }
+          .student-hero-strip { padding: 18px; box-shadow: 6px 6px 0 #d8a0c4; align-items: flex-start; }
+          .student-hero-strip img { width: 74px !important; height: 74px !important; }
+          .student-subject-row { grid-template-columns: 32px minmax(0, 1fr) !important; }
+          .student-subject-row > div:nth-of-type(2),
+          .student-subject-row > div:nth-of-type(3) { grid-column: 2; text-align: left !important; }
+        }
       `}</style>
 
-      <Orb size={480} top="-5%" left="15%" color="rgba(99,102,241,0.15)" duration={14} delay={0} />
-      <Orb size={360} top="50%" left="55%" color="rgba(96,165,250,0.09)" duration={18} delay={4} />
-
-      <div style={{ position: "relative", zIndex: 1, padding: "40px 40px 64px" }}>
+      <div className="student-dashboard-page" style={{ position: "relative", zIndex: 1, padding: "40px 40px 64px" }}>
 
         {/* ── GREETING ── */}
-        <div style={{ marginBottom: 44 }}>
+        <div className="student-hero-strip">
+          <div>
           <motion.p
             initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
             style={{ fontSize: 13, color: "#3F6E8F", fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 10 }}>
@@ -191,15 +222,17 @@ export default function StudentDashboard() {
             {" "}across{" "}
             <span style={{ color: "#3F6E8F", fontWeight: 900 }}>{subjects.length} subject{subjects.length !== 1 ? "s" : ""}</span>.
           </motion.p>
+          </div>
+          <img src="/dashboard-elements/backpack.png" alt="" aria-hidden="true" style={{ width: 104, height: 104, objectFit: "contain", flexShrink: 0, filter: "drop-shadow(6px 8px 0 rgba(7,21,33,0.14))" }} />
         </div>
 
         {/* ── STAT CARDS ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 40 }}>
+        <div className="student-stat-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 40 }}>
           {[
-            { label: "Subjects", rawVal: subjects.length, icon: "📚", color: "#6FA8DC" },
-            { label: "Tasks Pending", rawVal: totalHomework, icon: "📝", color: "#EFA83F" },
-            { label: "Notifications", rawVal: unreadCount, icon: "🔔", color: "#F6B94C" },
-            { label: "Submitted", rawVal: totalSubmitted, icon: "✅", color: "#F4C542" },
+            { label: "Subjects", rawVal: subjects.length, icon: "/dashboard-elements/graduation-stack.png", color: "#6FA8DC" },
+            { label: "Tasks Pending", rawVal: totalHomework, icon: "/dashboard-elements/pencil-box.png", color: "#EFA83F" },
+            { label: "Notifications", rawVal: unreadCount, icon: "/dashboard-elements/bell.png", color: "#F6B94C" },
+            { label: "Submitted", rawVal: totalSubmitted, icon: "/dashboard-elements/report-a-plus.png", color: "#F4C542" },
           ].map((s, i) => (
             <motion.div key={i}
               initial={{ opacity: 0, y: 24, scale: 0.93 }}
@@ -211,10 +244,14 @@ export default function StudentDashboard() {
                   style={{ background: "#FFFFFF", border: "4px solid #071521", borderRadius: 32, padding: "24px 22px", position: "relative", overflow: "hidden", transition: "all 0.25s", boxShadow: "4px 4px 0px #071521", cursor: "pointer" }}>
                   <motion.div initial={{ opacity: 0 }} whileHover={{ opacity: 1 }} transition={{ duration: 0.3 }}
                     style={{ position: "absolute", top: -30, right: -30, width: 110, height: 110, borderRadius: "50%", background: `${s.color}20`, filter: "blur(28px)", pointerEvents: "none" }} />
-                  <motion.span
+                  <motion.img
+                    src={s.icon}
+                    alt=""
+                    aria-hidden="true"
                     animate={{ rotate: [0, -6, 6, -3, 0] }}
                     transition={{ duration: 2, repeat: Infinity, repeatDelay: 4 + i * 1.5 }}
-                    style={{ fontSize: 26, display: "block", marginBottom: 12 }}>{s.icon}</motion.span>
+                    style={{ width: 42, height: 42, objectFit: "contain", display: "block", marginBottom: 12, filter: "drop-shadow(3px 4px 0 rgba(7,21,33,0.13))" }}
+                  />
                   <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 32, color: "#071521", letterSpacing: "-0.02em", marginBottom: 4 }}>
                     <Counter to={s.rawVal} delay={0.16 + i * 0.08} />
                   </div>
@@ -230,7 +267,7 @@ export default function StudentDashboard() {
         </div>
 
         {/* ── BOTTOM GRID: Subjects + Right column ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 20 }}>
+        <div className="student-main-grid" style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 20 }}>
 
           {/* Subject Overview */}
           <motion.div
@@ -264,7 +301,8 @@ export default function StudentDashboard() {
                     transition={{ delay: 0.42 + i * 0.07 }}
                     whileHover={{ x: 6, scale: 1.01 }}
                     onClick={() => navigate("/student/tasks")}
-                    style={{ display: "grid", gridTemplateColumns: "32px 1fr 120px 48px", alignItems: "center", gap: 14, cursor: "pointer", transition: "all 0.2s", background: "#FFFFFF", padding: "12px 16px", borderRadius: 20, border: "3px solid #071521", boxShadow: "4px 4px 0px #071521" }}>
+                    className="student-subject-row"
+                    style={{ display: "grid", gridTemplateColumns: "32px 1fr 120px 48px", alignItems: "center", gap: 14, cursor: "pointer", transition: "all 0.2s", background: "#FFFFFF", padding: "12px 16px", borderRadius: 8, border: "3px solid #071521", boxShadow: "4px 4px 0px #071521" }}>
 
                     <span style={{ fontSize: 24 }}>{s.icon}</span>
 
@@ -344,4 +382,4 @@ export default function StudentDashboard() {
     </div>
   );
 }
-
+

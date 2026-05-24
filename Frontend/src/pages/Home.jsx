@@ -2,6 +2,61 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import herosection from "../assets/herosection.jpg";
+import { motion } from "framer-motion";
+
+
+function FeaturePill({ image, text, delay }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.5, ease: [0.25, 1, 0.5, 1] }}
+      style={{
+        display: "flex", alignItems: "center", gap: 10,
+        padding: "11px 16px",
+        background: "#ffffff",
+        border: "3px solid #273c75",
+        borderRadius: 8,
+        fontSize: 13, color: "#273c75", fontWeight: 900,
+        boxShadow: "4px 4px 0 #8bb7d8",
+      }}>
+      <img src={image} alt="" aria-hidden="true" style={{ width: 26, height: 26, objectFit: "contain" }} />
+      {text}
+    </motion.div>
+  );
+}
+
+function Stat({ value, label, color, image, delay }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.5 }}
+      style={{
+        minHeight: 150,
+        padding: 22,
+        border: "4px solid #273c75",
+        borderRadius: 8,
+        background: color,
+        boxShadow: "7px 7px 0 #d8a0c4",
+        display: "grid",
+        alignContent: "space-between",
+      }}>
+      <img src={image} alt="" aria-hidden="true" style={{ width: 48, height: 48, objectFit: "contain", filter: "drop-shadow(3px 4px 0 rgba(39,60,117,0.14))" }} />
+      <div>
+        <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 34, fontWeight: 900, color: "#273c75", letterSpacing: 0, lineHeight: 1 }}>
+          {value}
+        </div>
+        <div style={{ fontSize: 12, color: "#334155", fontWeight: 900, marginTop: 7, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+          {label}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+
+
 
 
 export default function Home() {
@@ -838,6 +893,24 @@ export default function Home() {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
           }
+
+          .teacher-home-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin: 56px auto 32px;
+            max-width: 920px;
+            padding: 0 24px;
+          }
+          .teacher-stat-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(180px, 1fr));
+            gap: 18px;
+            width: min(100%, 820px);
+            margin: 0 auto;
+            padding: 0 24px 80px;
+          }
         `}
       </style>
 
@@ -1058,9 +1131,9 @@ export default function Home() {
               your teachers.
             </p>
 
-            
 
-           
+
+
           </section>
         </div>
 
@@ -1068,7 +1141,7 @@ export default function Home() {
 
 
       </div>
-    
+
       <section className="features-section">
         <div className="chunky-shell">
           <div className="section-header">
@@ -1121,8 +1194,24 @@ export default function Home() {
                 <span>Teacher connect</span>
                 <span>Parent visibility</span>
               </div>
+    
             </div>
           </div>
+          <div className="teacher-home-pills">
+                {[
+                  { image: "/dashboard-elements/idea-bulb.png", text: "AI Question Generator", delay: 0.5 },
+                  { image: "/dashboard-elements/calculator-books.png", text: "Kanban Task Tracking", delay: 0.56 },
+                  { image: "/dashboard-elements/pencil-box.png", text: "Homework & Tests", delay: 0.62 },
+                  { image: "/dashboard-elements/report-a-plus.png", text: "Curriculum Aligned", delay: 0.68 },
+                  { image: "/dashboard-elements/video-lesson.png", text: "Instant Deployment", delay: 0.74 },
+                ].map((f) => <FeaturePill key={f.text} {...f} />)}
+              </div>
+
+              <div className="teacher-stat-row">
+                <Stat value="10x" label="Faster task creation" color="#d8e8f4" image="/dashboard-elements/calculator-books.png" delay={0.9} />
+                <Stat value="100%" label="Curriculum aligned" color="#f1d8e6" image="/dashboard-elements/report-a-plus.png" delay={0.96} />
+                <Stat value="3 min" label="From topic to task" color="#fff0b8" image="/dashboard-elements/bell.png" delay={1.02} />
+              </div>
         </div>
       </section>
       <footer className="footer">

@@ -24,12 +24,12 @@ const ParentLayout = () => {
   const currentPage = navItems.find((n) => isActive(n.path));
 
   return (
-    <div style={{
+    <div className="sc-dashboard-skin parent-layout" style={{
       display: "flex",
       height: "100vh",
-      background: "radial-gradient(ellipse 80% 60% at 50% 0%, #1e1b4b 0%, #0f0e23 55%, #080714 100%)",
+      background: "#FFF5D6",
       fontFamily: "'DM Sans', sans-serif",
-      color: "#e2e8f0",
+      color: "#071521",
       overflow: "hidden",
     }}>
       <style>{`
@@ -39,16 +39,45 @@ const ParentLayout = () => {
         ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 99px; }
         ::-webkit-scrollbar-track { background: transparent; }
         a { text-decoration: none; }
+        .parent-layout .parent-sidebar {
+          background: #FFECA8 !important;
+          border-right: 4px solid #071521 !important;
+          border-radius: 0 34px 34px 0 !important;
+        }
+        .parent-layout .parent-topbar {
+          background: rgba(255,245,214,0.88) !important;
+          border-bottom: 4px solid #071521 !important;
+        }
+        .parent-layout .parent-sidebar [style*="color: #fff"],
+        .parent-layout .parent-sidebar [style*="color: #64748b"],
+        .parent-layout .parent-sidebar [style*="color: #475569"] {
+          color: #071521 !important;
+        }
+        .parent-layout .parent-sidebar [style*="rgba(99,102,241,0.18)"] {
+          background: #f6b94c !important;
+          border: 3px solid #071521 !important;
+          box-shadow: 4px 4px 0 #071521 !important;
+        }
+        @media (max-width: 640px) {
+          .parent-shell { min-width: 0; }
+          .parent-sidebar { width: 76px !important; }
+          .parent-sidebar-logo-text,
+          .parent-sidebar-label,
+          .parent-collapse-label { display: none !important; }
+          .parent-sidebar nav { padding: 12px 8px !important; }
+          .parent-topbar { padding: 14px 16px !important; }
+        }
       `}</style>
 
       {/* ── SIDEBAR ── */}
       <motion.aside
+        className="parent-sidebar"
         animate={{ width: collapsed ? 68 : 224 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         style={{
           height: "100vh",
-          background: "rgba(255,255,255,0.025)",
-          borderRight: "1px solid rgba(255,255,255,0.07)",
+          background: "#FFECA8",
+          borderRight: "4px solid #071521",
           backdropFilter: "blur(20px)",
           display: "flex",
           flexDirection: "column",
@@ -76,11 +105,12 @@ const ParentLayout = () => {
           <AnimatePresence>
             {!collapsed && (
               <motion.span
+                className="parent-sidebar-logo-text"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.18 }}
-                style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff", letterSpacing: "-0.02em", whiteSpace: "nowrap" }}>
+                style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 16, color: "#071521", letterSpacing: "0", whiteSpace: "nowrap" }}>
                 SmartCampus
               </motion.span>
             )}
@@ -135,6 +165,7 @@ const ParentLayout = () => {
                   <AnimatePresence>
                     {!collapsed && (
                       <motion.span
+                        className="parent-sidebar-label"
                         initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -8 }}
@@ -180,6 +211,7 @@ const ParentLayout = () => {
             <AnimatePresence>
               {!collapsed && (
                 <motion.span
+                  className="parent-collapse-label"
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                   transition={{ duration: 0.15 }}>
                   Collapse
@@ -191,17 +223,17 @@ const ParentLayout = () => {
       </motion.aside>
 
       {/* ── MAIN CONTENT ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div className="parent-shell" style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
 
         {/* Top bar */}
-        <div style={{
+        <div className="parent-topbar" style={{
           flexShrink: 0,
           backdropFilter: "blur(16px)",
           borderBottom: "1px solid rgba(255,255,255,0.05)",
           padding: "14px 32px",
           display: "flex", justifyContent: "space-between", alignItems: "center",
         }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: "#fff" }}>
+          <h2 style={{ fontSize: 18, fontWeight: 900, color: "#071521" }}>
             {currentPage?.label || "Parent Dashboard"}
           </h2>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
@@ -226,7 +258,7 @@ const ParentLayout = () => {
         </div>
 
         {/* Content area */}
-        <div style={{ flex: 1, overflowY: "auto", position: "relative" }}>
+        <div className="sc-page-frame" style={{ flex: 1, overflowY: "auto", position: "relative" }}>
           <Outlet />
         </div>
       </div>

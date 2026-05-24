@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 
 /* ─── mock data (swap for API calls) ─── */
 const STATS = [
-    { label: "Students", value: "128", sub: "+13 this term", color: "#818cf8" },
-    { label: "Classes", value: "4", sub: "Active now", color: "#34d399" },
-    { label: "Avg Score", value: "84%", sub: "↑ 8% vs last", color: "#22d3ee" },
-    { label: "Pending", value: "12", sub: "Need review", color: "#f59e0b" },
+    { label: "Students", value: "128", sub: "+13 this term", color: "#8bb7d8", bg: "#d8e8f4", image: "/dashboard-elements/backpack.png" },
+    { label: "Classes", value: "4", sub: "Active now", color: "#d8a0c4", bg: "#f1d8e6", image: "/dashboard-elements/graduation-stack.png" },
+    { label: "Avg Score", value: "84%", sub: "up 8% vs last", color: "#f4d98e", bg: "#fff0b8", image: "/dashboard-elements/report-a-plus.png" },
+    { label: "Pending", value: "12", sub: "Need review", color: "#8bb7d8", bg: "#dceeff", image: "/dashboard-elements/bell.png" },
 ];
 
 const CLASSES = [
@@ -67,10 +67,10 @@ function SH({ title, cta, onClick }) {
 function Card({ children, style = {}, delay = 0 }) {
     return (
         <motion.div {...fadeUp(delay)} style={{
-            borderRadius: 16,
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.07)",
-            backdropFilter: "blur(8px)",
+            borderRadius: 8,
+            background: "#ffffff",
+            border: "4px solid #273c75",
+            boxShadow: "8px 8px 0 #8bb7d8",
             padding: "22px 24px",
             ...style,
         }}>
@@ -85,10 +85,11 @@ function StatCard({ stat, delay }) {
         <motion.div {...fadeUp(delay)}
             whileHover={{ y: -2 }}
             style={{
-                borderRadius: 14,
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                padding: "20px 22px",
+                borderRadius: 8,
+                background: stat.bg,
+                border: "4px solid #273c75",
+                boxShadow: "7px 7px 0 #d8a0c4",
+                padding: "18px 18px",
                 cursor: "default",
                 position: "relative", overflow: "hidden",
             }}
@@ -98,14 +99,16 @@ function StatCard({ stat, delay }) {
                 position: "absolute", top: 0, left: "20%", right: "20%", height: 1,
                 background: `linear-gradient(90deg, transparent, ${stat.color}55, transparent)`,
             }} />
+            <img src={stat.image} alt="" aria-hidden="true" style={{ position: "absolute", right: 12, top: 12, width: 52, height: 52, objectFit: "contain", filter: "drop-shadow(3px 4px 0 rgba(39,60,117,0.16))" }} />
             <div style={{
                 fontFamily: "'Sora', sans-serif",
-                fontSize: 34, fontWeight: 800,
-                color: stat.color, lineHeight: 1,
-                letterSpacing: "-0.04em", marginBottom: 8,
+                fontSize: 34, fontWeight: 900,
+                color: "#273c75", lineHeight: 1,
+                letterSpacing: "0", marginBottom: 8,
+                paddingRight: 54,
             }}>{stat.value}</div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: "#94a3b8", marginBottom: 4 }}>{stat.label}</div>
-            <div style={{ fontSize: 11, color: "#334155" }}>{stat.sub}</div>
+            <div style={{ fontSize: 13, fontWeight: 900, color: "#273c75", marginBottom: 4 }}>{stat.label}</div>
+            <div style={{ fontSize: 12, color: "#334155", fontWeight: 700 }}>{stat.sub}</div>
         </motion.div>
     );
 }
@@ -225,36 +228,70 @@ export default function TeacherDashboard() {
     const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
     return (
-        <div style={{
+        <div className="teacher-dashboard-page" style={{
             padding: "36px 40px 60px",
             maxWidth: 1200,
             fontFamily: "'DM Sans', sans-serif",
+            margin: "0 auto",
         }}>
             <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@700;800&display=swap');
         * { box-sizing: border-box; }
+        .teacher-dashboard-page {
+          color: #273c75;
+          background:
+            radial-gradient(circle at 10% 12%, rgba(216,160,196,0.24), transparent 28%),
+            radial-gradient(circle at 88% 20%, rgba(244,217,142,0.28), transparent 30%);
+        }
+        .teacher-hero-strip {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+          padding: 24px;
+          border: 4px solid #273c75;
+          border-radius: 8px;
+          background: linear-gradient(135deg, rgba(255,236,168,0.92), rgba(216,232,244,0.92));
+          box-shadow: 10px 10px 0 #d8a0c4;
+          margin-bottom: 32px;
+        }
+        .teacher-stat-grid { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important; }
+        .teacher-main-grid { grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr) !important; }
+        @media (max-width: 920px) {
+          .teacher-dashboard-page { padding: 24px 18px 44px !important; }
+          .teacher-main-grid { grid-template-columns: 1fr !important; }
+          .teacher-hero-strip { align-items: flex-start; }
+        }
+        @media (max-width: 620px) {
+          .teacher-dashboard-page { padding: 18px 14px 36px !important; }
+          .teacher-hero-strip { padding: 18px; box-shadow: 6px 6px 0 #d8a0c4; }
+          .teacher-hero-strip img { width: 74px !important; height: 74px !important; }
+        }
       `}</style>
 
             {/* ── GREETING ── */}
-            <motion.div {...fadeUp(0)} style={{ marginBottom: 36 }}>
+            <motion.div {...fadeUp(0)} className="teacher-hero-strip">
+                <div>
                 <p style={{ fontSize: 12, color: "#6366f1", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 6 }}>
-                    {greeting} 👋
+                    {greeting}
                 </p>
                 <h1 style={{
                     fontFamily: "'Sora', sans-serif",
                     fontSize: "clamp(22px, 3vw, 28px)",
-                    fontWeight: 800, color: "#fff",
-                    letterSpacing: "-0.03em", marginBottom: 6,
+                    fontWeight: 900, color: "#273c75",
+                    letterSpacing: "0", marginBottom: 6,
                 }}>
                     Your Classroom Overview
                 </h1>
-                <p style={{ fontSize: 13, color: "#334155" }}>
-                    Term 2 · Academic Year 2025–26
+                <p style={{ fontSize: 13, color: "#334155", fontWeight: 800 }}>
+                    Term 2 • Academic Year 2025-26
                 </p>
+                </div>
+                <img src="/dashboard-elements/pencil-box.png" alt="" aria-hidden="true" style={{ width: 100, height: 100, objectFit: "contain", flexShrink: 0, filter: "drop-shadow(6px 8px 0 rgba(39,60,117,0.16))" }} />
             </motion.div>
 
             {/* ── 4 STAT CARDS ── */}
-            <div style={{
+            <div className="teacher-stat-grid" style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(4, 1fr)",
                 gap: 14,
@@ -264,7 +301,7 @@ export default function TeacherDashboard() {
             </div>
 
             {/* ── MAIN GRID: 2 cols ── */}
-            <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 16, alignItems: "start" }}>
+            <div className="teacher-main-grid" style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 16, alignItems: "start" }}>
 
                 {/* LEFT COL */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>

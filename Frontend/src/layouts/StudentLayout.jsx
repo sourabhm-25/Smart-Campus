@@ -25,7 +25,7 @@ const StudentLayout = () => {
   const currentPage = navItems.find((n) => isActive(n.path));
 
   return (
-    <div style={{
+    <div className="sc-dashboard-skin student-layout" style={{
       display: "flex",
       height: "100vh",
       background: "#FFF5D6",
@@ -40,10 +40,24 @@ const StudentLayout = () => {
         ::-webkit-scrollbar-thumb { background: #F6B94C; border-radius: 99px; border: 2px solid #FFF5D6; }
         ::-webkit-scrollbar-track { background: transparent; }
         a { text-decoration: none; }
+        .student-layout .student-topbar {
+          background: rgba(255,245,214,0.88) !important;
+        }
+        @media (max-width: 640px) {
+          .student-shell { min-width: 0; }
+          .student-sidebar { width: 76px !important; border-radius: 0 24px 24px 0 !important; }
+          .student-sidebar-logo-text,
+          .student-sidebar-label,
+          .student-collapse-label { display: none !important; }
+          .student-sidebar nav { padding: 12px 8px !important; }
+          .student-topbar { padding: 14px 16px !important; gap: 12px; }
+          .student-topbar-date { display: none !important; }
+        }
       `}</style>
 
       {/* ── SIDEBAR ── */}
       <motion.aside
+        className="student-sidebar"
         animate={{ width: collapsed ? 68 : 224 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         style={{
@@ -77,6 +91,7 @@ const StudentLayout = () => {
           <AnimatePresence>
             {!collapsed && (
               <motion.span
+                className="student-sidebar-logo-text"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
@@ -137,6 +152,7 @@ const StudentLayout = () => {
                   <AnimatePresence>
                     {!collapsed && (
                       <motion.span
+                        className="student-sidebar-label"
                         initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -8 }}
@@ -183,6 +199,7 @@ const StudentLayout = () => {
             <AnimatePresence>
               {!collapsed && (
                 <motion.span
+                  className="student-collapse-label"
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                   transition={{ duration: 0.15 }}>
                   Collapse
@@ -194,10 +211,10 @@ const StudentLayout = () => {
       </motion.aside>
 
       {/* ── MAIN CONTENT ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div className="student-shell" style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
 
         {/* Top bar */}
-        <div style={{
+        <div className="student-topbar" style={{
           flexShrink: 0,
           backdropFilter: "blur(16px)",
           borderBottom: "4px solid #071521",
@@ -212,12 +229,13 @@ const StudentLayout = () => {
               {currentPage?.label ?? "SmartCampus"}
             </span>
           </div>
-          <span style={{ fontSize: 14, color: "#1C3F57", fontWeight: 700 }}>Thu, Feb 19 · 2026</span>
+          <span className="student-topbar-date" style={{ fontSize: 14, color: "#1C3F57", fontWeight: 700 }}>Thu, Feb 19 · 2026</span>
         </div>
 
         {/* Page — animated on route change */}
         <div style={{ flex: 1, overflowY: "auto" }}>
           <motion.div
+            className="sc-page-frame"
             key={location.pathname}
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}

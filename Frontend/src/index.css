@@ -92,3 +92,123 @@ body::-webkit-scrollbar,
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
+
+/* Shared dashboard skin: keeps role pages visually consistent without touching page logic. */
+.sc-dashboard-skin {
+  --sc-ink: #071521;
+  --sc-ink-soft: #1c3f57;
+  --sc-blue: #8bb7d8;
+  --sc-pink: #d8a0c4;
+  --sc-yellow: #f4d98e;
+  --sc-cream: #fff5d6;
+  --sc-card: #ffffff;
+  background:
+    radial-gradient(circle at 12% 10%, rgba(216, 160, 196, 0.24), transparent 28%),
+    radial-gradient(circle at 88% 18%, rgba(139, 183, 216, 0.28), transparent 30%),
+    var(--sc-cream) !important;
+  color: var(--sc-ink) !important;
+}
+
+.sc-dashboard-skin a {
+  color: inherit;
+}
+
+.sc-dashboard-skin h1,
+.sc-dashboard-skin h2,
+.sc-dashboard-skin h3,
+.sc-dashboard-skin h4 {
+  color: var(--sc-ink) !important;
+  letter-spacing: 0 !important;
+}
+
+.sc-dashboard-skin p,
+.sc-dashboard-skin span,
+.sc-dashboard-skin div {
+  scrollbar-width: none;
+}
+
+.sc-dashboard-skin button,
+.sc-dashboard-skin input,
+.sc-dashboard-skin select,
+.sc-dashboard-skin textarea {
+  font-family: inherit;
+}
+
+.sc-dashboard-skin button {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.sc-dashboard-skin button:hover {
+  transform: translateY(-2px);
+}
+
+.sc-dashboard-skin [style*="rgba(255,255,255,0.03)"],
+.sc-dashboard-skin [style*="rgba(255,255,255,0.04)"],
+.sc-dashboard-skin [style*="rgba(255,255,255,0.02)"],
+.sc-dashboard-skin [style*="rgba(255,255,255,0.025)"],
+.sc-dashboard-skin [style*="rgba(255,255,255,0.05)"] {
+  background: var(--sc-card) !important;
+  border: 3px solid var(--sc-ink) !important;
+  border-radius: 8px !important;
+  box-shadow: 5px 5px 0 rgba(139, 183, 216, 0.95) !important;
+}
+
+.sc-dashboard-skin [style*="rgba(8,7,20"],
+.sc-dashboard-skin [style*="rgba(4,4,14"],
+.sc-dashboard-skin [style*="radial-gradient(ellipse"] {
+  background: var(--sc-cream) !important;
+}
+
+.sc-dashboard-skin [style*="color: #fff"],
+.sc-dashboard-skin [style*="color: \"#fff\""],
+.sc-dashboard-skin [style*="color: #e2e8f0"],
+.sc-dashboard-skin [style*="color: \"#e2e8f0\""],
+.sc-dashboard-skin [style*="color: #94a3b8"],
+.sc-dashboard-skin [style*="color: \"#94a3b8\""],
+.sc-dashboard-skin [style*="color: #64748b"],
+.sc-dashboard-skin [style*="color: \"#64748b\""],
+.sc-dashboard-skin [style*="color: #475569"],
+.sc-dashboard-skin [style*="color: \"#475569\""] {
+  color: var(--sc-ink) !important;
+}
+
+.sc-dashboard-skin [style*="borderRadius: 16"],
+.sc-dashboard-skin [style*="borderRadius: 18"],
+.sc-dashboard-skin [style*="borderRadius: 20"],
+.sc-dashboard-skin [style*="borderRadius: 24"],
+.sc-dashboard-skin [style*="borderRadius: 32"] {
+  border-radius: 8px !important;
+}
+
+.sc-dashboard-skin table {
+  color: var(--sc-ink);
+}
+
+.sc-dashboard-skin .sc-page-frame {
+  background: transparent !important;
+}
+
+.sc-dashboard-skin .sc-page-frame > * {
+  animation: scPageFloatIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.sc-dashboard-skin [style*="box-shadow"],
+.sc-dashboard-skin [style*="boxShadow"] {
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+}
+
+.sc-dashboard-skin [style*="box-shadow"]:hover,
+.sc-dashboard-skin [style*="boxShadow"]:hover {
+  transform: translateY(-2px);
+}
+
+@keyframes scPageFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

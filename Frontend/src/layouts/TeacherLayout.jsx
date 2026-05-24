@@ -326,7 +326,7 @@ function TeacherAvatar({ collapsed }) {
       </div>
       <AnimatePresence>
         {!collapsed && (
-          <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.15 }}>
+          <motion.div className="teacher-avatar-text" initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.15 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0", whiteSpace: "nowrap" }}>{userName}</div>
             <div style={{ fontSize: 10, color: "#34d399", fontWeight: 600, letterSpacing: "0.04em" }}>● Online</div>
           </motion.div>
@@ -393,6 +393,7 @@ function NavItem({ item, active, collapsed }) {
         <AnimatePresence>
           {!collapsed && (
             <motion.span
+              className="teacher-sidebar-label"
               initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -6 }}
               transition={{ duration: 0.14 }}
               style={{
@@ -410,6 +411,7 @@ function NavItem({ item, active, collapsed }) {
         <AnimatePresence>
           {!collapsed && item.badge && (
             <motion.span
+              className="teacher-sidebar-badge"
               initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.7 }}
               style={{
                 fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 99,
@@ -508,11 +510,11 @@ const TeacherLayout = () => {
   const currentPage = [...NAV_ITEMS, ...BOTTOM_ITEMS].find((n) => isActive(n.path));
 
   return (
-    <div style={{
+    <div className="sc-dashboard-skin teacher-layout" style={{
       display: "flex", height: "100vh",
-      background: "radial-gradient(ellipse 80% 60% at 50% 0%, #1e1b4b 0%, #0f0e23 55%, #080714 100%)",
+      background: "#FFF5D6",
       fontFamily: "'DM Sans', sans-serif",
-      color: "#e2e8f0",
+      color: "#071521",
       overflow: "hidden",
     }}>
       <style>{`
@@ -523,21 +525,68 @@ const TeacherLayout = () => {
         ::-webkit-scrollbar-track { background: transparent; }
         a { text-decoration: none; }
         ::selection { background: rgba(99,102,241,0.3); }
+        .teacher-layout .teacher-sidebar {
+          background: #FFECA8 !important;
+          border-right: 4px solid #071521 !important;
+          border-radius: 0 34px 34px 0 !important;
+          box-shadow: none !important;
+        }
+        .teacher-layout .teacher-topbar {
+          background: rgba(255,245,214,0.88) !important;
+          border-bottom: 4px solid #071521 !important;
+          color: #071521 !important;
+        }
+        .teacher-layout .teacher-statusbar {
+          background: #FFECA8 !important;
+          border-top: 4px solid #071521 !important;
+        }
+        .teacher-layout .teacher-page-scroll {
+          background:
+            radial-gradient(circle at 12% 10%, rgba(216,160,196,0.18), transparent 26%),
+            radial-gradient(circle at 88% 18%, rgba(139,183,216,0.22), transparent 28%),
+            #FFF5D6;
+        }
+        .teacher-layout .teacher-sidebar [style*="color: #e2e8f0"],
+        .teacher-layout .teacher-sidebar [style*="color: #4b5563"],
+        .teacher-layout .teacher-sidebar [style*="color: #475569"],
+        .teacher-layout .teacher-sidebar [style*="color: #334155"] {
+          color: #071521 !important;
+        }
+        .teacher-layout .teacher-sidebar [style*="rgba(99,102,241,0.15)"] {
+          background: #f6b94c !important;
+          border: 3px solid #071521 !important;
+          box-shadow: 4px 4px 0 #071521 !important;
+        }
+        @media (max-width: 760px) {
+          .teacher-shell { min-width: 0; }
+          .teacher-sidebar { width: 76px !important; }
+          .teacher-sidebar nav { padding: 10px 8px !important; }
+          .teacher-topbar { padding: 0 16px !important; }
+          .teacher-topbar-center,
+          .teacher-topbar-right,
+          .teacher-sidebar-text,
+          .teacher-sidebar-label,
+          .teacher-sidebar-badge,
+          .teacher-sidebar-expanded,
+          .teacher-avatar-text,
+          .teacher-collapse-label { display: none !important; }
+        }
       `}</style>
 
       {/* ── SIDEBAR ── */}
       <motion.aside
+        className="teacher-sidebar"
         animate={{ width: collapsed ? 64 : 220 }}
         transition={{ type: "spring", stiffness: 320, damping: 32 }}
         style={{
           height: "100vh",
-          background: "rgba(8,7,20,0.7)",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
+          background: "#FFECA8",
+          borderRight: "4px solid #071521",
           backdropFilter: "blur(24px)",
           display: "flex", flexDirection: "column",
           flexShrink: 0, overflow: "hidden",
           position: "relative", zIndex: 20,
-          boxShadow: "4px 0 32px rgba(0,0,0,0.3)",
+          boxShadow: "none",
         }}>
 
         {/* Logo */}
@@ -553,7 +602,8 @@ const TeacherLayout = () => {
             transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 8 }}
             style={{
               width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-              background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+            background: "#6FA8DC",
+            border: "3px solid #071521",
               display: "flex", alignItems: "center", justifyContent: "center",
               cursor: "pointer",
               boxShadow: "0 4px 16px rgba(99,102,241,0.4)",
@@ -564,12 +614,13 @@ const TeacherLayout = () => {
           <AnimatePresence>
             {!collapsed && (
               <motion.div
+                className="teacher-sidebar-text"
                 initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.18 }}>
-                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: 15, color: "#fff", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 15, color: "#071521", letterSpacing: "0", lineHeight: 1.1 }}>
                   SmartCampus
                 </div>
-                <div style={{ fontSize: 9, color: "#6366f1", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                <div style={{ fontSize: 9, color: "#273c75", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>
                   Teacher Portal
                 </div>
               </motion.div>
@@ -581,6 +632,7 @@ const TeacherLayout = () => {
         <AnimatePresence>
           {!collapsed && (
             <motion.div
+              className="teacher-sidebar-expanded"
               initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.22 }}
               style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", flexShrink: 0 }}>
@@ -656,7 +708,7 @@ const TeacherLayout = () => {
             </motion.span>
             <AnimatePresence>
               {!collapsed && (
-                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}>
+                <motion.span className="teacher-collapse-label" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}>
                   Collapse
                 </motion.span>
               )}
@@ -666,10 +718,11 @@ const TeacherLayout = () => {
       </motion.aside>
 
       {/* ── MAIN AREA ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
+      <div className="teacher-shell" style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
 
         {/* ── TOP BAR ── */}
         <motion.div
+          className="teacher-topbar"
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: pageReady ? 1 : 0, y: pageReady ? 0 : -12 }}
           transition={{ duration: 0.4 }}
@@ -696,12 +749,12 @@ const TeacherLayout = () => {
           </div>
 
           {/* Center: Stats */}
-          <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+          <div className="teacher-topbar-center" style={{ flex: 1, display: "flex", justifyContent: "center" }}>
             <HeaderStats data={statsData} />
           </div>
 
           {/* Right: Actions */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          <div className="teacher-topbar-right" style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
             <QuickActions />
             <NotifBell count={5} />
             <LiveClock />
@@ -723,7 +776,7 @@ const TeacherLayout = () => {
         </div>
 
         {/* ── PAGE CONTENT ── */}
-        <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+        <div className="teacher-page-scroll" style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -731,6 +784,7 @@ const TeacherLayout = () => {
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -8, filter: "blur(2px)" }}
               transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
+              className="sc-page-frame"
               style={{ minHeight: "100%" }}>
               <Outlet />
             </motion.div>
@@ -738,10 +792,10 @@ const TeacherLayout = () => {
         </div>
 
         {/* ── BOTTOM STATUS BAR ── */}
-        <div style={{
+        <div className="teacher-statusbar" style={{
           flexShrink: 0, height: 28,
-          background: "rgba(4,4,14,0.7)",
-          borderTop: "1px solid rgba(255,255,255,0.04)",
+          background: "#FFECA8",
+          borderTop: "4px solid #071521",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "0 28px",
         }}>

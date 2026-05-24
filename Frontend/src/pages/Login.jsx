@@ -540,7 +540,7 @@ export default function Login() {
           box-shadow: none !important;
         }
         .auth-google-btn {
-          background: #ffffff !important;
+          background: #dfc2c2ff !important;
           color: #273c75 !important;
           border: 3px solid #273c75 !important;
           border-radius: 8px !important;
