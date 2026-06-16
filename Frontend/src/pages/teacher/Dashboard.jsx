@@ -4,17 +4,17 @@ import { motion } from "framer-motion";
 
 /* ─── mock data (swap for API calls) ─── */
 const STATS = [
-    { label: "Students", value: "128", sub: "+13 this term", color: "#8bb7d8", bg: "#d8e8f4", image: "/dashboard-elements/backpack.png" },
-    { label: "Classes", value: "4", sub: "Active now", color: "#d8a0c4", bg: "#f1d8e6", image: "/dashboard-elements/graduation-stack.png" },
-    { label: "Avg Score", value: "84%", sub: "up 8% vs last", color: "#f4d98e", bg: "#fff0b8", image: "/dashboard-elements/report-a-plus.png" },
-    { label: "Pending", value: "12", sub: "Need review", color: "#8bb7d8", bg: "#dceeff", image: "/dashboard-elements/bell.png" },
+    { label: "Students", value: "128", sub: "+13 this term", color: "#273c75", bg: "#d8e8f4", image: "/dashboard-elements/backpack.png" },
+    { label: "Classes", value: "4", sub: "Active now", color: "#273c75", bg: "#f1d8e6", image: "/dashboard-elements/graduation-stack.png" },
+    { label: "Avg Score", value: "84%", sub: "up 8% vs last", color: "#273c75", bg: "#fff0b8", image: "/dashboard-elements/report-a-plus.png" },
+    { label: "Pending", value: "12", sub: "Need review", color: "#273c75", bg: "#dceeff", image: "/dashboard-elements/bell.png" },
 ];
 
 const CLASSES = [
-    { grade: "8A", subject: "Mathematics", students: 34, submitted: 28, avg: 82, color: "#818cf8" },
-    { grade: "8B", subject: "Science", students: 31, submitted: 24, avg: 79, color: "#34d399" },
-    { grade: "9A", subject: "Mathematics", students: 36, submitted: 31, avg: 88, color: "#22d3ee" },
-    { grade: "9B", subject: "English", students: 27, submitted: 20, avg: 85, color: "#f59e0b" },
+    { grade: "8A", subject: "Mathematics", students: 34, submitted: 28, avg: 82, color: "#273c75", accent: "#8bb7d8" },
+    { grade: "8B", subject: "Science", students: 31, submitted: 24, avg: 79, color: "#273c75", accent: "#34d399" },
+    { grade: "9A", subject: "Mathematics", students: 36, submitted: 31, avg: 88, color: "#273c75", accent: "#f6b94c" },
+    { grade: "9B", subject: "English", students: 27, submitted: 20, avg: 85, color: "#273c75", accent: "#d8a0c4" },
 ];
 
 const SUBMISSIONS = [
@@ -32,8 +32,9 @@ const DEADLINES = [
 ];
 
 /* ─── tiny helpers ─── */
-const scoreColor = (s) => s >= 90 ? "#34d399" : s >= 75 ? "#f59e0b" : "#f87171";
-const levelColor = { high: "#f87171", mid: "#f59e0b", low: "#34d399" };
+const scoreColor = (s) => s >= 90 ? "#15803d" : s >= 75 ? "#b45309" : "#b91c1c";
+const levelColor = { high: "#b91c1c", mid: "#b45309", low: "#15803d" };
+const levelBg    = { high: "#fee2e2", mid: "#fef3c7", low: "#d1fae5" };
 
 /* ─── fade-up animation preset ─── */
 const fadeUp = (delay = 0) => ({
@@ -46,17 +47,18 @@ const fadeUp = (delay = 0) => ({
 function SH({ title, cta, onClick }) {
     return (
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 18 }}>
-            <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: "#cbd5e1", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+            <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 900, color: "#3F6E8F", letterSpacing: "0.06em", textTransform: "uppercase" }}>
                 {title}
             </span>
             {cta && (
                 <button onClick={onClick} style={{
-                    background: "none", border: "none", cursor: "pointer",
-                    fontSize: 11, color: "#6366f1", fontWeight: 600,
-                    padding: "3px 6px", borderRadius: 6, transition: "background 0.15s",
+                    background: "none", border: "2px solid #071521", cursor: "pointer",
+                    fontSize: 11, color: "#071521", fontWeight: 800,
+                    padding: "3px 10px", borderRadius: 8, transition: "all 0.15s",
+                    fontFamily: "'DM Sans', sans-serif",
                 }}
-                    onMouseEnter={e => e.currentTarget.style.background = "rgba(99,102,241,0.1)"}
-                    onMouseLeave={e => e.currentTarget.style.background = "none"}
+                    onMouseEnter={e => { e.currentTarget.style.background = "#071521"; e.currentTarget.style.color = "#FFECA8"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#071521"; }}
                 >{cta} →</button>
             )}
         </div>
@@ -67,10 +69,10 @@ function SH({ title, cta, onClick }) {
 function Card({ children, style = {}, delay = 0 }) {
     return (
         <motion.div {...fadeUp(delay)} style={{
-            borderRadius: 8,
+            borderRadius: 16,
             background: "#ffffff",
-            border: "4px solid #273c75",
-            boxShadow: "8px 8px 0 #8bb7d8",
+            border: "4px solid #071521",
+            boxShadow: "6px 6px 0 #8bb7d8",
             padding: "22px 24px",
             ...style,
         }}>
@@ -83,32 +85,28 @@ function Card({ children, style = {}, delay = 0 }) {
 function StatCard({ stat, delay }) {
     return (
         <motion.div {...fadeUp(delay)}
-            whileHover={{ y: -2 }}
+            whileHover={{ y: -2, boxShadow: "8px 8px 0 #d8a0c4" }}
             style={{
-                borderRadius: 8,
+                borderRadius: 14,
                 background: stat.bg,
-                border: "4px solid #273c75",
-                boxShadow: "7px 7px 0 #d8a0c4",
+                border: "4px solid #071521",
+                boxShadow: "5px 5px 0 #071521",
                 padding: "18px 18px",
                 cursor: "default",
                 position: "relative", overflow: "hidden",
+                transition: "box-shadow 0.2s",
             }}
         >
-            {/* top accent line */}
-            <div style={{
-                position: "absolute", top: 0, left: "20%", right: "20%", height: 1,
-                background: `linear-gradient(90deg, transparent, ${stat.color}55, transparent)`,
-            }} />
-            <img src={stat.image} alt="" aria-hidden="true" style={{ position: "absolute", right: 12, top: 12, width: 52, height: 52, objectFit: "contain", filter: "drop-shadow(3px 4px 0 rgba(39,60,117,0.16))" }} />
+            <img src={stat.image} alt="" aria-hidden="true" style={{ position: "absolute", right: 12, top: 12, width: 52, height: 52, objectFit: "contain", filter: "drop-shadow(2px 3px 0 rgba(39,60,117,0.18))", opacity: 0.85 }} />
             <div style={{
                 fontFamily: "'Sora', sans-serif",
-                fontSize: 34, fontWeight: 900,
-                color: "#273c75", lineHeight: 1,
-                letterSpacing: "0", marginBottom: 8,
-                paddingRight: 54,
+                fontSize: 36, fontWeight: 900,
+                color: "#071521", lineHeight: 1,
+                marginBottom: 8,
+                paddingRight: 60,
             }}>{stat.value}</div>
-            <div style={{ fontSize: 13, fontWeight: 900, color: "#273c75", marginBottom: 4 }}>{stat.label}</div>
-            <div style={{ fontSize: 12, color: "#334155", fontWeight: 700 }}>{stat.sub}</div>
+            <div style={{ fontSize: 13, fontWeight: 900, color: "#071521", marginBottom: 3 }}>{stat.label}</div>
+            <div style={{ fontSize: 11, color: "#3F6E8F", fontWeight: 700 }}>{stat.sub}</div>
         </motion.div>
     );
 }
@@ -122,41 +120,42 @@ function ClassRow({ cls, delay }) {
             style={{
                 display: "flex", alignItems: "center", gap: 14,
                 padding: "12px 0",
-                borderBottom: "1px solid rgba(255,255,255,0.045)",
+                borderBottom: "2px dashed rgba(7,21,33,0.1)",
                 cursor: "pointer",
             }}
         >
             {/* Grade badge */}
             <div style={{
-                width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-                background: `${cls.color}14`, border: `1px solid ${cls.color}28`,
+                width: 42, height: 42, borderRadius: 10, flexShrink: 0,
+                background: cls.accent + "33",
+                border: `3px solid #071521`,
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 800, color: cls.color,
+                fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 900, color: "#071521",
             }}>
                 {cls.grade}
             </div>
 
             {/* Info */}
             <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", marginBottom: 2 }}>
-                    Grade {cls.grade}  <span style={{ color: "#334155", fontWeight: 400 }}>·</span>  <span style={{ color: "#475569", fontWeight: 400, fontSize: 12 }}>{cls.subject}</span>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#071521", marginBottom: 2 }}>
+                    Grade {cls.grade} <span style={{ color: "#3F6E8F", fontWeight: 600 }}>· {cls.subject}</span>
                 </div>
                 {/* Progress bar */}
-                <div style={{ height: 3, borderRadius: 99, background: "rgba(255,255,255,0.06)", overflow: "hidden", marginTop: 6 }}>
+                <div style={{ height: 4, borderRadius: 99, background: "rgba(7,21,33,0.08)", overflow: "hidden", marginTop: 5 }}>
                     <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${pct}%` }}
                         transition={{ delay: delay + 0.3, duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
-                        style={{ height: "100%", borderRadius: 99, background: cls.color }}
+                        style={{ height: "100%", borderRadius: 99, background: cls.accent }}
                     />
                 </div>
-                <div style={{ fontSize: 10, color: "#334155", marginTop: 4 }}>{cls.submitted}/{cls.students} submitted</div>
+                <div style={{ fontSize: 11, color: "#3F6E8F", marginTop: 4, fontWeight: 700 }}>{cls.submitted}/{cls.students} submitted</div>
             </div>
 
             {/* Avg score */}
             <div style={{ textAlign: "right", flexShrink: 0 }}>
-                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 17, fontWeight: 800, color: cls.color }}>{cls.avg}%</div>
-                <div style={{ fontSize: 9, color: "#334155", textTransform: "uppercase", letterSpacing: "0.05em" }}>avg</div>
+                <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 17, fontWeight: 900, color: "#071521" }}>{cls.avg}%</div>
+                <div style={{ fontSize: 9, color: "#3F6E8F", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 800 }}>avg</div>
             </div>
         </motion.div>
     );
@@ -168,31 +167,38 @@ function SubmissionRow({ s, delay, last }) {
         <motion.div {...fadeUp(delay)} style={{
             display: "flex", alignItems: "center", gap: 12,
             padding: "10px 0",
-            borderBottom: last ? "none" : "1px solid rgba(255,255,255,0.045)",
+            borderBottom: last ? "none" : "2px dashed rgba(7,21,33,0.1)",
         }}>
             {/* Avatar letter */}
             <div style={{
-                width: 30, height: 30, borderRadius: 8, flexShrink: 0,
-                background: "rgba(129,140,248,0.12)", border: "1px solid rgba(129,140,248,0.22)",
+                width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                background: "#d8e8f4", border: "3px solid #071521",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: "#818cf8",
+                fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 900, color: "#273c75",
+                boxShadow: "2px 2px 0 #071521",
             }}>{s.name[0]}</div>
 
             {/* Name + subject */}
             <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#e2e8f0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</div>
-                <div style={{ fontSize: 10, color: "#334155" }}>{s.subject} · {s.time}</div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#071521", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</div>
+                <div style={{ fontSize: 11, color: "#3F6E8F", fontWeight: 700 }}>{s.subject} · {s.time}</div>
             </div>
 
             {/* Score / badge */}
             {s.status === "graded" ? (
-                <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 800, color: scoreColor(s.score), flexShrink: 0 }}>
+                <span style={{
+                    fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 900,
+                    color: scoreColor(s.score), flexShrink: 0,
+                    background: s.score >= 90 ? "#d1fae5" : s.score >= 75 ? "#fef3c7" : "#fee2e2",
+                    border: `2px solid ${scoreColor(s.score)}`,
+                    borderRadius: 8, padding: "2px 10px",
+                }}>
                     {s.score}%
                 </span>
             ) : (
                 <span style={{
-                    fontSize: 9, fontWeight: 700, padding: "3px 8px", borderRadius: 99, flexShrink: 0,
-                    background: "rgba(245,158,11,0.12)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.22)",
+                    fontSize: 10, fontWeight: 900, padding: "3px 10px", borderRadius: 8, flexShrink: 0,
+                    background: "#fef3c7", color: "#b45309", border: "2px solid #f59e0b",
                 }}>Review</span>
             )}
         </motion.div>
@@ -201,19 +207,23 @@ function SubmissionRow({ s, delay, last }) {
 
 /* ─── Deadline row ─── */
 function DeadlineRow({ d, delay, last }) {
-    const c = levelColor[d.level];
+    const c   = levelColor[d.level];
+    const bg  = levelBg[d.level];
     return (
         <motion.div {...fadeUp(delay)} style={{
             display: "flex", alignItems: "center", gap: 12,
             padding: "10px 0",
-            borderBottom: last ? "none" : "1px solid rgba(255,255,255,0.045)",
+            borderBottom: last ? "none" : "2px dashed rgba(7,21,33,0.1)",
         }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: c, flexShrink: 0, boxShadow: `0 0 6px ${c}` }} />
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: c, flexShrink: 0, border: "2px solid #071521" }} />
             <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#e2e8f0" }}>{d.title}</div>
-                <div style={{ fontSize: 10, color: "#334155", marginTop: 2 }}>{d.class}</div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "#071521" }}>{d.title}</div>
+                <div style={{ fontSize: 11, color: "#3F6E8F", marginTop: 2, fontWeight: 700 }}>{d.class}</div>
             </div>
-            <span style={{ fontSize: 10, fontWeight: 700, color: c, flexShrink: 0 }}>{d.due}</span>
+            <span style={{
+                fontSize: 11, fontWeight: 900, color: c, flexShrink: 0,
+                background: bg, border: `2px solid ${c}`, borderRadius: 8, padding: "2px 9px",
+            }}>{d.due}</span>
         </motion.div>
     );
 }
@@ -235,25 +245,22 @@ export default function TeacherDashboard() {
             margin: "0 auto",
         }}>
             <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&family=Sora:wght@700;800;900&display=swap');
         * { box-sizing: border-box; }
         .teacher-dashboard-page {
-          color: #273c75;
-          background:
-            radial-gradient(circle at 10% 12%, rgba(216,160,196,0.24), transparent 28%),
-            radial-gradient(circle at 88% 20%, rgba(244,217,142,0.28), transparent 30%);
+          color: #071521;
         }
         .teacher-hero-strip {
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 20px;
-          padding: 24px;
-          border: 4px solid #273c75;
-          border-radius: 8px;
-          background: linear-gradient(135deg, rgba(255,236,168,0.92), rgba(216,232,244,0.92));
-          box-shadow: 10px 10px 0 #d8a0c4;
-          margin-bottom: 32px;
+          padding: 24px 28px;
+          border: 4px solid #071521;
+          border-radius: 14px;
+          background: linear-gradient(135deg, #ffe792, #B7DBFF);
+          box-shadow: 8px 8px 0 #d8a0c4;
+          margin-bottom: 28px;
         }
         .teacher-stat-grid { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important; }
         .teacher-main-grid { grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr) !important; }
@@ -264,7 +271,7 @@ export default function TeacherDashboard() {
         }
         @media (max-width: 620px) {
           .teacher-dashboard-page { padding: 18px 14px 36px !important; }
-          .teacher-hero-strip { padding: 18px; box-shadow: 6px 6px 0 #d8a0c4; }
+          .teacher-hero-strip { padding: 18px; box-shadow: 5px 5px 0 #d8a0c4; }
           .teacher-hero-strip img { width: 74px !important; height: 74px !important; }
         }
       `}</style>
@@ -272,22 +279,22 @@ export default function TeacherDashboard() {
             {/* ── GREETING ── */}
             <motion.div {...fadeUp(0)} className="teacher-hero-strip">
                 <div>
-                <p style={{ fontSize: 12, color: "#6366f1", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 6 }}>
-                    {greeting}
-                </p>
-                <h1 style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontSize: "clamp(22px, 3vw, 28px)",
-                    fontWeight: 900, color: "#273c75",
-                    letterSpacing: "0", marginBottom: 6,
-                }}>
-                    Your Classroom Overview
-                </h1>
-                <p style={{ fontSize: 13, color: "#334155", fontWeight: 800 }}>
-                    Term 2 • Academic Year 2025-26
-                </p>
+                    <p style={{ fontSize: 11, color: "#3F6E8F", fontWeight: 900, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 6 }}>
+                        {greeting} 👋
+                    </p>
+                    <h1 style={{
+                        fontFamily: "'Sora', sans-serif",
+                        fontSize: "clamp(22px, 3vw, 28px)",
+                        fontWeight: 900, color: "#071521",
+                        letterSpacing: "0", marginBottom: 6,
+                    }}>
+                        Your Classroom Overview
+                    </h1>
+                    <p style={{ fontSize: 13, color: "#273c75", fontWeight: 800 }}>
+                        Term 2 • Academic Year 2025-26
+                    </p>
                 </div>
-                <img src="/dashboard-elements/pencil-box.png" alt="" aria-hidden="true" style={{ width: 100, height: 100, objectFit: "contain", flexShrink: 0, filter: "drop-shadow(6px 8px 0 rgba(39,60,117,0.16))" }} />
+                <img src="/dashboard-elements/pencil-box.png" alt="" aria-hidden="true" style={{ width: 100, height: 100, objectFit: "contain", flexShrink: 0, filter: "drop-shadow(4px 6px 0 rgba(7,21,33,0.18))" }} />
             </motion.div>
 
             {/* ── 4 STAT CARDS ── */}
@@ -331,36 +338,38 @@ export default function TeacherDashboard() {
                         <SH title="Quick Actions" />
                         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                             {[
-                                { label: "Assign New Task", icon: "✦", path: "/teacher/task", color: "#6366f1" },
-                                { label: "Create a Test", icon: "◈", path: "/teacher/test", color: "#8b5cf6" },
-                                { label: "Open Kanban", icon: "⊞", path: "/teacher/kanban", color: "#22d3ee" },
-                                { label: "View Submissions", icon: "◎", path: "/teacher/submissions", color: "#34d399" },
+                                { label: "Assign New Task", icon: "✦", path: "/teacher/task", color: "#273c75", bg: "#d8e8f4" },
+                                { label: "Create a Test", icon: "◈", path: "/teacher/test", color: "#273c75", bg: "#f1d8e6" },
+                                { label: "Open Kanban", icon: "⊞", path: "/teacher/kanban", color: "#273c75", bg: "#B7DBFF" },
+                                { label: "View Submissions", icon: "◎", path: "/teacher/submissions", color: "#273c75", bg: "#FFECA8" },
                             ].map((a) => (
                                 <motion.button
                                     key={a.label}
-                                    whileHover={{ x: 3, borderColor: `${a.color}40` }}
+                                    whileHover={{ x: 3, boxShadow: "4px 4px 0 #071521" }}
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => navigate(a.path)}
                                     style={{
-                                        display: "flex", alignItems: "center", gap: 10,
+                                        display: "flex", alignItems: "center", gap: 12,
                                         padding: "11px 14px", borderRadius: 10, cursor: "pointer",
-                                        background: "rgba(255,255,255,0.025)",
-                                        border: "1px solid rgba(255,255,255,0.07)",
-                                        color: "#94a3b8", fontSize: 13, fontWeight: 500,
-                                        textAlign: "left", transition: "border-color 0.2s, color 0.2s",
+                                        background: a.bg,
+                                        border: "3px solid #071521",
+                                        color: "#071521", fontSize: 13, fontWeight: 800,
+                                        textAlign: "left",
                                         width: "100%",
+                                        boxShadow: "2px 2px 0 #071521",
+                                        transition: "all 0.15s",
+                                        fontFamily: "'DM Sans', sans-serif",
                                     }}
-                                    onMouseEnter={e => { e.currentTarget.style.color = "#e2e8f0"; }}
-                                    onMouseLeave={e => { e.currentTarget.style.color = "#94a3b8"; }}
                                 >
                                     <span style={{
                                         width: 28, height: 28, borderRadius: 7, flexShrink: 0,
-                                        background: `${a.color}18`, border: `1px solid ${a.color}30`,
+                                        background: "#ffffff", border: `2px solid #071521`,
                                         display: "flex", alignItems: "center", justifyContent: "center",
-                                        fontSize: 13, color: a.color,
+                                        fontSize: 13, color: "#071521",
+                                        boxShadow: "1px 1px 0 #071521",
                                     }}>{a.icon}</span>
                                     {a.label}
-                                    <span style={{ marginLeft: "auto", fontSize: 12, color: "#1e293b" }}>→</span>
+                                    <span style={{ marginLeft: "auto", fontSize: 14, color: "#071521", fontWeight: 900 }}>→</span>
                                 </motion.button>
                             ))}
                         </div>
@@ -376,26 +385,29 @@ export default function TeacherDashboard() {
 
                     {/* Enrollment requests nudge */}
                     <motion.div {...fadeUp(0.38)}
-                        whileHover={{ borderColor: "rgba(99,102,241,0.3)" }}
+                        whileHover={{ y: -2, boxShadow: "6px 6px 0 #d8a0c4" }}
                         style={{
                             borderRadius: 14, padding: "16px 20px",
-                            background: "rgba(99,102,241,0.07)",
-                            border: "1px solid rgba(99,102,241,0.18)",
-                            cursor: "pointer", transition: "border-color 0.2s",
+                            background: "#f1d8e6",
+                            border: "3px solid #071521",
+                            cursor: "pointer",
                             display: "flex", alignItems: "center", gap: 14,
+                            boxShadow: "4px 4px 0 #071521",
+                            transition: "all 0.2s",
                         }}
                         onClick={() => navigate("/teacher/dashboard")}
                     >
                         <div style={{
                             width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                            background: "rgba(99,102,241,0.18)", border: "1px solid rgba(99,102,241,0.3)",
+                            background: "#ffffff", border: "3px solid #071521",
                             display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16,
+                            boxShadow: "2px 2px 0 #071521",
                         }}>🙋</div>
                         <div>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: "#c7d2fe" }}>3 Enrollment Requests</div>
-                            <div style={{ fontSize: 11, color: "#475569", marginTop: 2 }}>Students waiting to join your class</div>
+                            <div style={{ fontSize: 13, fontWeight: 900, color: "#071521" }}>3 Enrollment Requests</div>
+                            <div style={{ fontSize: 11, color: "#3F6E8F", marginTop: 2, fontWeight: 700 }}>Students waiting to join your class</div>
                         </div>
-                        <span style={{ marginLeft: "auto", fontSize: 13, color: "#6366f1" }}>→</span>
+                        <span style={{ marginLeft: "auto", fontSize: 14, color: "#071521", fontWeight: 900 }}>→</span>
                     </motion.div>
                 </div>
             </div>

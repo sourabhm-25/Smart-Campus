@@ -10,7 +10,8 @@ const fadeUp = (delay = 0) => ({
   transition: { delay, duration: 0.38, ease: [0.25, 1, 0.5, 1] },
 });
 
-const classColors = ["#818cf8", "#34d399", "#22d3ee", "#f59e0b", "#c084fc", "#fb7185"];
+const classColors = ["#8bb7d8", "#34d399", "#f6b94c", "#d8a0c4", "#a78bfa", "#fb7185"];
+const classBgs    = ["#d8e8f4", "#d1fae5", "#FFECA8", "#f1d8e6", "#ede9fe", "#fee2e2"];
 
 /* ── Toast ── */
 function Toast({ msg, type }) {
@@ -22,12 +23,12 @@ function Toast({ msg, type }) {
       style={{
         position: "fixed", bottom: 28, right: 28, zIndex: 999,
         padding: "12px 20px", borderRadius: 12,
-        background: type === "success" ? "rgba(52,211,153,0.15)" : "rgba(248,113,113,0.15)",
-        border: `1px solid ${type === "success" ? "rgba(52,211,153,0.35)" : "rgba(248,113,113,0.35)"}`,
-        backdropFilter: "blur(16px)",
-        color: type === "success" ? "#34d399" : "#f87171",
-        fontSize: 13, fontWeight: 600,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+        background: type === "success" ? "#d1fae5" : "#fee2e2",
+        border: `3px solid ${type === "success" ? "#34d399" : "#f87171"}`,
+        color: type === "success" ? "#15803d" : "#b91c1c",
+        fontSize: 13, fontWeight: 800,
+        boxShadow: "4px 4px 0 #071521",
+        fontFamily: "'DM Sans', sans-serif",
       }}
     >
       {type === "success" ? "✓ " : "✗ "}{msg}
@@ -47,7 +48,7 @@ function SubjectModal({ req, onConfirm, onClose }) {
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       style={{
         position: "fixed", inset: 0, zIndex: 200,
-        background: "rgba(0,0,0,0.65)", backdropFilter: "blur(8px)",
+        background: "rgba(7,21,33,0.6)", backdropFilter: "blur(6px)",
         display: "flex", alignItems: "center", justifyContent: "center",
       }}
       onClick={onClose}
@@ -56,20 +57,20 @@ function SubjectModal({ req, onConfirm, onClose }) {
         initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
         onClick={e => e.stopPropagation()}
         style={{
-          width: 380, borderRadius: 18,
-          background: "rgba(12,11,30,0.98)",
-          border: "1px solid rgba(99,102,241,0.3)",
-          backdropFilter: "blur(24px)",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.7)",
+          width: 400, borderRadius: 20,
+          background: "#ffffff",
+          border: "4px solid #071521",
+          boxShadow: "8px 8px 0 #8bb7d8",
           padding: "28px 28px 24px",
+          fontFamily: "'DM Sans', sans-serif",
         }}
       >
-        <div style={{ fontSize: 18, marginBottom: 8 }}>📚</div>
-        <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 15, fontWeight: 800, color: "#e2e8f0", marginBottom: 6 }}>
+        <div style={{ fontSize: 22, marginBottom: 8 }}>📚</div>
+        <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 17, fontWeight: 900, color: "#071521", marginBottom: 6 }}>
           Select Subject to Accept
         </div>
-        <div style={{ fontSize: 12, color: "#475569", marginBottom: 20 }}>
-          Accepting <strong style={{ color: "#c7d2fe" }}>{req?.student_name}</strong> — Grade {req?.grade}
+        <div style={{ fontSize: 12, color: "#3F6E8F", marginBottom: 20, fontWeight: 700 }}>
+          Accepting <strong style={{ color: "#071521" }}>{req?.student_name}</strong> — Grade {req?.grade}
         </div>
 
         {subjects.length > 0 ? (
@@ -79,24 +80,25 @@ function SubjectModal({ req, onConfirm, onClose }) {
                 onClick={() => setSelected(s)}
                 style={{
                   padding: "10px 14px", borderRadius: 10, cursor: "pointer",
-                  background: selected === s ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.03)",
-                  border: selected === s ? "1px solid rgba(99,102,241,0.5)" : "1px solid rgba(255,255,255,0.08)",
-                  color: selected === s ? "#a5b4fc" : "#94a3b8",
-                  fontSize: 13, fontWeight: 600, transition: "all 0.15s",
+                  background: selected === s ? "#FFECA8" : "#f8fafc",
+                  border: selected === s ? "3px solid #071521" : "2px solid #e2e8f0",
+                  color: "#071521",
+                  fontSize: 13, fontWeight: 800, transition: "all 0.15s",
+                  boxShadow: selected === s ? "3px 3px 0 #071521" : "none",
                 }}>{s}</motion.div>
             ))}
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
               onClick={() => setSelected("__custom__")}
               style={{
                 padding: "10px 14px", borderRadius: 10, cursor: "pointer",
-                background: selected === "__custom__" ? "rgba(99,102,241,0.1)" : "rgba(255,255,255,0.02)",
-                border: selected === "__custom__" ? "1px solid rgba(99,102,241,0.3)" : "1px solid rgba(255,255,255,0.06)",
-                color: "#475569", fontSize: 12, fontWeight: 600, transition: "all 0.15s",
+                background: selected === "__custom__" ? "#FFF5D6" : "#f8fafc",
+                border: selected === "__custom__" ? "3px solid #071521" : "2px dashed #d1d5db",
+                color: "#3F6E8F", fontSize: 12, fontWeight: 800, transition: "all 0.15s",
               }}>+ Enter custom subject</motion.div>
           </div>
         ) : (
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 12, color: "#475569", marginBottom: 8 }}>No subjects detected. Enter manually:</div>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 12, color: "#3F6E8F", fontWeight: 700, marginBottom: 8 }}>No subjects detected. Enter manually:</div>
           </div>
         )}
 
@@ -105,8 +107,10 @@ function SubjectModal({ req, onConfirm, onClose }) {
             placeholder="e.g. Mathematics"
             style={{
               width: "100%", padding: "10px 14px", borderRadius: 10, marginBottom: 16,
-              background: "rgba(255,255,255,0.05)", border: "1px solid rgba(99,102,241,0.3)",
-              color: "#e2e8f0", fontSize: 13, outline: "none", fontFamily: "'DM Sans', sans-serif",
+              background: "#ffffff", border: "3px solid #071521",
+              color: "#071521", fontSize: 13, outline: "none",
+              fontFamily: "'DM Sans', sans-serif",
+              boxShadow: "3px 3px 0 #d8e8f4",
             }}
           />
         )}
@@ -115,17 +119,21 @@ function SubjectModal({ req, onConfirm, onClose }) {
           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
             disabled={!value} onClick={() => value && onConfirm(value)}
             style={{
-              flex: 1, padding: "11px", borderRadius: 10, cursor: value ? "pointer" : "not-allowed",
-              background: value ? "rgba(52,211,153,0.15)" : "rgba(255,255,255,0.03)",
-              border: value ? "1px solid rgba(52,211,153,0.35)" : "1px solid rgba(255,255,255,0.07)",
-              color: value ? "#34d399" : "#334155", fontSize: 13, fontWeight: 700,
+              flex: 1, padding: "12px", borderRadius: 10, cursor: value ? "pointer" : "not-allowed",
+              background: value ? "#d1fae5" : "#f1f5f9",
+              border: `3px solid ${value ? "#34d399" : "#e2e8f0"}`,
+              color: value ? "#15803d" : "#94a3b8",
+              fontSize: 13, fontWeight: 900,
               fontFamily: "'DM Sans',sans-serif", transition: "all 0.2s",
+              boxShadow: value ? "3px 3px 0 #071521" : "none",
             }}>✓ Confirm Accept</motion.button>
           <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={onClose}
             style={{
-              padding: "11px 18px", borderRadius: 10, cursor: "pointer",
-              background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-              color: "#475569", fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans',sans-serif",
+              padding: "12px 20px", borderRadius: 10, cursor: "pointer",
+              background: "#fee2e2", border: "3px solid #f87171",
+              color: "#b91c1c", fontSize: 13, fontWeight: 900,
+              fontFamily: "'DM Sans',sans-serif",
+              boxShadow: "3px 3px 0 #071521",
             }}>Cancel</motion.button>
         </div>
       </motion.div>
@@ -133,13 +141,13 @@ function SubjectModal({ req, onConfirm, onClose }) {
   );
 }
 
-/* ── Enrollment Request Card (image 2 style) ── */
+/* ── Enrollment Request Card ── */
 function RequestCard({ req, index, onAccept, onReject, processing }) {
-  const color = classColors[index % classColors.length];
+  const color  = classColors[index % classColors.length];
+  const bg     = classBgs[index % classBgs.length];
   const initials = req.student_name
     ? req.student_name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()
     : "?";
-
   const isPending = processing === req.id;
 
   return (
@@ -151,8 +159,9 @@ function RequestCard({ req, index, onAccept, onReject, processing }) {
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       style={{
         borderRadius: 16,
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.07)",
+        background: "#ffffff",
+        border: "3px solid #071521",
+        boxShadow: "4px 4px 0 #8bb7d8",
         padding: "16px 18px",
         marginBottom: 12,
       }}
@@ -161,25 +170,26 @@ function RequestCard({ req, index, onAccept, onReject, processing }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
         <div style={{
           width: 46, height: 46, borderRadius: 12, flexShrink: 0,
-          background: `${color}18`, border: `1px solid ${color}35`,
+          background: bg, border: "3px solid #071521",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 800, color,
+          fontFamily: "'Sora', sans-serif", fontSize: 15, fontWeight: 900, color: "#071521",
+          boxShadow: "2px 2px 0 #071521",
         }}>{initials}</div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#e2e8f0", marginBottom: 3 }}>
+          <div style={{ fontSize: 14, fontWeight: 900, color: "#071521", marginBottom: 3 }}>
             {req.student_name || "Unknown Student"}
           </div>
-          <div style={{ fontSize: 11, color: "#475569" }}>
+          <div style={{ fontSize: 11, color: "#3F6E8F", fontWeight: 700 }}>
             Applied for: {req.my_subjects?.join(", ") || req.grade ? `Grade ${req.grade}` : "—"}
           </div>
           {req.student_email && (
-            <div style={{ fontSize: 10, color: "#334155", marginTop: 2 }}>{req.student_email}</div>
+            <div style={{ fontSize: 10, color: "#3F6E8F", marginTop: 2, fontWeight: 700 }}>{req.student_email}</div>
           )}
         </div>
 
         {req.requested_at && (
-          <span style={{ fontSize: 10, color: "#334155", whiteSpace: "nowrap", flexShrink: 0 }}>
+          <span style={{ fontSize: 10, color: "#3F6E8F", whiteSpace: "nowrap", flexShrink: 0, fontWeight: 800, background: "#FFF5D6", border: "2px solid #071521", borderRadius: 6, padding: "2px 7px" }}>
             {new Date(req.requested_at).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
           </span>
         )}
@@ -191,15 +201,16 @@ function RequestCard({ req, index, onAccept, onReject, processing }) {
           disabled={isPending}
           onClick={() => onAccept(req)}
           style={{
-            flex: 1, padding: "9px 0", borderRadius: 10, cursor: isPending ? "not-allowed" : "pointer",
-            background: "rgba(99,102,241,0.12)",
-            border: "1px solid rgba(99,102,241,0.28)",
-            color: "#818cf8", fontSize: 12, fontWeight: 700,
+            flex: 1, padding: "9px 0", borderRadius: 10,
+            cursor: isPending ? "not-allowed" : "pointer",
+            background: "#d1fae5", border: "3px solid #34d399",
+            color: "#15803d", fontSize: 12, fontWeight: 900,
             fontFamily: "'DM Sans', sans-serif",
+            boxShadow: "2px 2px 0 #071521",
             opacity: isPending ? 0.5 : 1, transition: "all 0.2s",
           }}
-          onMouseEnter={e => { if (!isPending) e.currentTarget.style.background = "rgba(99,102,241,0.22)"; }}
-          onMouseLeave={e => { if (!isPending) e.currentTarget.style.background = "rgba(99,102,241,0.12)"; }}
+          onMouseEnter={e => { if (!isPending) e.currentTarget.style.boxShadow = "4px 4px 0 #071521"; }}
+          onMouseLeave={e => { if (!isPending) e.currentTarget.style.boxShadow = "2px 2px 0 #071521"; }}
         >
           {isPending ? "…" : "✓  Accept"}
         </button>
@@ -208,27 +219,16 @@ function RequestCard({ req, index, onAccept, onReject, processing }) {
           disabled={isPending}
           onClick={() => onReject(req)}
           style={{
-            flex: 1, padding: "9px 0", borderRadius: 10, cursor: isPending ? "not-allowed" : "pointer",
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "#475569", fontSize: 12, fontWeight: 700,
+            flex: 1, padding: "9px 0", borderRadius: 10,
+            cursor: isPending ? "not-allowed" : "pointer",
+            background: "#fee2e2", border: "3px solid #f87171",
+            color: "#b91c1c", fontSize: 12, fontWeight: 900,
             fontFamily: "'DM Sans', sans-serif",
+            boxShadow: "2px 2px 0 #071521",
             opacity: isPending ? 0.5 : 1, transition: "all 0.2s",
           }}
-          onMouseEnter={e => {
-            if (!isPending) {
-              e.currentTarget.style.background = "rgba(248,113,113,0.1)";
-              e.currentTarget.style.color = "#f87171";
-              e.currentTarget.style.borderColor = "rgba(248,113,113,0.25)";
-            }
-          }}
-          onMouseLeave={e => {
-            if (!isPending) {
-              e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-              e.currentTarget.style.color = "#475569";
-              e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-            }
-          }}
+          onMouseEnter={e => { if (!isPending) e.currentTarget.style.boxShadow = "4px 4px 0 #071521"; }}
+          onMouseLeave={e => { if (!isPending) e.currentTarget.style.boxShadow = "2px 2px 0 #071521"; }}
         >
           ✕  Reject
         </button>
@@ -237,7 +237,7 @@ function RequestCard({ req, index, onAccept, onReject, processing }) {
   );
 }
 
-/* ── Enrolled Students Table (image 2 style) ── */
+/* ── Enrolled Students Table ── */
 function StudentsTable({ students, classes, activeClass, setActiveClass, loading }) {
   const filtered = activeClass === "all"
     ? students
@@ -246,43 +246,47 @@ function StudentsTable({ students, classes, activeClass, setActiveClass, loading
   return (
     <div style={{
       borderRadius: 18,
-      background: "rgba(255,255,255,0.03)",
-      border: "1px solid rgba(255,255,255,0.07)",
+      background: "#ffffff",
+      border: "4px solid #071521",
+      boxShadow: "6px 6px 0 #8bb7d8",
       overflow: "hidden",
       display: "flex", flexDirection: "column",
       height: "100%",
     }}>
       {/* Header */}
       <div style={{
-        padding: "18px 22px",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
-        background: "rgba(255,255,255,0.01)",
+        padding: "16px 20px",
+        borderBottom: "3px solid #071521",
+        background: "#FFECA8",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         flexWrap: "wrap", gap: 10,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: "#e2e8f0" }}>
+          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 900, color: "#071521" }}>
             Enrolled Students
           </span>
           <span style={{
-            fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 99,
-            background: "rgba(129,140,248,0.15)", border: "1px solid rgba(129,140,248,0.3)", color: "#818cf8",
+            fontSize: 10, fontWeight: 900, padding: "2px 9px", borderRadius: 99,
+            background: "#ffffff", border: "2px solid #071521", color: "#071521",
+            boxShadow: "1px 1px 0 #071521",
           }}>{filtered.length}</span>
         </div>
 
         {/* Class filter */}
         {classes.length > 1 && (
           <div style={{ display: "flex", gap: 5 }}>
-            {[{ id: "all", label: "All" }, ...classes.map((c, i) => ({ id: c.id, label: `Grade ${c.grade}`, color: classColors[i % classColors.length] }))].map(tab => {
+            {[{ id: "all", label: "All", bg: "#FFF5D6" },
+              ...classes.map((c, i) => ({ id: c.id, label: `Grade ${c.grade}`, bg: classBgs[i % classBgs.length] }))
+            ].map(tab => {
               const isActive = activeClass === tab.id;
-              const color = tab.color || "#818cf8";
               return (
                 <button key={tab.id} onClick={() => setActiveClass(tab.id)}
                   style={{
-                    padding: "4px 10px", borderRadius: 7, cursor: "pointer", fontSize: 10, fontWeight: 700,
-                    background: isActive ? `${color}20` : "rgba(255,255,255,0.03)",
-                    border: isActive ? `1px solid ${color}40` : "1px solid rgba(255,255,255,0.07)",
-                    color: isActive ? color : "#475569", transition: "all 0.2s",
+                    padding: "4px 10px", borderRadius: 8, cursor: "pointer", fontSize: 10, fontWeight: 900,
+                    background: isActive ? tab.bg : "#f8fafc",
+                    border: isActive ? "2px solid #071521" : "2px solid #e2e8f0",
+                    color: "#071521", transition: "all 0.2s",
+                    boxShadow: isActive ? "2px 2px 0 #071521" : "none",
                   }}>{tab.label}</button>
               );
             })}
@@ -290,30 +294,26 @@ function StudentsTable({ students, classes, activeClass, setActiveClass, loading
         )}
       </div>
 
-      {/* Table */}
+      {/* Table content */}
       {loading ? (
-        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#334155", fontSize: 13 }}>
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#3F6E8F", fontSize: 13, fontWeight: 800 }}>
           Loading students…
         </div>
       ) : filtered.length === 0 ? (
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10 }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: 12,
-            background: "rgba(129,140,248,0.1)", border: "1px solid rgba(129,140,248,0.2)",
-            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20,
-          }}>👥</div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#475569" }}>No students yet</div>
-          <div style={{ fontSize: 11, color: "#334155" }}>Accept requests to add students</div>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: "40px 0" }}>
+          <div style={{ fontSize: 36 }}>👥</div>
+          <div style={{ fontSize: 13, fontWeight: 900, color: "#071521" }}>No students yet</div>
+          <div style={{ fontSize: 11, color: "#3F6E8F", fontWeight: 700 }}>Accept requests to add students</div>
         </div>
       ) : (
         <div style={{ overflowX: "auto", flex: 1 }}>
           <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", fontFamily: "'DM Sans', sans-serif" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.01)" }}>
+              <tr style={{ borderBottom: "2px dashed rgba(7,21,33,0.12)", background: "#FFF5D6" }}>
                 {["Student Name", "Subject", "Progress", "Status", ""].map(h => (
                   <th key={h} style={{
                     padding: "10px 18px", textAlign: "left",
-                    fontSize: 9, fontWeight: 700, color: "#334155",
+                    fontSize: 9, fontWeight: 900, color: "#3F6E8F",
                     textTransform: "uppercase", letterSpacing: "0.1em",
                   }}>{h}</th>
                 ))}
@@ -321,7 +321,8 @@ function StudentsTable({ students, classes, activeClass, setActiveClass, loading
             </thead>
             <tbody>
               {filtered.map((s, i) => {
-                const color = classColors[i % classColors.length];
+                const color    = classColors[i % classColors.length];
+                const bg       = classBgs[i % classBgs.length];
                 const initials = s.name?.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() || "?";
                 const subjects = s.classInfo?.subjects || [];
                 const progress = s.progress ?? Math.floor(50 + Math.random() * 45);
@@ -332,65 +333,62 @@ function StudentsTable({ students, classes, activeClass, setActiveClass, loading
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.04 }}
-                    style={{ borderBottom: "1px solid rgba(255,255,255,0.03)", transition: "background 0.15s", cursor: "default" }}
-                    onMouseEnter={e => e.currentTarget.style.background = "rgba(99,102,241,0.03)"}
+                    style={{ borderBottom: "2px dashed rgba(7,21,33,0.1)", transition: "background 0.15s", cursor: "default" }}
+                    onMouseEnter={e => e.currentTarget.style.background = "rgba(246,185,76,0.12)"}
                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                   >
                     {/* Name */}
                     <td style={{ padding: "13px 18px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <div style={{
-                          width: 32, height: 32, borderRadius: 8, flexShrink: 0,
-                          background: `${color}18`, border: `1px solid ${color}30`,
+                          width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+                          background: bg, border: "3px solid #071521",
                           display: "flex", alignItems: "center", justifyContent: "center",
-                          fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 800, color,
+                          fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 900, color: "#071521",
+                          boxShadow: "2px 2px 0 #071521",
                         }}>{initials}</div>
                         <div>
-                          <div style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0" }}>{s.name}</div>
-                          {s.email && <div style={{ fontSize: 10, color: "#334155", marginTop: 1 }}>{s.email}</div>}
+                          <div style={{ fontSize: 13, fontWeight: 800, color: "#071521" }}>{s.name}</div>
+                          {s.email && <div style={{ fontSize: 10, color: "#3F6E8F", marginTop: 1, fontWeight: 700 }}>{s.email}</div>}
                         </div>
                       </div>
                     </td>
 
                     {/* Subject */}
-                    <td style={{ padding: "13px 18px", fontSize: 12, color: "#64748b" }}>
+                    <td style={{ padding: "13px 18px", fontSize: 12, color: "#3F6E8F", fontWeight: 700 }}>
                       {subjects.length > 0 ? subjects.join(", ") : s.classInfo?.grade ? `Grade ${s.classInfo.grade}` : "—"}
                     </td>
 
                     {/* Progress */}
                     <td style={{ padding: "13px 18px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <div style={{ width: 80, height: 4, borderRadius: 99, background: "rgba(255,255,255,0.06)", overflow: "hidden" }}>
+                        <div style={{ width: 80, height: 6, borderRadius: 99, background: "rgba(7,21,33,0.08)", overflow: "hidden", border: "1px solid rgba(7,21,33,0.1)" }}>
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${progress}%` }}
                             transition={{ delay: 0.3 + i * 0.04, duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
-                            style={{
-                              height: "100%", borderRadius: 99,
-                              background: `linear-gradient(90deg, #6366f1, #8b5cf6)`,
-                              boxShadow: "0 0 6px rgba(99,102,241,0.5)",
-                            }}
+                            style={{ height: "100%", borderRadius: 99, background: color }}
                           />
                         </div>
-                        <span style={{ fontSize: 11, color: "#475569", minWidth: 28 }}>{progress}%</span>
+                        <span style={{ fontSize: 11, color: "#071521", minWidth: 28, fontWeight: 900 }}>{progress}%</span>
                       </div>
                     </td>
 
                     {/* Status */}
                     <td style={{ padding: "13px 18px" }}>
                       <span style={{
-                        fontSize: 9, fontWeight: 700, padding: "3px 10px", borderRadius: 99,
-                        background: "rgba(52,211,153,0.1)", color: "#34d399",
-                        border: "1px solid rgba(52,211,153,0.2)",
+                        fontSize: 9, fontWeight: 900, padding: "3px 10px", borderRadius: 8,
+                        background: "#d1fae5", color: "#15803d",
+                        border: "2px solid #34d399",
                         textTransform: "uppercase", letterSpacing: "0.06em",
                       }}>Active</span>
                     </td>
 
                     {/* Action */}
                     <td style={{ padding: "13px 18px" }}>
-                      <span style={{ fontSize: 14, color: "#334155", cursor: "pointer", transition: "color 0.2s" }}
-                        onMouseEnter={e => e.currentTarget.style.color = "#818cf8"}
-                        onMouseLeave={e => e.currentTarget.style.color = "#334155"}
+                      <span style={{ fontSize: 14, color: "#3F6E8F", cursor: "pointer", fontWeight: 900, transition: "color 0.2s" }}
+                        onMouseEnter={e => e.currentTarget.style.color = "#071521"}
+                        onMouseLeave={e => e.currentTarget.style.color = "#3F6E8F"}
                       >↗</span>
                     </td>
                   </motion.tr>
@@ -407,37 +405,34 @@ function StudentsTable({ students, classes, activeClass, setActiveClass, loading
 /* ── Quick Stats Row ── */
 function QuickStats({ requests, students, classes }) {
   const stats = [
-    { label: "Pending Requests", value: requests.length, icon: "🙋", color: "#f59e0b" },
-    { label: "Total Students", value: students.length, icon: "👥", color: "#818cf8" },
-    { label: "My Classes", value: classes.length, icon: "🏫", color: "#34d399" },
-    { label: "Active Students", value: students.length, icon: "✅", color: "#22d3ee" },
+    { label: "Pending Requests", value: requests.length, icon: "🙋", bg: "#FFECA8",  border: "#f6b94c" },
+    { label: "Total Students",   value: students.length, icon: "👥", bg: "#d8e8f4",  border: "#8bb7d8" },
+    { label: "My Classes",       value: classes.length,  icon: "🏫", bg: "#d1fae5",  border: "#34d399" },
+    { label: "Active Students",  value: students.length, icon: "✅", bg: "#f1d8e6",  border: "#d8a0c4" },
   ];
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginBottom: 28 }}>
-      {stats.map(({ label, value, icon, color }, i) => (
+      {stats.map(({ label, value, icon, bg, border }, i) => (
         <motion.div key={label} {...fadeUp(0.04 + i * 0.05)} style={{
           borderRadius: 14,
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.07)",
+          background: bg,
+          border: "4px solid #071521",
+          boxShadow: "4px 4px 0 #071521",
           padding: "18px 20px",
           display: "flex", alignItems: "center", gap: 14,
-          position: "relative", overflow: "hidden",
         }}>
           <div style={{
-            position: "absolute", top: 0, left: "20%", right: "20%", height: 1,
-            background: `linear-gradient(90deg, transparent, ${color}55, transparent)`,
-          }} />
-          <div style={{
             width: 42, height: 42, borderRadius: 11, flexShrink: 0,
-            background: `${color}14`, border: `1px solid ${color}28`,
+            background: "#ffffff", border: "3px solid #071521",
             display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18,
+            boxShadow: "2px 2px 0 #071521",
           }}>{icon}</div>
           <div>
-            <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 26, fontWeight: 800, color, lineHeight: 1, letterSpacing: "-0.04em" }}>
+            <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 28, fontWeight: 900, color: "#071521", lineHeight: 1 }}>
               {value}
             </div>
-            <div style={{ fontSize: 9, color: "#475569", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", marginTop: 4 }}>
+            <div style={{ fontSize: 9, color: "#3F6E8F", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.07em", marginTop: 4 }}>
               {label}
             </div>
           </div>
@@ -451,13 +446,13 @@ function QuickStats({ requests, students, classes }) {
    MAIN COMPONENT
 ═══════════════════════════════════════ */
 export default function Students() {
-  const [requests, setRequests] = useState([]);
-  const [classes, setClasses] = useState([]);
-  const [loadingReq, setLoadingReq] = useState(true);
+  const [requests, setRequests]         = useState([]);
+  const [classes, setClasses]           = useState([]);
+  const [loadingReq, setLoadingReq]     = useState(true);
   const [loadingStudents, setLoadingStudents] = useState(true);
-  const [processing, setProcessing] = useState(null);
-  const [toast, setToast] = useState(null);
-  const [activeClass, setActiveClass] = useState("all");
+  const [processing, setProcessing]     = useState(null);
+  const [toast, setToast]               = useState(null);
+  const [activeClass, setActiveClass]   = useState("all");
   const [subjectModal, setSubjectModal] = useState(null);
 
   const showToast = (msg, type = "success") => {
@@ -491,10 +486,7 @@ export default function Students() {
     }
   };
 
-  useEffect(() => {
-    fetchRequests();
-    fetchClasses();
-  }, []);
+  useEffect(() => { fetchRequests(); fetchClasses(); }, []);
 
   const handleAccept = (req) => setSubjectModal(req);
 
@@ -530,22 +522,24 @@ export default function Students() {
   const allStudents = classes.flatMap(cls => (cls.students || []).map(s => ({ ...s, classInfo: cls })));
 
   return (
-    <div style={{ padding: "36px 40px 60px", fontFamily: "'DM Sans', sans-serif", color: "#e2e8f0" }}>
+    <div style={{ padding: "36px 40px 60px", fontFamily: "'DM Sans', sans-serif", color: "#071521" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&family=Sora:wght@700;800;900&display=swap');
         * { box-sizing: border-box; }
         button { font-family: 'DM Sans', sans-serif; }
+        input { font-family: 'DM Sans', sans-serif; }
+        input:focus { outline: none; box-shadow: 4px 4px 0 #8bb7d8 !important; }
       `}</style>
 
       {/* ── Page Header ── */}
       <motion.div {...fadeUp(0)} style={{ marginBottom: 28 }}>
-        <p style={{ fontSize: 11, color: "#6366f1", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>
+        <p style={{ fontSize: 11, color: "#3F6E8F", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>
           Class Management
         </p>
-        <h1 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 800, fontSize: "clamp(20px, 3vw, 28px)", color: "#fff", letterSpacing: "-0.03em", marginBottom: 6 }}>
+        <h1 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: "clamp(20px, 3vw, 28px)", color: "#071521", marginBottom: 6 }}>
           Students
         </h1>
-        <p style={{ fontSize: 13, color: "#475569" }}>
+        <p style={{ fontSize: 13, color: "#3F6E8F", fontWeight: 700 }}>
           Manage enrollment requests and view your enrolled students
         </p>
       </motion.div>
@@ -553,45 +547,47 @@ export default function Students() {
       {/* ── Quick Stats ── */}
       <QuickStats requests={requests} students={allStudents} classes={classes} />
 
-      {/* ── Main 2-col Grid (image 2 layout) ── */}
+      {/* ── Main 2-col Grid ── */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, alignItems: "stretch" }}>
 
         {/* LEFT: Enrollment Requests */}
         <motion.div {...fadeUp(0.12)} style={{ minWidth: 0, display: "flex", flexDirection: "column" }}>
-          {/* Section label */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: "#e2e8f0" }}>
+              <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 900, color: "#071521" }}>
                 Enrollment Requests
               </span>
               <span style={{
-                fontSize: 10, fontWeight: 800, padding: "2px 8px", borderRadius: 99,
-                background: requests.length > 0 ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.05)",
-                border: requests.length > 0 ? "1px solid rgba(245,158,11,0.3)" : "1px solid rgba(255,255,255,0.08)",
-                color: requests.length > 0 ? "#f59e0b" : "#334155",
+                fontSize: 10, fontWeight: 900, padding: "2px 9px", borderRadius: 99,
+                background: requests.length > 0 ? "#FFECA8" : "#f1f5f9",
+                border: `2px solid ${requests.length > 0 ? "#f6b94c" : "#e2e8f0"}`,
+                color: "#071521",
+                boxShadow: "1px 1px 0 #071521",
               }}>{requests.length}</span>
             </div>
             {requests.length > 3 && (
-              <span style={{ fontSize: 11, color: "#6366f1", cursor: "pointer", fontWeight: 600 }}>View All →</span>
+              <span style={{ fontSize: 11, color: "#273c75", cursor: "pointer", fontWeight: 900 }}>View All →</span>
             )}
           </div>
 
           {loadingReq ? (
-            <div style={{ textAlign: "center", padding: "48px 0", color: "#334155", fontSize: 13 }}>Loading…</div>
+            <div style={{ textAlign: "center", padding: "48px 0", color: "#3F6E8F", fontSize: 13, fontWeight: 800 }}>Loading…</div>
           ) : requests.length === 0 ? (
             <div style={{
-              borderRadius: 16, background: "rgba(255,255,255,0.02)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              borderRadius: 16, background: "#ffffff",
+              border: "4px solid #071521",
+              boxShadow: "6px 6px 0 #d8e8f4",
               flex: 1, textAlign: "center", display: "flex", flexDirection: "column",
-              alignItems: "center", justifyContent: "center", gap: 12,
+              alignItems: "center", justifyContent: "center", gap: 12, padding: "48px 24px",
             }}>
               <div style={{
                 width: 56, height: 56, borderRadius: 14,
-                background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.18)",
+                background: "#d1fae5", border: "3px solid #34d399",
                 display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22,
+                boxShadow: "3px 3px 0 #071521",
               }}>✓</div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "#475569" }}>No pending requests</div>
-              <div style={{ fontSize: 12, color: "#334155" }}>All enrollment requests have been reviewed</div>
+              <div style={{ fontSize: 14, fontWeight: 900, color: "#071521" }}>No pending requests</div>
+              <div style={{ fontSize: 12, color: "#3F6E8F", fontWeight: 700 }}>All enrollment requests have been reviewed</div>
             </div>
           ) : (
             <AnimatePresence mode="popLayout">

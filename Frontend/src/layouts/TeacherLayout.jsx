@@ -33,10 +33,10 @@ function LiveClock() {
   const mm = String(m).padStart(2, "0");
   return (
     <div style={{ textAlign: "right" }}>
-      <div style={{ fontFamily: "'Sora', monospace", fontSize: 13, fontWeight: 700, color: "#c7d2fe", letterSpacing: "0.05em" }}>
-        {hh}:{mm} <span style={{ fontSize: 10, color: "#6366f1" }}>{ampm}</span>
+      <div style={{ fontFamily: "'Sora', monospace", fontSize: 13, fontWeight: 700, color: "#071521", letterSpacing: "0.05em" }}>
+        {hh}:{mm} <span style={{ fontSize: 10, color: "#273c75" }}>{ampm}</span>
       </div>
-      <div style={{ fontSize: 10, color: "#334155", fontWeight: 500, letterSpacing: "0.04em", marginTop: 1 }}>
+      <div style={{ fontSize: 10, color: "#5a7a8a", fontWeight: 600, letterSpacing: "0.04em", marginTop: 1 }}>
         {t.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
       </div>
     </div>
@@ -163,12 +163,12 @@ function QuickActions() {
   }, []);
 
   const actions = [
-    { label: "Assign New Task", icon: "✏️", path: "/teacher/task", color: "#6366f1" },
-    { label: "Create a Test", icon: "🧪", path: "/teacher/test", color: "#8b5cf6" },
-    { label: "View Kanban Board", icon: "📌", path: "/teacher/kanban", color: "#22d3ee" },
-    { label: "Check Submissions", icon: "📋", path: "/teacher/submissions", color: "#34d399" },
-    { label: "Student List", icon: "👥", path: "/teacher/students", color: "#f59e0b" },
-    { label: "View Analytics", icon: "📊", path: "/teacher/analytics", color: "#f87171" },
+    { label: "Assign New Task", icon: "✏️", path: "/teacher/task", color: "#273c75" },
+    { label: "Create a Test", icon: "🧪", path: "/teacher/test", color: "#273c75" },
+    { label: "View Kanban Board", icon: "📌", path: "/teacher/kanban", color: "#273c75" },
+    { label: "Check Submissions", icon: "📋", path: "/teacher/submissions", color: "#273c75" },
+    { label: "Student List", icon: "👥", path: "/teacher/students", color: "#273c75" },
+    { label: "View Analytics", icon: "📊", path: "/teacher/analytics", color: "#273c75" },
   ];
 
   return (
@@ -178,17 +178,18 @@ function QuickActions() {
         onClick={() => setOpen(!open)}
         style={{
           display: "flex", alignItems: "center", gap: 7,
-          padding: "8px 14px", borderRadius: 10,
-          background: "rgba(99,102,241,0.15)",
-          border: "1px solid rgba(99,102,241,0.3)",
-          color: "#a5b4fc", fontSize: 12, fontWeight: 700,
+          padding: "8px 14px", borderRadius: 8,
+          background: "#ffffff",
+          border: "3px solid #071521",
+          color: "#071521", fontSize: 12, fontWeight: 800,
           cursor: "pointer", letterSpacing: "0.02em",
           fontFamily: "'Sora', sans-serif",
+          boxShadow: "3px 3px 0 #d8a0c4",
           transition: "all 0.2s",
         }}>
         <span style={{ fontSize: 14 }}>⚡</span>
         Quick Actions
-        <kbd style={{ fontSize: 9, padding: "2px 5px", borderRadius: 4, background: "rgba(255,255,255,0.08)", color: "#475569", border: "1px solid rgba(255,255,255,0.1)" }}>⌘K</kbd>
+        <kbd style={{ fontSize: 9, padding: "2px 5px", borderRadius: 4, background: "#f4d98e", color: "#273c75", border: "2px solid #273c75", fontWeight: 900 }}>⌘K</kbd>
       </motion.button>
 
       <AnimatePresence>
@@ -200,11 +201,10 @@ function QuickActions() {
             transition={{ duration: 0.18 }}
             style={{
               position: "absolute", left: 0, top: 46, zIndex: 100,
-              width: 260, borderRadius: 16,
-              background: "rgba(15,14,35,0.98)",
-              border: "1px solid rgba(99,102,241,0.25)",
-              backdropFilter: "blur(24px)",
-              boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
+              width: 260, borderRadius: 8,
+              background: "#ffffff",
+              border: "3px solid #071521",
+              boxShadow: "8px 8px 0 #8bb7d8",
               padding: "8px",
             }}>
             {actions.map((a, i) => (
@@ -213,17 +213,17 @@ function QuickActions() {
                 onClick={() => { navigate(a.path); setOpen(false); }}
                 style={{
                   display: "flex", alignItems: "center", gap: 12,
-                  padding: "10px 12px", borderRadius: 10, cursor: "pointer", transition: "background 0.15s",
+                  padding: "10px 12px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s",
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(99,102,241,0.1)"}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(246,185,76,0.25)"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                 <div style={{
                   width: 30, height: 30, borderRadius: 8, flexShrink: 0,
-                  background: `${a.color}20`, border: `1px solid ${a.color}40`,
+                  background: "#f4d98e", border: "2px solid #071521",
                   display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14,
                 }}>{a.icon}</div>
-                <span style={{ fontSize: 13, color: "#cbd5e1", fontWeight: 500 }}>{a.label}</span>
-                <span style={{ marginLeft: "auto", fontSize: 11, color: "#334155" }}>→</span>
+                <span style={{ fontSize: 13, color: "#071521", fontWeight: 700 }}>{a.label}</span>
+                <span style={{ marginLeft: "auto", fontSize: 11, color: "#5a7a8a" }}>→</span>
               </motion.div>
             ))}
           </motion.div>
@@ -234,45 +234,29 @@ function QuickActions() {
 }
 
 /* ─────────────────────────────────────────
-   MICRO: MINI PROGRESS RING
-───────────────────────────────────────── */
-function ProgressRing({ pct = 72, size = 36, stroke = 3, color = "#6366f1" }) {
-  const r = (size - stroke * 2) / 2;
-  const circ = 2 * Math.PI * r;
-  const offset = circ - (pct / 100) * circ;
-  return (
-    <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={stroke} />
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke}
-        strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round"
-        style={{ transition: "stroke-dashoffset 0.8s ease" }} />
-    </svg>
-  );
-}
-
-/* ─────────────────────────────────────────
-   MICRO: TOP HEADER STATS BAR
+   MICRO: HEADER STATS
 ───────────────────────────────────────── */
 function HeaderStats({ data }) {
   const stats = [
-    { label: "Classes", value: data.classes.toString(), icon: "🏫", color: "#818cf8" },
-    { label: "Students", value: data.students.toString(), icon: "👥", color: "#34d399" },
-    { label: "Pending", value: data.pending.toString(), icon: "⏳", color: "#f59e0b" },
-    { label: "Avg Score", value: data.avg + "%", icon: "🎯", color: "#22d3ee" },
+    { label: "Classes", value: data.classes.toString(), icon: "🏧", color: "#273c75" },
+    { label: "Students", value: data.students.toString(), icon: "👥", color: "#273c75" },
+    { label: "Pending", value: data.pending.toString(), icon: "⏳", color: "#273c75" },
+    { label: "Avg Score", value: data.avg + "%", icon: "🎯", color: "#273c75" },
   ];
   return (
     <div style={{ display: "flex", gap: 8 }}>
       {stats.map((s) => (
         <div key={s.label} style={{
           display: "flex", alignItems: "center", gap: 7,
-          padding: "6px 12px", borderRadius: 10,
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.06)",
+          padding: "6px 12px", borderRadius: 8,
+          background: "#ffffff",
+          border: "2px solid #071521",
+          boxShadow: "3px 3px 0 #d8a0c4",
         }}>
           <span style={{ fontSize: 13 }}>{s.icon}</span>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 800, color: s.color, lineHeight: 1, fontFamily: "'Sora', sans-serif" }}>{s.value}</div>
-            <div style={{ fontSize: 9, color: "#475569", fontWeight: 500, letterSpacing: "0.04em", textTransform: "uppercase" }}>{s.label}</div>
+            <div style={{ fontSize: 12, fontWeight: 900, color: s.color, lineHeight: 1, fontFamily: "'Sora', sans-serif" }}>{s.value}</div>
+            <div style={{ fontSize: 9, color: "#5a7a8a", fontWeight: 700, letterSpacing: "0.04em", textTransform: "uppercase" }}>{s.label}</div>
           </div>
         </div>
       ))}
@@ -301,34 +285,35 @@ function TeacherAvatar({ collapsed }) {
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: 10,
-      padding: collapsed ? "14px 0" : "14px 14px",
-      borderTop: "1px solid rgba(255,255,255,0.06)",
+      padding: collapsed ? "14px 0" : "14px 18px",
+      borderTop: "4px solid #071521",
       justifyContent: collapsed ? "center" : "flex-start",
       flexShrink: 0, cursor: "pointer",
       transition: "background 0.2s",
     }}
-      onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+      onMouseEnter={e => e.currentTarget.style.background = "rgba(246,185,76,0.25)"}
       onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
       <div style={{ position: "relative", flexShrink: 0 }}>
         <div style={{
           width: 34, height: 34, borderRadius: "50%",
-          background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+          background: "#6FA8DC",
+          border: "3px solid #071521",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 15, fontWeight: 700, color: "#fff",
+          fontSize: 15, fontWeight: 900, color: "#071521",
           fontFamily: "'Sora', sans-serif",
-          boxShadow: "0 0 0 2px rgba(99,102,241,0.35)",
-        }}>S</div>
+          boxShadow: "3px 3px 0 #071521",
+        }}>{userName.charAt(0).toUpperCase()}</div>
         <div style={{
-          position: "absolute", bottom: 0, right: 0,
+          position: "absolute", bottom: -1, right: -1,
           width: 9, height: 9, borderRadius: "50%",
-          background: "#34d399", border: "2px solid #080714",
+          background: "#34d399", border: "2px solid #FFECA8",
         }} />
       </div>
       <AnimatePresence>
         {!collapsed && (
           <motion.div className="teacher-avatar-text" initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.15 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#e2e8f0", whiteSpace: "nowrap" }}>{userName}</div>
-            <div style={{ fontSize: 10, color: "#34d399", fontWeight: 600, letterSpacing: "0.04em" }}>● Online</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#071521", whiteSpace: "nowrap", fontFamily: "'Sora', sans-serif" }}>{userName}</div>
+            <div style={{ fontSize: 10, color: "#34d399", fontWeight: 700, letterSpacing: "0.04em" }}>● Online</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -343,50 +328,41 @@ function NavItem({ item, active, collapsed }) {
   return (
     <NavLink to={item.path}>
       <motion.div
-        whileHover={{ x: collapsed ? 0 : 4, background: active ? undefined : "rgba(255,255,255,0.04)" }}
+        whileHover={{ x: collapsed ? 0 : 3 }}
         whileTap={{ scale: 0.96 }}
         title={collapsed ? item.label : undefined}
         style={{
           display: "flex", alignItems: "center",
           gap: collapsed ? 0 : 11,
-          padding: collapsed ? "11px 0" : "10px 12px",
-          borderRadius: 11,
+          padding: collapsed ? "11px 0" : "11px 13px",
+          borderRadius: 24,
           justifyContent: collapsed ? "center" : "flex-start",
           position: "relative", cursor: "pointer",
-          background: active ? "rgba(99,102,241,0.15)" : "transparent",
-          border: active ? "1px solid rgba(99,102,241,0.28)" : "1px solid transparent",
-          transition: "background 0.18s, border-color 0.18s",
-          overflow: "hidden",
+          background: "transparent",
+          transition: "all 0.2s",
         }}>
 
-        {/* Active glow bar */}
-        {active && (
-          <motion.div layoutId="sidebarActiveBar"
-            style={{
-              position: "absolute", left: 0, top: "15%", bottom: "15%",
-              width: 3, borderRadius: 99, background: "#6366f1",
-              boxShadow: "0 0 12px rgba(99,102,241,0.8)",
-            }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }} />
-        )}
-
-        {/* Active shimmer */}
+        {/* Sliding active pill — matches student layout */}
         {active && (
           <motion.div
-            animate={{ x: ["-100%", "200%"] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "linear", repeatDelay: 1.5 }}
+            layoutId="activeBar"
             style={{
               position: "absolute", inset: 0,
-              background: "linear-gradient(90deg, transparent, rgba(99,102,241,0.08), transparent)",
-              pointerEvents: "none",
-            }} />
+              borderRadius: 24,
+              background: "#F6B94C",
+              border: "3px solid #071521",
+              boxShadow: "4px 4px 0px #0B1E2D",
+              zIndex: 0,
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          />
         )}
 
         {/* Emoji icon */}
         <motion.span
-          animate={active ? { scale: [1, 1.2, 1] } : {}}
-          transition={{ duration: 0.4 }}
-          style={{ fontSize: 16, flexShrink: 0, lineHeight: 1 }}>
+          animate={active ? { scale: [1, 1.25, 1] } : {}}
+          transition={{ duration: 0.35 }}
+          style={{ fontSize: 18, flexShrink: 0, lineHeight: 1, zIndex: 1 }}>
           {item.emoji}
         </motion.span>
 
@@ -394,13 +370,14 @@ function NavItem({ item, active, collapsed }) {
           {!collapsed && (
             <motion.span
               className="teacher-sidebar-label"
-              initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -6 }}
-              transition={{ duration: 0.14 }}
+              initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.15 }}
               style={{
-                fontSize: 13, fontWeight: active ? 700 : 500,
-                color: active ? "#c7d2fe" : "#4b5563",
+                fontSize: 16, fontWeight: active ? 800 : 600,
+                color: active ? "#071521" : "#102A3C",
                 whiteSpace: "nowrap", flex: 1,
-                transition: "color 0.18s",
+                transition: "color 0.2s",
+                zIndex: 1,
               }}>
               {item.label}
             </motion.span>
@@ -414,12 +391,11 @@ function NavItem({ item, active, collapsed }) {
               className="teacher-sidebar-badge"
               initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.7 }}
               style={{
-                fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 99,
-                background: item.badge === "New"
-                  ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
-                  : "linear-gradient(135deg, #f87171, #ef4444)",
+                fontSize: 9, fontWeight: 900, padding: "3px 7px", borderRadius: 99,
+                background: "#f87171",
+                border: "2px solid #071521",
                 color: "#fff", letterSpacing: "0.04em",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                zIndex: 1,
               }}>
               {item.badge}
             </motion.span>
@@ -434,9 +410,9 @@ function NavItem({ item, active, collapsed }) {
    SIDEBAR SECTION LABEL
 ───────────────────────────────────────── */
 function SectionLabel({ label, collapsed }) {
-  if (collapsed) return <div style={{ height: 14, borderBottom: "1px solid rgba(255,255,255,0.04)", margin: "6px 0" }} />;
+  if (collapsed) return <div style={{ height: 10, margin: "4px 0" }} />;
   return (
-    <div style={{ padding: "6px 12px 4px", fontSize: 9, fontWeight: 800, color: "#1e293b", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+    <div style={{ padding: "10px 13px 4px", fontSize: 10, fontWeight: 900, color: "#5a7a8a", letterSpacing: "0.1em", textTransform: "uppercase" }}>
       {label}
     </div>
   );
@@ -520,21 +496,22 @@ const TeacherLayout = () => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@600;700;800&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 99px; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #F6B94C; border-radius: 99px; border: 2px solid #FFF5D6; }
         ::-webkit-scrollbar-track { background: transparent; }
         a { text-decoration: none; }
-        ::selection { background: rgba(99,102,241,0.3); }
+        ::selection { background: rgba(246,185,76,0.35); }
         .teacher-layout .teacher-sidebar {
           background: #FFECA8 !important;
           border-right: 4px solid #071521 !important;
-          border-radius: 0 34px 34px 0 !important;
+          border-radius: 0 40px 40px 0 !important;
           box-shadow: none !important;
         }
         .teacher-layout .teacher-topbar {
           background: rgba(255,245,214,0.88) !important;
           border-bottom: 4px solid #071521 !important;
           color: #071521 !important;
+          backdrop-filter: blur(16px) !important;
         }
         .teacher-layout .teacher-statusbar {
           background: #FFECA8 !important;
@@ -545,17 +522,6 @@ const TeacherLayout = () => {
             radial-gradient(circle at 12% 10%, rgba(216,160,196,0.18), transparent 26%),
             radial-gradient(circle at 88% 18%, rgba(139,183,216,0.22), transparent 28%),
             #FFF5D6;
-        }
-        .teacher-layout .teacher-sidebar [style*="color: #e2e8f0"],
-        .teacher-layout .teacher-sidebar [style*="color: #4b5563"],
-        .teacher-layout .teacher-sidebar [style*="color: #475569"],
-        .teacher-layout .teacher-sidebar [style*="color: #334155"] {
-          color: #071521 !important;
-        }
-        .teacher-layout .teacher-sidebar [style*="rgba(99,102,241,0.15)"] {
-          background: #f6b94c !important;
-          border: 3px solid #071521 !important;
-          box-shadow: 4px 4px 0 #071521 !important;
         }
         @media (max-width: 760px) {
           .teacher-shell { min-width: 0; }
@@ -591,71 +557,33 @@ const TeacherLayout = () => {
 
         {/* Logo */}
         <div style={{
-          padding: collapsed ? "20px 0" : "20px 16px",
+          padding: collapsed ? "22px 0" : "22px 18px",
           display: "flex", alignItems: "center", gap: 10,
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
+          borderBottom: "4px solid #071521",
           justifyContent: collapsed ? "center" : "flex-start",
           flexShrink: 0,
         }}>
-          <motion.div
+          <motion.img
+            src="/logo.png"
+            alt="Logo"
             animate={{ rotate: [0, -8, 8, -4, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 8 }}
-            style={{
-              width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-            background: "#6FA8DC",
-            border: "3px solid #071521",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer",
-              boxShadow: "0 4px 16px rgba(99,102,241,0.4)",
-              overflow: "hidden",
-            }}>
-            <img src="/logo.png" alt="Logo" style={{ width: "80%", height: "80%", objectFit: "contain" }} />
-          </motion.div>
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 8 }}
+            style={{ width: 28, height: 28, flexShrink: 0, display: "block", objectFit: "contain" }}
+          />
           <AnimatePresence>
             {!collapsed && (
-              <motion.div
+              <motion.span
                 className="teacher-sidebar-text"
-                initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.18 }}>
-                <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 15, color: "#071521", letterSpacing: "0", lineHeight: 1.1 }}>
-                  SmartCampus
-                </div>
-                <div style={{ fontSize: 9, color: "#273c75", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                  Teacher Portal
-                </div>
-              </motion.div>
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.18 }}
+                style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 18, color: "#071521", letterSpacing: "-0.02em", whiteSpace: "nowrap" }}>
+                SmartCampus
+              </motion.span>
             )}
           </AnimatePresence>
         </div>
-
-        {/* ── QUICK STATS PILL (expanded only) ── */}
-        <AnimatePresence>
-          {!collapsed && (
-            <motion.div
-              className="teacher-sidebar-expanded"
-              initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.22 }}
-              style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", flexShrink: 0 }}>
-              <div style={{ padding: "12px 16px" }}>
-                <div style={{
-                  borderRadius: 12, padding: "10px 14px",
-                  background: "linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(139,92,246,0.08) 100%)",
-                  border: "1px solid rgba(99,102,241,0.2)",
-                }}>
-                  <div style={{ fontSize: 10, color: "#6366f1", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Today</div>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    {[{ v: statsData.classes.toString(), l: "Classes" }, { v: statsData.pending.toString(), l: "Pending" }, { v: statsData.avg + "%", l: "Avg" }].map(s => (
-                      <div key={s.l} style={{ textAlign: "center" }}>
-                        <div style={{ fontFamily: "'Sora', sans-serif", fontSize: 16, fontWeight: 800, color: "#c7d2fe" }}>{s.v}</div>
-                        <div style={{ fontSize: 9, color: "#475569", textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.l}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Nav */}
         <nav style={{ flex: 1, padding: "10px 8px", display: "flex", flexDirection: "column", gap: 1, overflowY: "auto" }}>
@@ -687,28 +615,29 @@ const TeacherLayout = () => {
         <TeacherAvatar collapsed={collapsed} />
 
         {/* Collapse toggle */}
-        <div style={{ padding: "10px 8px", borderTop: "1px solid rgba(255,255,255,0.05)", flexShrink: 0 }}>
+        <div style={{ padding: "16px", flexShrink: 0 }}>
           <motion.button
-            whileHover={{ background: "rgba(255,255,255,0.06)" }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ y: -2, boxShadow: "4px 4px 0px #071521" }}
+            whileTap={{ scale: 0.94, y: 0, boxShadow: "0px 0px 0px #071521" }}
             onClick={() => setCollapsed(!collapsed)}
             style={{
-              width: "100%", padding: "9px", borderRadius: 10,
-              background: "rgba(255,255,255,0.025)",
-              border: "1px solid rgba(255,255,255,0.07)",
-              color: "#334155", fontSize: 12, fontWeight: 600,
-              cursor: "pointer", display: "flex", alignItems: "center",
-              justifyContent: "center", gap: 7, transition: "background 0.2s",
+              width: "100%", padding: "12px",
+              borderRadius: 24,
+              background: "#6FA8DC",
+              border: "3px solid #071521",
+              color: "#071521", fontSize: 14, fontWeight: 800,
+              cursor: "pointer",
+              display: "flex", alignItems: "center",
+              justifyContent: "center", gap: 8,
+              transition: "all 0.2s",
             }}>
             <motion.span
               animate={{ rotate: collapsed ? 180 : 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 24 }}
-              style={{ display: "inline-block", fontSize: 13, color: "#6366f1" }}>
-              ←
-            </motion.span>
+              style={{ display: "inline-block", fontSize: 14 }}>←</motion.span>
             <AnimatePresence>
               {!collapsed && (
-                <motion.span className="teacher-collapse-label" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}>
+                <motion.span className="teacher-collapse-label" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
                   Collapse
                 </motion.span>
               )}
@@ -728,41 +657,34 @@ const TeacherLayout = () => {
           transition={{ duration: 0.4 }}
           style={{
             flexShrink: 0,
-            background: "rgba(8,7,20,0.6)",
-            backdropFilter: "blur(20px)",
-            borderBottom: "1px solid rgba(255,255,255,0.05)",
+            background: "rgba(255,245,214,0.88)",
+            backdropFilter: "blur(16px)",
+            borderBottom: "4px solid #071521",
             padding: "0 28px",
             height: 60,
             display: "flex", alignItems: "center", justifyContent: "space-between",
             gap: 16,
+            zIndex: 50,
           }}>
 
-          {/* Left: Breadcrumb + Page */}
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 2 }}>
-            <Breadcrumb current={currentPage} />
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 16 }}>{currentPage?.emoji ?? "🏠"}</span>
-              <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 14, fontWeight: 700, color: "#e2e8f0", letterSpacing: "-0.01em" }}>
-                {currentPage?.label ?? "Dashboard"}
-              </span>
-            </div>
+          {/* Left: Page title */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 20 }}>{currentPage?.emoji ?? "🏠"}</span>
+            <span style={{ fontSize: 18, fontWeight: 800, color: "#071521", fontFamily: "'Sora', sans-serif" }}>
+              {currentPage?.label ?? "Dashboard"}
+            </span>
           </div>
 
-          {/* Center: Stats */}
-          <div className="teacher-topbar-center" style={{ flex: 1, display: "flex", justifyContent: "center" }}>
-            <HeaderStats data={statsData} />
-          </div>
-
-          {/* Right: Actions */}
-          <div className="teacher-topbar-right" style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+          {/* Right: Actions + Clock */}
+          <div className="teacher-topbar-right" style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
             <QuickActions />
-            <NotifBell count={5} />
+            <div style={{ width: 1, height: 24, background: "#071521", opacity: 0.15 }} />
             <LiveClock />
           </div>
         </motion.div>
 
         {/* ── PROGRESS STRIP ── */}
-        <div style={{ flexShrink: 0, height: 2, background: "rgba(255,255,255,0.03)", position: "relative", overflow: "hidden" }}>
+        <div style={{ flexShrink: 0, height: 2, background: "rgba(39,60,117,0.08)", position: "relative", overflow: "hidden" }}>
           <motion.div
             key={location.pathname}
             initial={{ width: "0%", opacity: 1 }}
@@ -770,7 +692,7 @@ const TeacherLayout = () => {
             transition={{ duration: 0.6, ease: [0.25, 1, 0.5, 1] }}
             style={{
               height: "100%",
-              background: "linear-gradient(90deg, #6366f1, #8b5cf6, #22d3ee)",
+              background: "linear-gradient(90deg, #f6b94c, #d8a0c4, #8bb7d8)",
               position: "absolute", left: 0, top: 0,
             }} />
         </div>
