@@ -8,7 +8,7 @@ const css = `
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&display=swap');
 
   .task-root {
-    min-height: 100vh;
+    min-height: 100%;
     background: linear-gradient(135deg, #f0f4ff 0%, #fafafa 50%, #f5f0ff 100%);
     font-family: 'DM Sans', sans-serif;
     padding: 48px 16px 80px;

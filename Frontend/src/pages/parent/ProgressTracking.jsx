@@ -111,7 +111,7 @@ export default function ProgressTracking() {
 
   // ── Render ───────────────────────────────────────────────────
   return (
-    <div style={{ padding: "40px 40px 64px", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif", color: "#273c75" }}>
+    <div style={{ padding: "40px 40px 64px", minHeight: "100%", fontFamily: "'DM Sans', sans-serif", color: "#273c75" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@600;700;800&display=swap');
         .progress-select:focus { outline: none; border-color: #273c75 !important; box-shadow: 3px 3px 0 #d8a0c4; }

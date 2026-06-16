@@ -27,7 +27,7 @@ const StudentLayout = () => {
   return (
     <div className="sc-dashboard-skin student-layout" style={{
       display: "flex",
-      height: "100vh",
+      height: "100%",
       background: "#FFF5D6",
       fontFamily: "'DM Sans', sans-serif",
       color: "#071521",
@@ -61,7 +61,7 @@ const StudentLayout = () => {
         animate={{ width: collapsed ? 68 : 224 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         style={{
-          height: "100vh",
+          height: "100%",
           background: "#FFECA8",
           borderRight: "4px solid #071521",
           borderRadius: "0 40px 40px 0",

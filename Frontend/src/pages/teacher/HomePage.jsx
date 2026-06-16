@@ -41,20 +41,13 @@ export default function TeacherHomePage() {
   const navigate = useNavigate();
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#fff5d6",
-      fontFamily: "'DM Sans', sans-serif",
-      color: "#273c75",
-      position: "relative",
-      overflowX: "hidden",
-    }}>
+    <div style={{ padding: "32px", minHeight: "100%", fontFamily: "'DM Sans', sans-serif", color: "#071521", position: "relative" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@600;700;800&display=swap');
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        a { text-decoration: none; }
-        .teacher-home-shell {
-          min-height: 100vh;
+        * { box-sizing: border-box; }
+        button { cursor: pointer; font-family: inherit; }
+        .teacher-dashboard-page {
+          min-height: 100%;
           background:
             radial-gradient(circle at 12% 10%, rgba(216,160,196,0.26), transparent 26%),
             radial-gradient(circle at 86% 18%, rgba(139,183,216,0.28), transparent 30%);

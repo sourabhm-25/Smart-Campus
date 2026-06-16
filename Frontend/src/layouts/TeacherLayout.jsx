@@ -511,7 +511,7 @@ const TeacherLayout = () => {
 
   return (
     <div className="sc-dashboard-skin teacher-layout" style={{
-      display: "flex", height: "100vh",
+      display: "flex", height: "100%",
       background: "#FFF5D6",
       fontFamily: "'DM Sans', sans-serif",
       color: "#071521",
@@ -579,7 +579,7 @@ const TeacherLayout = () => {
         animate={{ width: collapsed ? 64 : 220 }}
         transition={{ type: "spring", stiffness: 320, damping: 32 }}
         style={{
-          height: "100vh",
+          height: "100%",
           background: "#FFECA8",
           borderRight: "4px solid #071521",
           backdropFilter: "blur(24px)",

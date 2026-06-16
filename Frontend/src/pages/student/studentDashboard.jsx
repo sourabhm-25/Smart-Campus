@@ -159,13 +159,13 @@ export default function StudentDashboard() {
   })();
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: "'DM Sans', sans-serif", color: "#071521", position: "relative" }}>
+    <div style={{ minHeight: "100%", fontFamily: "'DM Sans', sans-serif", color: "#071521", position: "relative" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@600;700;800&display=swap');
         * { box-sizing: border-box; }
         button { cursor: pointer; font-family: inherit; }
         .student-dashboard-page {
-          min-height: 100vh;
+          min-height: 100%;
           background:
             radial-gradient(circle at 12% 10%, rgba(216,160,196,0.24), transparent 26%),
             radial-gradient(circle at 86% 18%, rgba(139,183,216,0.26), transparent 28%);

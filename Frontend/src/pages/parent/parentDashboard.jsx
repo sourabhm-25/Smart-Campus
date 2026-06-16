@@ -93,13 +93,13 @@ export default function ParentDashboard() {
   })();
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: "'DM Sans', sans-serif", color: "#273c75", position: "relative" }}>
+    <div style={{ minHeight: "100%", fontFamily: "'DM Sans', sans-serif", color: "#273c75", position: "relative" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@600;700;800&display=swap');
         * { box-sizing: border-box; }
         button { cursor: pointer; font-family: inherit; }
         .parent-dashboard-page {
-          min-height: 100vh;
+          min-height: 100%;
           background:
             radial-gradient(circle at 12% 10%, rgba(244,217,142,0.34), transparent 26%),
             radial-gradient(circle at 88% 18%, rgba(216,160,196,0.24), transparent 28%);
