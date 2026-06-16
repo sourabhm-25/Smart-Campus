@@ -73,7 +73,7 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden", background: "#0f172a" }}>
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
@@ -1217,6 +1217,6 @@ export default function Home() {
       <footer className="footer">
         <p>© 2026 Smart Campus. Elevating educational experiences.</p>
       </footer>
-    </>
+    </div>
   );
 }

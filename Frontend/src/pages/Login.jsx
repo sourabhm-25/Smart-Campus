@@ -380,7 +380,7 @@ export default function Login() {
   };
 
   return (
-    <>
+    <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden", background: "#ffffff" }}>
       <style>{`
         .auth-page {
           position: relative;
@@ -1297,6 +1297,6 @@ export default function Login() {
         <p>© 2024 Smart Campus Educational Systems. All rights reserved.</p>
       </footer>
     </div>
-    </>
+    </div>
   );
 }
