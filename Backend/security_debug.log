@@ -8909,3 +8909,6 @@ quired: student, User: std@gmail.com Role: student
 role_checker called. Required: student, User: std@gmail.com Role: student
 get_current_user returning user: std@gmail.com
 role_checker called. Required: student, User: std@gmail.com Role: student
+get_current_user init
+get_current_user returning user: std@gmail.com
+role_checker called. Required: student, User: std@gmail.com Role: student

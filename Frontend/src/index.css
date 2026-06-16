@@ -3,15 +3,13 @@
 html {
   width: 100%;
   height: 100%;
-  overflow: hidden;
 }
 
 body {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -22,8 +20,9 @@ body {
   transform: scale(0.85);
   transform-origin: top left;
   width: calc(100vw / 0.85);   /* 117.6vw → ×0.85 = 100vw */
-  height: calc(100vh / 0.85);  /* 117.6vh → ×0.85 = 100vh */
-  overflow: hidden;
+  min-height: calc(100vh / 0.85);  /* ensures content taller than viewport can scroll */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 
