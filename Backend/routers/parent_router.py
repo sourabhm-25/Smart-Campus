@@ -197,15 +197,19 @@ def get_child_submissions(child_id: str, user=Depends(require_role("parent"))):
     for sub in subs:
         hw = homework_collection.find_one({"_id": sub["homework_id"]})
         submitted_at = sub.get("submitted_at")
+        # Submissions use total_marks (not max_score) — support both field names
+        max_score = sub.get("max_score") or sub.get("total_marks")
+        total_score = sub.get("total_score") or 0
+        percentage = round((total_score / max_score) * 100, 1) if max_score else sub.get("percentage")
         result.append({
             "submission_id": str(sub["_id"]),
             "homework_id": str(sub["homework_id"]),
             "homework_title": hw.get("title", "") if hw else "",
             "subject": hw.get("subject", "") if hw else sub.get("subject", ""),
-            "status": sub.get("status", "pending"),
-            "total_score": sub.get("total_score"),
-            "max_score": sub.get("max_score"),
-            "percentage": round((sub.get("total_score", 0) / sub.get("max_score", 1)) * 100, 1) if sub.get("max_score") else None,
+            "status": sub.get("status", "submitted"),
+            "total_score": total_score,
+            "max_score": max_score,
+            "percentage": percentage,
             "feedback": sub.get("feedback", ""),
             "submitted_at": submitted_at.isoformat() if isinstance(submitted_at, datetime) else str(submitted_at),
         })
@@ -240,10 +244,11 @@ def get_child_progress(child_id: str, user=Depends(require_role("parent"))):
             "_id": "$subject",
             "total_submissions": {"$sum": 1},
             "evaluated_submissions": {
-                "$sum": {"$cond": [{"$eq": ["$status", "evaluated"]}, 1, 0]}
+                "$sum": {"$cond": [{"$in": ["$status", ["evaluated", "submitted", "needs_review", "reviewed", "late"]]}, 1, 0]}
             },
             "total_scored": {"$sum": "$total_score"},
-            "total_possible": {"$sum": "$max_score"},
+            # Support both field names: max_score and total_marks
+            "total_possible": {"$sum": {"$ifNull": ["$max_score", "$total_marks"]}},
             "avg_score": {"$avg": "$total_score"},
         }},
         {"$sort": {"_id": 1}},
@@ -310,19 +315,20 @@ def generate_report_card(child_id: str, user=Depends(require_role("parent"))):
     if not child:
         raise HTTPException(status_code=404, detail="Child not found")
 
-    # Get class info
+    # Get class info (not required — report card works without a class)
     cls = classes_collection.find_one({"students": child_oid})
-    if not cls:
-        raise HTTPException(status_code=404, detail="Child not enrolled in any class")
 
-    # Get all submissions for this student
+    # Get all GRADED submissions for this student
+    # Include: submitted, evaluated, reviewed, needs_review, late (all auto-graded statuses)
+    graded_statuses = ["evaluated", "submitted", "needs_review", "reviewed", "late"]
     pipeline = [
-        {"$match": {"student_id": child_oid, "status": "evaluated"}},
+        {"$match": {"student_id": child_oid, "status": {"$in": graded_statuses}}},
         {"$group": {
             "_id": "$subject",
             "total_submissions": {"$sum": 1},
             "total_score": {"$sum": "$total_score"},
-            "max_possible": {"$sum": "$max_score"},
+            # Support both max_score and total_marks field names
+            "max_possible": {"$sum": {"$ifNull": ["$max_score", "$total_marks"]}},
             "avg_score": {"$avg": "$total_score"},
         }},
         {"$sort": {"_id": 1}},
@@ -371,8 +377,8 @@ def generate_report_card(child_id: str, user=Depends(require_role("parent"))):
         "report_card": {
             "child_name": child.get("name", ""),
             "child_id": child_id,
-            "school": cls.get("school", ""),
-            "grade": cls.get("grade", ""),
+            "school": cls.get("school", "") if cls else child.get("school", ""),
+            "grade": cls.get("grade", "") if cls else child.get("grade", ""),
             "generated_at": datetime.utcnow().isoformat(),
             "overall_percentage": round(overall_percentage, 1),
             "overall_grade": overall_grade,

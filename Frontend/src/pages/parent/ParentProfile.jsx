@@ -8,11 +8,7 @@ const getToken = () => localStorage.getItem("access_token");
 export default function ParentProfile() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-  });
+  const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -21,11 +17,7 @@ export default function ParentProfile() {
     const stored = JSON.parse(localStorage.getItem("user") || "{}");
     setUser(stored);
     if (stored.name && stored.email) {
-      setFormData({
-        name: stored.name,
-        email: stored.email,
-        phone: stored.phone || "",
-      });
+      setFormData({ name: stored.name, email: stored.email, phone: stored.phone || "" });
     }
     setLoading(false);
   }, []);
@@ -45,80 +37,103 @@ export default function ParentProfile() {
     e.preventDefault();
     setError("");
     setMessage("");
-
-    // In a real app, you'd send this to the backend
     localStorage.setItem("user", JSON.stringify(formData));
     setMessage("Profile updated successfully!");
     setTimeout(() => setMessage(""), 3000);
   };
 
-  if (loading) return <p style={{ color: "#64748b", padding: 40 }}>Loading...</p>;
+  if (loading) return <p style={{ color: "#3F6E8F", padding: 40, fontWeight: 800 }}>Loading…</p>;
+
+  const inputStyle = {
+    width: "100%",
+    padding: "12px 16px",
+    borderRadius: 8,
+    background: "#ffffff",
+    border: "3px solid #273c75",
+    color: "#273c75",
+    fontSize: 14,
+    fontFamily: "inherit",
+    fontWeight: 700,
+    transition: "all 0.2s",
+  };
+
+  const disabledInputStyle = {
+    ...inputStyle,
+    background: "#e8f0f8",
+    border: "3px solid #8bb7d8",
+    color: "#3F6E8F",
+    cursor: "not-allowed",
+  };
 
   return (
-    <div style={{ padding: "40px 40px 64px", minHeight: "100vh" }}>
+    <div style={{ padding: "40px 40px 64px", minHeight: "100vh", fontFamily: "'DM Sans', sans-serif", color: "#273c75" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Sora:wght@600;700;800&display=swap');
+        .profile-input:focus { outline: none; border-color: #c94fab !important; box-shadow: 3px 3px 0 #d8a0c4; }
+        .profile-action-btn:hover { background: #d8e8f4 !important; }
       `}</style>
 
       <div style={{ maxWidth: 600 }}>
-        {/* Profile Section */}
+
+        {/* Profile Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           style={{
             padding: 32,
-            borderRadius: 16,
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 8,
+            background: "linear-gradient(135deg, #fff0b8, #f1d8e6)",
+            border: "4px solid #273c75",
+            boxShadow: "8px 8px 0 #8bb7d8",
             marginBottom: 24,
           }}>
+
+          {/* Avatar + Name */}
           <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 32 }}>
             <div style={{
-              width: 64,
-              height: 64,
-              borderRadius: "50%",
-              background: "rgba(99,102,241,0.3)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 32,
+              width: 72, height: 72, borderRadius: "50%",
+              background: "#f4d98e",
+              border: "4px solid #273c75",
+              boxShadow: "4px 4px 0 #d8a0c4",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 36,
             }}>
               👨‍👩‍👧‍👦
             </div>
             <div>
-              <h2 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 20, color: "#fff", marginBottom: 4 }}>
+              <h2 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 22, color: "#273c75", marginBottom: 4 }}>
                 {formData.name}
               </h2>
-              <p style={{ fontSize: 13, color: "#64748b" }}>Parent Account</p>
+              <span style={{
+                display: "inline-block",
+                fontSize: 11, padding: "4px 12px", borderRadius: 6,
+                background: "#d8a0c4", border: "2px solid #273c75",
+                color: "#273c75", fontWeight: 900, textTransform: "uppercase",
+                letterSpacing: "0.06em",
+              }}>
+                Parent Account
+              </span>
             </div>
           </div>
 
-          {/* Profile Form */}
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {/* Form */}
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <div>
-              <label style={{ fontSize: 12, color: "#64748b", fontWeight: 600, marginBottom: 4, display: "block" }}>
+              <label style={{ fontSize: 12, color: "#273c75", fontWeight: 900, marginBottom: 6, display: "block", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                 Full Name
               </label>
               <input
+                className="profile-input"
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                style={{
-                  width: "100%",
-                  padding: "12px 16px",
-                  borderRadius: 8,
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  color: "#e2e8f0",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                }}
+                style={inputStyle}
               />
             </div>
 
             <div>
-              <label style={{ fontSize: 12, color: "#64748b", fontWeight: 600, marginBottom: 4, display: "block" }}>
+              <label style={{ fontSize: 12, color: "#273c75", fontWeight: 900, marginBottom: 6, display: "block", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                 Email
               </label>
               <input
@@ -126,70 +141,58 @@ export default function ParentProfile() {
                 name="email"
                 value={formData.email}
                 disabled
-                style={{
-                  width: "100%",
-                  padding: "12px 16px",
-                  borderRadius: 8,
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.05)",
-                  color: "#64748b",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                  cursor: "not-allowed",
-                }}
+                style={disabledInputStyle}
               />
-              <p style={{ fontSize: 11, color: "#64748b", marginTop: 4 }}>Email cannot be changed</p>
+              <p style={{ fontSize: 11, color: "#3F6E8F", marginTop: 4, fontWeight: 700 }}>Email cannot be changed</p>
             </div>
 
             <div>
-              <label style={{ fontSize: 12, color: "#64748b", fontWeight: 600, marginBottom: 4, display: "block" }}>
+              <label style={{ fontSize: 12, color: "#273c75", fontWeight: 900, marginBottom: 6, display: "block", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                 Phone (Optional)
               </label>
               <input
+                className="profile-input"
                 type="tel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="+1 (555) 000-0000"
-                style={{
-                  width: "100%",
-                  padding: "12px 16px",
-                  borderRadius: 8,
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  color: "#e2e8f0",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                }}
+                style={inputStyle}
               />
             </div>
 
             {message && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ color: "#34d399", fontSize: 13, fontWeight: 600 }}>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                style={{ color: "#1a7a5e", fontSize: 13, fontWeight: 800, background: "#d1fae5", padding: "10px 14px", borderRadius: 8, border: "2px solid #34d399" }}>
                 ✅ {message}
               </motion.p>
             )}
             {error && (
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ color: "#f472b6", fontSize: 13, fontWeight: 600 }}>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                style={{ color: "#9f1239", fontSize: 13, fontWeight: 800, background: "#ffe4e6", padding: "10px 14px", borderRadius: 8, border: "2px solid #f472b6" }}>
                 ❌ {error}
               </motion.p>
             )}
 
-            <button
+            <motion.button
               type="submit"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               style={{
-                padding: "12px 16px",
+                padding: "13px 16px",
                 borderRadius: 8,
-                background: "rgba(99,102,241,0.3)",
-                border: "1px solid rgba(99,102,241,0.5)",
-                color: "#c7d2fe",
-                fontWeight: 600,
+                background: "#f4d98e",
+                border: "3px solid #273c75",
+                color: "#273c75",
+                fontWeight: 900,
                 cursor: "pointer",
                 fontSize: 14,
-                marginTop: 8,
+                fontFamily: "inherit",
+                boxShadow: "4px 4px 0 #d8a0c4",
+                marginTop: 4,
               }}>
-              Save Changes
-            </button>
+              Save Changes ✓
+            </motion.button>
           </form>
         </motion.div>
 
@@ -199,83 +202,65 @@ export default function ParentProfile() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           style={{
-            padding: 32,
-            borderRadius: 16,
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.07)",
+            padding: 28,
+            borderRadius: 8,
+            background: "#ffffff",
+            border: "4px solid #273c75",
+            boxShadow: "6px 6px 0 #8bb7d8",
           }}>
-          <h3 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 700, fontSize: 16, color: "#fff", marginBottom: 20 }}>
-            Account & Security
+          <h3 style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 17, color: "#273c75", marginBottom: 18 }}>
+            Account &amp; Security
           </h3>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <button
-              style={{
-                padding: "12px 16px",
-                borderRadius: 8,
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "#e2e8f0",
-                fontWeight: 600,
-                cursor: "pointer",
-                fontSize: 14,
-                textAlign: "left",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = "rgba(255,255,255,0.07)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = "rgba(255,255,255,0.05)";
-              }}>
-              🔒 Change Password
-            </button>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {[
+              { label: "🔒 Change Password", action: () => {} },
+              { label: "🔔 Notification Preferences", action: () => {} },
+            ].map((item, i) => (
+              <motion.button
+                key={i}
+                className="profile-action-btn"
+                whileHover={{ x: 4 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={item.action}
+                style={{
+                  padding: "12px 16px",
+                  borderRadius: 8,
+                  background: "#f8f4ec",
+                  border: "3px solid #273c75",
+                  color: "#273c75",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  textAlign: "left",
+                  transition: "background 0.2s",
+                }}>
+                {item.label}
+              </motion.button>
+            ))}
 
-            <button
-              style={{
-                padding: "12px 16px",
-                borderRadius: 8,
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "#e2e8f0",
-                fontWeight: 600,
-                cursor: "pointer",
-                fontSize: 14,
-                textAlign: "left",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = "rgba(255,255,255,0.07)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = "rgba(255,255,255,0.05)";
-              }}>
-              🔔 Notification Preferences
-            </button>
-
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
               onClick={handleLogout}
               style={{
                 padding: "12px 16px",
                 borderRadius: 8,
-                background: "rgba(244, 114, 182, 0.1)",
-                border: "1px solid rgba(244, 114, 182, 0.3)",
-                color: "#f472b6",
-                fontWeight: 600,
+                background: "#ffe4e6",
+                border: "3px solid #f472b6",
+                color: "#9f1239",
+                fontWeight: 900,
                 cursor: "pointer",
                 fontSize: 14,
+                fontFamily: "inherit",
                 textAlign: "left",
                 marginTop: 8,
+                boxShadow: "4px 4px 0 #f472b6",
                 transition: "all 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = "rgba(244, 114, 182, 0.15)";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = "rgba(244, 114, 182, 0.1)";
               }}>
               🚪 Logout
-            </button>
+            </motion.button>
           </div>
         </motion.div>
       </div>

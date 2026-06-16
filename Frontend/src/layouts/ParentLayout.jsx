@@ -136,8 +136,9 @@ const ParentLayout = () => {
                     justifyContent: collapsed ? "center" : "flex-start",
                     position: "relative",
                     cursor: "pointer",
-                    background: active ? "rgba(99,102,241,0.18)" : "transparent",
-                    border: active ? "1px solid rgba(99,102,241,0.32)" : "1px solid transparent",
+                    background: active ? "#f6b94c" : "transparent",
+                    border: active ? "3px solid #071521" : "1px solid transparent",
+                    boxShadow: active ? "4px 4px 0 #071521" : "none",
                     transition: "background 0.2s, border-color 0.2s",
                   }}>
 
@@ -147,9 +148,8 @@ const ParentLayout = () => {
                       layoutId="activeBar"
                       style={{
                         position: "absolute", left: 0, top: "18%", bottom: "18%",
-                        width: 3, borderRadius: 99,
-                        background: "#6366f1",
-                        boxShadow: "0 0 10px #6366f1",
+                        width: 4, borderRadius: 99,
+                        background: "#273c75",
                       }}
                       transition={{ type: "spring", stiffness: 400, damping: 30 }}
                     />
@@ -172,8 +172,8 @@ const ParentLayout = () => {
                         transition={{ duration: 0.15 }}
                         style={{
                           fontSize: 14,
-                          fontWeight: active ? 700 : 500,
-                          color: active ? "#c7d2fe" : "#64748b",
+                          fontWeight: active ? 900 : 600,
+                          color: active ? "#071521" : "#3F5A6E",
                           whiteSpace: "nowrap",
                           transition: "color 0.2s",
                         }}>
@@ -190,15 +190,15 @@ const ParentLayout = () => {
         {/* Collapse toggle */}
         <div style={{ padding: "12px 8px", borderTop: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
           <motion.button
-            whileHover={{ background: "rgba(255,255,255,0.07)" }}
+            whileHover={{ background: "#f6b94c" }}
             whileTap={{ scale: 0.94 }}
             onClick={() => setCollapsed(!collapsed)}
             style={{
               width: "100%", padding: "9px",
-              borderRadius: 11,
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "#475569", fontSize: 13, fontWeight: 600,
+              borderRadius: 8,
+              background: "rgba(39,60,117,0.08)",
+              border: "2px solid #071521",
+              color: "#071521", fontSize: 13, fontWeight: 800,
               cursor: "pointer",
               display: "flex", alignItems: "center",
               justifyContent: "center", gap: 8,
@@ -237,20 +237,24 @@ const ParentLayout = () => {
             {currentPage?.label || "Parent Dashboard"}
           </h2>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-            <button style={{
-              padding: "8px 16px",
+            <button
+              onClick={() => { localStorage.removeItem("access_token"); localStorage.removeItem("user"); window.location.href = "/login"; }}
+              style={{
+              padding: "8px 18px",
               borderRadius: 8,
-              background: "rgba(99,102,241,0.12)",
-              border: "1px solid rgba(99,102,241,0.25)",
-              color: "#c7d2fe",
+              background: "#f4d98e",
+              border: "3px solid #071521",
+              color: "#071521",
               fontSize: 13,
-              fontWeight: 600,
+              fontWeight: 900,
               cursor: "pointer",
+              boxShadow: "3px 3px 0 #d8a0c4",
               transition: "all 0.2s",
+              fontFamily: "inherit",
             }} onMouseEnter={(e) => {
-              e.target.style.background = "rgba(99,102,241,0.18)";
+              e.currentTarget.style.background = "#d8a0c4";
             }} onMouseLeave={(e) => {
-              e.target.style.background = "rgba(99,102,241,0.12)";
+              e.currentTarget.style.background = "#f4d98e";
             }}>
               Logout
             </button>
