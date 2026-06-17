@@ -14,6 +14,7 @@ import Submissions from "./pages/teacher/Submissions";
 import Students from "./pages/teacher/Students";
 import TeacherNotifications from "./pages/teacher/Notifications";
 import TeacherProfile from "./pages/teacher/Profile";
+import Analytics from "./pages/teacher/Analytics";
 
 // Student & Parent
 import StudentLayout from "./layouts/StudentLayout";
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="test" element={<TestImageSol />} />
         <Route path="submissions" element={<Submissions />} />
         <Route path="students" element={<Students />} />
+        <Route path="analytics" element={<Analytics />} />
         <Route path="notifications" element={<TeacherNotifications />} />
         <Route path="profile" element={<TeacherProfile />} />
       </Route>

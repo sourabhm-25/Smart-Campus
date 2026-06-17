@@ -609,12 +609,19 @@ def get_my_progress(user=Depends(require_role("student"))):
     user_id = user["_id"]
 
     pipeline = [
-        {"$match": {"student_id": user_id, "status": "evaluated"}},
+        # Match submissions that have been graded (total_score is set and > 0)
+        # Submissions use status "submitted"/"late"/"reviewed"/"needs_review" — never "evaluated"
+        {"$match": {
+            "student_id": user_id,
+            "total_score": {"$ne": None},
+            "total_marks": {"$ne": None},
+            "subject": {"$exists": True, "$ne": ""},
+        }},
         {"$group": {
             "_id": "$subject",
             "submissions": {"$sum": 1},
             "total_scored": {"$sum": "$total_score"},
-            "total_possible": {"$sum": "$max_score"},
+            "total_possible": {"$sum": "$total_marks"},
             "avg_score": {"$avg": "$total_score"},
         }},
         {"$sort": {"_id": 1}},

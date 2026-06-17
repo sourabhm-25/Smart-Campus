@@ -648,98 +648,219 @@ export default function Profile() {
         {tab === "progress" && (
           <motion.div key="progress" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25 }}>
             {progress.length === 0 ? (
-              <div style={{
-                background: "#ffffff", border: "4px dashed #071521",
-                borderRadius: 14, padding: "48px", textAlign: "center",
-              }}>
+              <div style={{ background: "#ffffff", border: "4px dashed #071521", borderRadius: 14, padding: "48px", textAlign: "center" }}>
                 <div style={{ fontSize: 40, marginBottom: 12 }}>📊</div>
                 <div style={{ fontSize: 15, fontWeight: 900, color: "#071521", fontFamily: "'Sora', sans-serif" }}>No evaluated submissions yet</div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#3F6E8F", marginTop: 8 }}>
-                  Complete and submit tasks to see your progress here.
-                </div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#3F6E8F", marginTop: 8 }}>Complete and submit tasks to see your progress here.</div>
               </div>
             ) : (
               <>
-                {/* Overall grade */}
-                {overallGrade && (
+                {/* ── Row 1: Overall Donut + Score Bar Chart ── */}
+                <div style={{ display: "flex", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
+
+                  {/* Overall Donut Ring */}
                   <div style={{
-                    background: "linear-gradient(135deg, #f1d8e6, #d8e8f4)",
-                    border: "4px solid #071521", borderRadius: 14,
-                    padding: "20px 24px", boxShadow: "6px 6px 0 #8bb7d8",
-                    marginBottom: 20,
-                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    background: "#ffffff", border: "4px solid #071521", borderRadius: 14,
+                    padding: "22px 24px", boxShadow: "6px 6px 0 #8bb7d8",
+                    flex: "1 1 200px", minWidth: 200,
+                    display: "flex", flexDirection: "column", alignItems: "center",
                   }}>
-                    <div>
-                      <div style={{ fontSize: 11, fontWeight: 900, color: "#3F6E8F", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>Overall Performance</div>
-                      <div style={{ fontSize: 24, fontWeight: 900, color: "#071521", fontFamily: "'Sora', sans-serif" }}>
-                        {overallPct}% average across {progress.length} subject{progress.length !== 1 ? "s" : ""}
-                      </div>
+                    <div style={{ fontSize: 11, fontWeight: 900, color: "#3F6E8F", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 14, alignSelf: "flex-start" }}>
+                      Overall Score
                     </div>
-                    <div style={{
-                      width: 60, height: 60, borderRadius: 12,
-                      background: gradeBg[overallGrade] || "#dbeafe",
-                      border: `4px solid ${gradeBorder[overallGrade] || "#60a5fa"}`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 24, fontWeight: 900, color: gradeColor[overallGrade] || "#1d4ed8",
-                      fontFamily: "'Sora', sans-serif",
-                      boxShadow: "3px 3px 0 #071521",
-                    }}>
-                      {overallGrade}
+                    {(() => {
+                      const pct = overallPct ?? 0;
+                      const grade = overallGrade ?? "F";
+                      const r = 58, circ = 2 * Math.PI * r;
+                      const offset = circ * (1 - pct / 100);
+                      const col = gradeBorder[grade] || "#60a5fa";
+                      return (
+                        <div style={{ position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                          <svg width={144} height={144} style={{ transform: "rotate(-90deg)" }}>
+                            <circle cx={72} cy={72} r={r} fill="none" stroke="#e8f0f8" strokeWidth={14} />
+                            <motion.circle
+                              cx={72} cy={72} r={r} fill="none" stroke={col} strokeWidth={14}
+                              strokeLinecap="round" strokeDasharray={circ}
+                              initial={{ strokeDashoffset: circ }}
+                              animate={{ strokeDashoffset: offset }}
+                              transition={{ duration: 1.2, ease: "easeOut" }}
+                            />
+                          </svg>
+                          <div style={{ position: "absolute", textAlign: "center" }}>
+                            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 26, color: "#071521", lineHeight: 1 }}>{pct}%</div>
+                            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 18, color: col, marginTop: 2 }}>{grade}</div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#3F6E8F", marginTop: 10, textAlign: "center" }}>
+                      Avg across {progress.length} subject{progress.length !== 1 ? "s" : ""}
                     </div>
                   </div>
-                )}
 
-                {/* Subject progress cards */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  {/* Bar Chart — Score % per Subject */}
+                  <div style={{
+                    background: "#ffffff", border: "4px solid #071521", borderRadius: 14,
+                    padding: "22px 24px", boxShadow: "6px 6px 0 #f4d98e",
+                    flex: "3 1 280px", minWidth: 260,
+                  }}>
+                    <div style={{ fontSize: 11, fontWeight: 900, color: "#3F6E8F", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 16 }}>
+                      Score % by Subject
+                    </div>
+                    {(() => {
+                      const chartH = 180;
+                      const barW = Math.max(36, Math.floor(320 / Math.max(progress.length, 1)));
+                      const gap = 12;
+                      const totalW = progress.length * (barW + gap) - gap;
+                      return (
+                        <div style={{ overflowX: "auto" }}>
+                          <svg width={Math.max(totalW + 44, 260)} height={chartH + 44} style={{ display: "block" }}>
+                            {[0, 25, 50, 75, 100].map(v => (
+                              <g key={v}>
+                                <line x1={34} y1={chartH - (v / 100) * chartH} x2={totalW + 38} y2={chartH - (v / 100) * chartH} stroke="#e8f0f8" strokeWidth={1.5} />
+                                <text x={30} y={chartH - (v / 100) * chartH + 4} textAnchor="end" fontSize={9} fill="#94a3b8" fontWeight="700">{v}</text>
+                              </g>
+                            ))}
+                            {progress.map((p, i) => {
+                              const meta = getMeta(p.subject);
+                              const pct = Math.min(100, p.percentage ?? 0);
+                              const grade = getGrade(pct);
+                              const col = gradeBorder[grade] || meta.color;
+                              const bh = Math.max(4, (pct / 100) * chartH);
+                              const x = 38 + i * (barW + gap);
+                              const y = chartH - bh;
+                              const label = p.subject.length > 7 ? p.subject.slice(0, 6) + "…" : p.subject;
+                              return (
+                                <g key={i}>
+                                  <rect x={x} y={0} width={barW} height={chartH} rx={5} fill="#f8fafc" />
+                                  <motion.rect x={x} width={barW} rx={5} fill={col}
+                                    initial={{ y: chartH, height: 0 }}
+                                    animate={{ y, height: bh }}
+                                    transition={{ duration: 0.8, delay: i * 0.08, ease: "easeOut" }}
+                                  />
+                                  <text x={x + barW / 2} y={Math.max(y - 3, 11)} textAnchor="middle" fontSize={9} fontWeight="900" fill={col}>{Math.round(pct)}%</text>
+                                  <text x={x + barW / 2} y={chartH + 14} textAnchor="middle" fontSize={9} fontWeight="800" fill="#071521">{label}</text>
+                                  <text x={x + barW / 2} y={chartH + 26} textAnchor="middle" fontSize={8} fontWeight="900" fill={col}>{grade}</text>
+                                </g>
+                              );
+                            })}
+                            <line x1={34} y1={chartH} x2={totalW + 38} y2={chartH} stroke="#d8e8f4" strokeWidth={2} />
+                          </svg>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+
+                {/* ── Row 2: Marks bars + Submissions count ── */}
+                <div style={{ display: "flex", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
+
+                  {/* Marks Earned vs Possible */}
+                  <div style={{
+                    background: "#ffffff", border: "4px solid #071521", borderRadius: 14,
+                    padding: "22px 24px", boxShadow: "6px 6px 0 #d8a0c4",
+                    flex: "2 1 260px",
+                  }}>
+                    <div style={{ fontSize: 11, fontWeight: 900, color: "#3F6E8F", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 16 }}>
+                      Marks Earned vs Available
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                      {progress.map((p, i) => {
+                        const meta = getMeta(p.subject);
+                        const pct = p.total_possible > 0 ? (p.total_scored / p.total_possible) * 100 : 0;
+                        const grade = getGrade(pct);
+                        const col = gradeBorder[grade] || meta.color;
+                        return (
+                          <div key={i}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <span style={{ fontSize: 15 }}>{meta.icon}</span>
+                                <span style={{ fontSize: 13, fontWeight: 800, color: "#071521" }}>{p.subject}</span>
+                              </div>
+                              <span style={{ fontSize: 13, fontWeight: 900, color: col }}>{p.total_scored} / {p.total_possible}</span>
+                            </div>
+                            <div style={{ height: 12, background: "#e8f0f8", borderRadius: 6, overflow: "hidden", border: "2px solid #d8e8f4" }}>
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${Math.min(100, pct)}%` }}
+                                transition={{ duration: 0.9, ease: "easeOut", delay: i * 0.07 }}
+                                style={{ height: "100%", background: `linear-gradient(90deg, ${col}, ${col}99)`, borderRadius: 4 }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Evaluated Submissions count */}
+                  <div style={{
+                    background: "#ffffff", border: "4px solid #071521", borderRadius: 14,
+                    padding: "22px 24px", boxShadow: "6px 6px 0 #6ee7b7",
+                    flex: "1 1 180px", minWidth: 180,
+                  }}>
+                    <div style={{ fontSize: 11, fontWeight: 900, color: "#3F6E8F", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 16 }}>
+                      Evaluated Submissions
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                      {progress.map((p, i) => {
+                        const meta = getMeta(p.subject);
+                        const maxSubs = Math.max(...progress.map(x => x.evaluated_submissions), 1);
+                        const pct = (p.evaluated_submissions / maxSubs) * 100;
+                        return (
+                          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <span style={{ fontSize: 14, flexShrink: 0 }}>{meta.icon}</span>
+                            <div style={{ flex: 1, height: 10, background: "#e8f0f8", borderRadius: 5, overflow: "hidden" }}>
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${pct}%` }}
+                                transition={{ duration: 0.8, ease: "easeOut", delay: i * 0.07 }}
+                                style={{ height: "100%", background: meta.color, borderRadius: 5 }}
+                              />
+                            </div>
+                            <span style={{ fontSize: 13, fontWeight: 900, color: "#071521", minWidth: 16, textAlign: "right" }}>
+                              {p.evaluated_submissions}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div style={{ marginTop: 14, fontSize: 11, fontWeight: 700, color: "#3F6E8F" }}>
+                      Total: <strong style={{ color: "#071521" }}>{progress.reduce((s, p) => s + p.evaluated_submissions, 0)}</strong> graded
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Row 3: Per-subject detail cards ── */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {progress.map((p, i) => {
                     const meta = getMeta(p.subject);
                     const pct = p.percentage ?? 0;
                     const grade = getGrade(pct);
                     return (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.07 }}
-                        style={{
-                          background: "#ffffff", border: "4px solid #071521",
-                          borderRadius: 14, padding: "20px 22px",
-                          boxShadow: `5px 5px 0 ${meta.color}60`,
-                        }}
+                      <motion.div key={i} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
+                        style={{ background: "#ffffff", border: "4px solid #071521", borderRadius: 14, padding: "18px 22px", boxShadow: `5px 5px 0 ${meta.color}60` }}
                       >
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                            <div style={{
-                              width: 44, height: 44, borderRadius: 10,
-                              background: `${meta.color}20`, border: `3px solid ${meta.color}`,
-                              display: "flex", alignItems: "center", justifyContent: "center",
-                              fontSize: 20,
-                            }}>
+                            <div style={{ width: 40, height: 40, borderRadius: 10, background: `${meta.color}20`, border: `3px solid ${meta.color}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
                               {meta.icon}
                             </div>
                             <div>
-                              <div style={{ fontSize: 16, fontWeight: 900, color: "#071521", fontFamily: "'Sora', sans-serif" }}>{p.subject}</div>
-                              <div style={{ fontSize: 12, fontWeight: 700, color: "#3F6E8F" }}>
-                                {p.evaluated_submissions} submission{p.evaluated_submissions !== 1 ? "s" : ""} evaluated
+                              <div style={{ fontSize: 15, fontWeight: 900, color: "#071521", fontFamily: "'Sora', sans-serif" }}>{p.subject}</div>
+                              <div style={{ fontSize: 11, fontWeight: 700, color: "#3F6E8F" }}>
+                                {p.evaluated_submissions} submission{p.evaluated_submissions !== 1 ? "s" : ""} graded · avg {p.average_score ?? 0} pts
                               </div>
                             </div>
                           </div>
-                          <div style={{
-                            textAlign: "center",
-                            background: gradeBg[grade] || "#dbeafe",
-                            border: `3px solid ${gradeBorder[grade] || "#60a5fa"}`,
-                            borderRadius: 10, padding: "8px 16px",
-                            boxShadow: "2px 2px 0 #071521",
-                          }}>
-                            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 22, color: gradeColor[grade] || "#1d4ed8" }}>{grade}</div>
-                            <div style={{ fontSize: 11, fontWeight: 800, color: gradeColor[grade] || "#1d4ed8" }}>{pct}%</div>
+                          <div style={{ textAlign: "center", background: gradeBg[grade] || "#dbeafe", border: `3px solid ${gradeBorder[grade] || "#60a5fa"}`, borderRadius: 10, padding: "6px 14px", boxShadow: "2px 2px 0 #071521" }}>
+                            <div style={{ fontFamily: "'Sora', sans-serif", fontWeight: 900, fontSize: 20, color: gradeColor[grade] || "#1d4ed8" }}>{grade}</div>
+                            <div style={{ fontSize: 10, fontWeight: 800, color: gradeColor[grade] || "#1d4ed8" }}>{pct}%</div>
                           </div>
                         </div>
-
                         <ProgressBar value={pct} color={gradeBorder[grade] || meta.color} delay={0.1 + i * 0.05} />
-
-                        <div style={{ display: "flex", gap: 20, marginTop: 10, fontSize: 12, fontWeight: 700, color: "#3F6E8F" }}>
-                          <span>Total: <strong style={{ color: "#071521" }}>{p.total_scored}/{p.total_possible}</strong></span>
+                        <div style={{ display: "flex", gap: 20, marginTop: 8, fontSize: 12, fontWeight: 700, color: "#3F6E8F" }}>
+                          <span>Total Scored: <strong style={{ color: "#071521" }}>{p.total_scored}/{p.total_possible}</strong></span>
                           <span>Average: <strong style={{ color: "#071521" }}>{p.average_score}</strong></span>
                         </div>
                       </motion.div>

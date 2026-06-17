@@ -17,7 +17,7 @@ const NAV_ITEMS = [
 ];
 
 const BOTTOM_ITEMS = [
-  { label: "Notifications", icon: "🔔", path: "/teacher/notifications", badge: "5" },
+  { label: "Notifications", icon: "🔔", path: "/teacher/notifications", badge: null },
   { label: "Profile", icon: "👤", path: "/teacher/profile", badge: null },
   { label: "Settings", icon: "⚙️", path: "/teacher/settings", badge: null },
 ];
