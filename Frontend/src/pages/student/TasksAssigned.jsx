@@ -534,10 +534,36 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
 // ════════════════════════════════════════════════════════
 // PhotoUpload — camera / gallery input for text questions
 // ════════════════════════════════════════════════════════
-function PhotoUpload({ color, onPhotoSelected, currentPhoto }) {
+function PhotoUpload({ color, onPhotoSelected, currentPhoto, filePickerOpenRef }) {
   const fileRef = useRef();
 
+  // Open the file picker while suppressing fullscreen-exit AND visibility violations
+  const openFilePicker = (withCapture) => {
+    if (withCapture) {
+      fileRef.current.setAttribute("capture", "environment");
+    } else {
+      fileRef.current.removeAttribute("capture");
+    }
+    // Set flag to block violation handlers
+    if (filePickerOpenRef) filePickerOpenRef.current = true;
+
+    // Safety: clear flag after window regains focus (with delay so all events fire first)
+    const clearFlag = () => {
+      setTimeout(() => {
+        if (filePickerOpenRef) filePickerOpenRef.current = false;
+      }, 1500);
+      window.removeEventListener("focus", clearFlag);
+    };
+    window.addEventListener("focus", clearFlag);
+
+    fileRef.current.click();
+  };
+
   const handleFile = (e) => {
+    // Clear flag after a short delay so any pending events are ignored first
+    setTimeout(() => {
+      if (filePickerOpenRef) filePickerOpenRef.current = false;
+    }, 1500);
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -581,10 +607,7 @@ function PhotoUpload({ color, onPhotoSelected, currentPhoto }) {
         <div style={{ display: "flex", gap: 10 }}>
           {/* Camera */}
           <button
-            onClick={() => {
-              fileRef.current.setAttribute("capture", "environment");
-              fileRef.current.click();
-            }}
+            onClick={() => openFilePicker(true)}
             style={{
               display: "flex", alignItems: "center", gap: 8,
               padding: "10px 18px", borderRadius: 10, cursor: "pointer",
@@ -598,10 +621,7 @@ function PhotoUpload({ color, onPhotoSelected, currentPhoto }) {
           </button>
           {/* Gallery */}
           <button
-            onClick={() => {
-              fileRef.current.removeAttribute("capture");
-              fileRef.current.click();
-            }}
+            onClick={() => openFilePicker(false)}
             style={{
               display: "flex", alignItems: "center", gap: 8,
               padding: "10px 18px", borderRadius: 10, cursor: "pointer",
@@ -630,7 +650,7 @@ function PhotoUpload({ color, onPhotoSelected, currentPhoto }) {
 // QuestionSlide — isolated component so AnimatePresence
 // exit animation always has stable, prop-frozen data
 // ════════════════════════════════════════════════════════
-function QuestionSlide({ question, stepIndex, color, answers, setAnswers, photos, setPhotos, submitError, total }) {
+function QuestionSlide({ question, stepIndex, color, answers, setAnswers, photos, setPhotos, submitError, total, filePickerOpenRef }) {
   if (!question) return null;
   const qType = detectType(question);
   const isLast = stepIndex === total - 1;
@@ -677,12 +697,19 @@ function QuestionSlide({ question, stepIndex, color, answers, setAnswers, photos
         lineHeight: 1.75, marginBottom: 28,
         paddingLeft: 18, borderLeft: `4px solid ${color}88`,
       }}>
-        {question.question || question.text || `Question ${stepIndex + 1}`}
+        {(() => {
+          const qText = question.question || question.text;
+          if (typeof qText === "string" || typeof qText === "number") return qText;
+          if (qText) return JSON.stringify(qText);
+          return `Question ${stepIndex + 1}`;
+        })()}
       </div>
 
       {/* MCQ */}
       {qType === "mcq" && (() => {
-        const options = question.options || question.choices || [];
+        const rawOptions = question.options || question.choices || [];
+        // Guard malformed data (object instead of array) so it can't crash the screen
+        const options = Array.isArray(rawOptions) ? rawOptions : Object.values(rawOptions || {});
         const letters = ["A", "B", "C", "D", "E"];
         if (options.length === 0) return <div style={{ color: "#94a3b8", fontSize: 13, fontWeight: 700 }}>⚠️ No options for this question.</div>;
         return (
@@ -809,6 +836,7 @@ function QuestionSlide({ question, stepIndex, color, answers, setAnswers, photos
             color={color}
             currentPhoto={photos[stepIndex] || null}
             onPhotoSelected={(photo) => setPhotos(p => ({ ...p, [stepIndex]: photo }))}
+            filePickerOpenRef={filePickerOpenRef}
           />
         </div>
       )}
@@ -852,6 +880,17 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
   const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(0);
   const [flashcardFlipped, setFlashcardFlipped] = useState(false);
   const autoSubmitRef = useRef();
+
+  // ── Stable refs so event listeners never need to be re-registered ──
+  // These refs always point to the latest values without causing effect re-runs
+  const submittingRef = useRef(false);
+  const resultRef = useRef(null);
+  const warningsRef = useRef(0);
+  const filePickerOpenRef = useRef(false); // true while OS file dialog is open
+
+  // Keep refs in sync with state
+  useEffect(() => { submittingRef.current = submitting; }, [submitting]);
+  useEffect(() => { resultRef.current = result; }, [result]);
 
   const requestFS = useCallback(async () => {
     try {
@@ -990,11 +1029,17 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     autoSubmitRef.current = handleSubmit;
   });
 
+  // handleViolation uses refs so it is STABLE (never recreated) — this is critical
+  // so the fullscreen effect never needs to re-run and re-register its listeners.
   const handleViolation = useCallback((reason = null) => {
-    if (submitting || result) return;
+    // Use refs to read latest values without stale closures
+    if (submittingRef.current || resultRef.current) return;
+    // Also ignore if file picker is open
+    if (filePickerOpenRef.current) return;
 
     setWarnings(prev => {
       const next = prev + 1;
+      warningsRef.current = next;
       if (next >= 3) {
         alert(`Warning ${next}/3: You have repeatedly violated test rules. The test will now be submitted automatically.`);
         if (autoSubmitRef.current) autoSubmitRef.current();
@@ -1003,7 +1048,8 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
       }
       return next;
     });
-  }, [submitting, result]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // ← empty deps: stable forever, reads state via refs
 
   // Nuclear fallback — whenever result is set (any submission path), kill camera
   useEffect(() => {
@@ -1016,17 +1062,21 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
   }, []);
 
   // Fullscreen Lockdown for Tests
+  // This effect runs ONCE when the test starts and NEVER re-runs during the test.
+  // All state is read via stable refs so no re-registration is needed.
   useEffect(() => {
     if (task.task_type !== "test") return;
-    if (result || submitting) return;
     if (!testStarted) return; // Wait until they click Start Test
 
-    // Request fullscreen
+    // Request fullscreen on test start
     requestFS();
 
     let hiddenTimeout = null;
 
     const handleVisibilityChange = () => {
+      // Ignore: file picker open, already submitted, or already submitting
+      if (filePickerOpenRef.current) return;
+      if (resultRef.current || submittingRef.current) return;
       if (document.hidden) {
         handleViolation("You left the test window.");
         // 15-second auto-submit if they stay away
@@ -1040,6 +1090,9 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     };
 
     const handleFullscreenChange = () => {
+      // Ignore: file picker open, already submitted, or already submitting
+      if (filePickerOpenRef.current) return;
+      if (resultRef.current || submittingRef.current) return;
       const isFullscreen = document.fullscreenElement ||
         document.webkitFullscreenElement ||
         document.mozFullScreenElement ||
@@ -1054,6 +1107,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
     document.addEventListener("MSFullscreenChange", handleFullscreenChange);
 
     return () => {
+      // Cleanup: remove listeners and exit fullscreen when test ends/component unmounts
       if (hiddenTimeout) clearTimeout(hiddenTimeout);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
@@ -1067,7 +1121,22 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
         else if (document.msExitFullscreen) document.msExitFullscreen();
       }
     };
-  }, [task.task_type, submitting, result, testStarted, handleViolation, requestFS]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task.task_type, testStarted]); // ← minimal deps: runs once per test session
+
+  // Seamlessly re-enter fullscreen on any click if we lost it (e.g. due to file picker)
+  useEffect(() => {
+    const handleAnyClick = () => {
+      if (task.task_type !== "test") return;
+      // No filePickerOpenRef check here — by the time a click fires,
+      // the native picker has already closed, so this is always safe.
+      if (testStarted && !document.fullscreenElement) {
+        requestFS();
+      }
+    };
+    document.addEventListener("click", handleAnyClick);
+    return () => document.removeEventListener("click", handleAnyClick);
+  }, [task.task_type, testStarted, requestFS]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -1358,6 +1427,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                     setPhotos={setPhotos}
                     submitError={submitError}
                     total={total}
+                    filePickerOpenRef={filePickerOpenRef}
                   />
                 </motion.div>
               </AnimatePresence>
@@ -1423,7 +1493,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                 onClick={allAnswered && !submitting ? handleSubmit : undefined}
                 style={{
                   background: allAnswered ? color : "rgba(255,255,255,0.05)",
-                  color: allAnswered ? "#0a0f1a" : "#334155",
+                  color: allAnswered ? "#0a0f1a" : "#f1f5f9",
                   border: "none", borderRadius: 12,
                   padding: "12px 32px", fontSize: 13, fontWeight: 800,
                   cursor: allAnswered && !submitting ? "pointer" : "not-allowed",
@@ -1447,7 +1517,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
                     />
                     Submitting…
                   </>
-                ) : allAnswered ? "Submit Task ✓" : `Answer all (${answeredCount}/${total})`}
+                ) : allAnswered ? "Submit Test ✓" : `Submit Test (${answeredCount}/${total} answered)`}
               </motion.button>
             )}
           </div>
@@ -1496,7 +1566,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
 
       {/* ── AI Proctoring Camera ── */}
       {task.task_type === "test" && cameraActive && !warningMessage && (
-        <ProctoringCamera onViolation={handleViolation} onReady={() => setAiReady(true)} />
+        <ProctoringCamera onViolation={handleViolation} onReady={() => setAiReady(true)} filePickerOpenRef={filePickerOpenRef} />
       )}
 
       {/* ── Pre-test setup overlay ── */}

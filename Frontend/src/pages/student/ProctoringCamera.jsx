@@ -42,7 +42,7 @@ const GAZE_CONSEC_REQ  = 4;      // consecutive "away" detections before flaggin
 const RISK_WARN        = 40;
 const RISK_TRIGGER     = 70;
 
-export default function ProctoringCamera({ onViolation, onReady, onRiskUpdate }) {
+export default function ProctoringCamera({ onViolation, onReady, onRiskUpdate, filePickerOpenRef }) {
   const videoRef         = useRef(null);
   const loopActive       = useRef(true);
   const yoloTimerRef     = useRef(null);
@@ -82,6 +82,7 @@ export default function ProctoringCamera({ onViolation, onReady, onRiskUpdate })
   // ── Layer 2: YOLO frame sender ─────────────────────────────────────────
   const sendFrameToYolo = useCallback(async () => {
     if (!videoRef.current || !loopActive.current) return;
+    if (filePickerOpenRef?.current) return; // Pause while file picker is open
     const vid = videoRef.current;
     if (!vid.videoWidth || !vid.videoHeight) return;
 
@@ -239,6 +240,12 @@ export default function ProctoringCamera({ onViolation, onReady, onRiskUpdate })
 
     const faceLoop = async () => {
       if (!loopActive.current) return;
+
+      if (filePickerOpenRef?.current) {
+        // Just queue the next check without processing
+        faceTimerRef.current = setTimeout(faceLoop, FACE_INTERVAL_MS);
+        return;
+      }
 
       if (videoRef.current?.readyState === 4) {
         const now    = Date.now();

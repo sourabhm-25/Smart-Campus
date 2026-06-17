@@ -36,53 +36,54 @@
   "questions": {
     "short_answer": [
       {
-        "question": "A robot is facing North and performs 3 quarter-turns clockwise to face a target. The programmer needs to know the total angle of rotation in degrees. Find the total degrees the robot turned. Show your working.",
-        "answer": "Step 1: One quarter-turn is equal to 90°. Step 2: 3 × 90 = 270. Answer: 270°.",
+        "question": "A toy car starts facing East on a play mat. It makes a half turn clockwise. Then, it makes a quarter turn clockwise. Find the total degrees the car turned. Show your working.",
+        "answer": "Step 1: A half turn clockwise is 180 degrees. Step 2: A quarter turn clockwise is 90 degrees. Step 3: Add the two turns: 180 + 90 = 270. Answer: The total turn is 270 degrees.",
         "marks": 3
       },
       {
-        "question": "A wind vane rotates a half-turn clockwise and then makes another 45° turn in the same direction. Find the total degrees the wind vane has moved from its starting position. Show your working.",
-        "answer": "Step 1: A half-turn is equal to 180°. Step 2: 180 + 45 = 225. Answer: 225°.",
+        "question": "A toy spaceship is mounted on a swivel stand. It rotates 360 degrees clockwise. Then, it rotates 90 degrees counter-clockwise. Find the net clockwise rotation in degrees. Show your working.",
+        "answer": "Step 1: A clockwise rotation of 360 degrees is a full turn. Step 2: A counter-clockwise rotation of 90 degrees subtracts from the clockwise turn. Step 3: Compute the difference: 360 - 90 = 270. Answer: The net angle of rotation is 270 degrees clockwise.",
         "marks": 3
       }
     ],
     "mcq": [
       {
-        "question": "A figure skater performs exactly 2 full rotations during a jump. How many total degrees did the skater turn?",
-        "options": [
-          "a) 180°",
-          "b) 360°",
-          "c) 540°",
-          "d) 720°"
-        ],
-        "answer": "d",
+        "question": "An arrow on a dial points at 12. The arrow makes a three-quarter turn clockwise. Through how many degrees does it turn?",
+        "options": {
+          "A": "90",
+          "B": "180",
+          "C": "270",
+          "D": "360"
+        },
+        "answer": "C",
         "marks": 1
       },
       {
-        "question": "A steering wheel is turned 180° and then another 90° in the same direction. What is the total rotation in degrees?",
-        "options": [
-          "a) 90°",
-          "b) 180°",
-          "c) 270°",
-          "d) 360°"
-        ],
-        "answer": "c",
+        "question": "A submarine rotates clockwise by 90 degrees. It then rotates another 90 degrees in the same direction. What is the total angle of rotation in degrees?",
+        "options": {
+          "A": "90",
+          "B": "180",
+          "C": "270",
+          "D": "360"
+        },
+        "answer": "B",
         "marks": 1
       }
     ],
     "fill_in_the_blanks": [
       {
-        "question": "The minute hand of a clock moves from the 12 to the 3. This movement represents a turn of _______ degrees.",
-        "answer": "90",
+        "question": "A clock hand points at 12. After making a full turn clockwise, the hand has turned through _______ degrees.",
+        "answer": "360",
         "marks": 1
       },
       {
-        "question": "A wheel makes one full rotation clockwise. The total angle of this turn is _______ degrees.",
-        "answer": "360",
+        "question": "A skateboarder does a trick in the air. They make a half turn before landing. This turn is equal to _______ degrees.",
+        "answer": "180",
         "marks": 1
       }
     ],
     "true_false": [],
     "matching": []
-  }
+  },
+  "flashcards": []
 }
