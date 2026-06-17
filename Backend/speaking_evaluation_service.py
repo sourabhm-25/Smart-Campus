@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 GEMINI_API_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
-    "gemini-flash-latest:generateContent"
+    "gemini-2.5-flash:generateContent"
 )
 
 MAX_AUDIO_SIZE_BYTES = 10 * 1024 * 1024
@@ -102,7 +102,7 @@ class SpeakingEvaluationResult(BaseModel):
     grade_letter: str
     grade_percentage: float
     duration_evaluated: Optional[float] = None
-    evaluation_model: str = "gemini-flash-latest"
+    evaluation_model: str = "gemini-2.5-flash"
     evaluated_at: float = 0.0
 
 
