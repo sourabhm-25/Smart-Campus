@@ -315,10 +315,10 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
               ].map(({ label, val, max }) => (
                 <div key={label} style={{ marginBottom: 12 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                    <span style={{ fontSize: 12, color: "#313437ff" }}>{label}</span>
+                    <span style={{ fontSize: 12, color: "rgba(215, 228, 242, 1)" }}>{label}</span>
                     <span style={{ fontSize: 12, fontWeight: 700, color }}>{val}/{max}</span>
                   </div>
-                  <div style={{ height: 6, background: "rgba(255,255,255,0.06)", borderRadius: 3, overflow: "hidden" }}>
+                  <div style={{ height: 6, background: "rgba(215, 228, 242, 1)", borderRadius: 3, overflow: "hidden" }}>
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${(val / max) * 100}%` }}
@@ -346,8 +346,8 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
 
             {/* Transcript */}
             {result.transcript && result.transcript !== "[No speech detected]" && (
-              <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "16px 20px" }}>
-                <div style={{ fontSize: 11, color: "#031c3fff", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>📝 AI Transcript</div>
+              <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255, 255, 255, 1)", borderRadius: 14, padding: "16px 20px" }}>
+                <div style={{ fontSize: 11, color: "#031c3fff", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>📝 Result Transcript</div>
                 <div style={{ fontSize: 13, color: "#102a4fff", lineHeight: 1.7, fontStyle: "italic" }}>"{result.transcript}"</div>
               </div>
             )}
@@ -356,7 +356,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
               onClick={onClose}
               style={{
                 background: `linear-gradient(135deg, ${color}cc, ${color})`,
-                color: "#0a0f1a", border: "none", borderRadius: 12,
+                color: "#ffffffff", border: "none", borderRadius: 12,
                 padding: "14px 32px", fontSize: 14, fontWeight: 700,
                 cursor: "pointer", boxShadow: `0 4px 20px ${color}44`,
               }}
@@ -401,7 +401,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
 
             {/* Passage card */}
             <div style={{
-              background: "rgba(255,255,255,0.03)", border: `1px solid ${color}33`,
+              background: "rgba(248, 248, 248, 1)", border: `1px solid ${color}33`,
               borderRadius: 20, padding: "24px 28px", width: "100%", boxSizing: "border-box",
             }}>
               <div style={{ fontSize: 11, color, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 10 }}>
@@ -438,7 +438,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
             {/* Playback (after recording, idle state) */}
             {phase === "idle" && audioUrl && (
               <div style={{ width: "100%", boxSizing: "border-box" }}>
-                <div style={{ fontSize: 12, color: "#071521", marginBottom: 8, textAlign: "center" }}>
+                <div style={{ fontSize: 12, color: "rgba(248, 252, 255, 1)", marginBottom: 8, textAlign: "center" }}>
                   Recording ready · {fmt(recSeconds)}
                 </div>
                 <audio
@@ -493,7 +493,7 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
                   <button
                     onClick={() => { setAudioBlob(null); setAudioUrl(null); setRecSeconds(0); }}
                     style={{
-                      background: "rgba(255,255,255,0.05)", color: "#525252ff",
+                      background: "rgba(209, 209, 209, 1)", color: "#fff5f5ff",
                       border: "1px solid rgba(255,255,255,0.1)", borderRadius: 100,
                       padding: "12px 24px", fontSize: 13, fontWeight: 600, cursor: "pointer",
                     }}
@@ -613,7 +613,7 @@ function PhotoUpload({ color, onPhotoSelected, currentPhoto, filePickerOpenRef }
               padding: "10px 18px", borderRadius: 10, cursor: "pointer",
               background: `${color}12`,
               border: `1px solid ${color}33`,
-              color: "#071521", fontSize: 13, fontWeight: 600,
+              color: "#ffffffff", fontSize: 13, fontWeight: 600,
               transition: "all 0.15s",
             }}
           >
@@ -627,7 +627,7 @@ function PhotoUpload({ color, onPhotoSelected, currentPhoto, filePickerOpenRef }
               padding: "10px 18px", borderRadius: 10, cursor: "pointer",
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.1)",
-              color: "#071521", fontSize: 13, fontWeight: 600,
+              color: "#ffffffff", fontSize: 13, fontWeight: 600,
               transition: "all 0.15s",
             }}
           >
@@ -2213,7 +2213,7 @@ export default function TasksAssigned() {
             >
               <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
               <div style={{ fontSize: 16, fontWeight: 600, color: "#34d399" }}>All tasks submitted!</div>
-              <div style={{ fontSize: 13, marginTop: 8, color: "#071521" }}>
+              <div style={{ fontSize: 13, marginTop: 8, color: "#76787bff" }}>
                 Head to <strong style={{ color: "#60a5fa" }}>Tasks Submitted</strong> to view your results.
               </div>
             </motion.div>
