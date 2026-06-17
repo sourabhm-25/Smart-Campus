@@ -11,33 +11,33 @@ import { useState } from "react";
 // ── Grade colour map ──────────────────────────────────────────────────────────
 const GRADE_COLORS = {
   "A+": { bg: "#052e16", border: "#16a34a", text: "#4ade80", label: "Excellent" },
-  "A":  { bg: "#052e16", border: "#22c55e", text: "#86efac", label: "Very Good" },
+  "A": { bg: "#052e16", border: "#22c55e", text: "#86efac", label: "Very Good" },
   "B+": { bg: "#0c4a6e", border: "#0ea5e9", text: "#7dd3fc", label: "Good" },
-  "B":  { bg: "#0c4a6e", border: "#38bdf8", text: "#bae6fd", label: "Above Average" },
-  "C":  { bg: "#1c1917", border: "#f59e0b", text: "#fcd34d", label: "Average" },
-  "D":  { bg: "#2d1515", border: "#f97316", text: "#fdba74", label: "Needs Work" },
-  "F":  { bg: "#2d0f0f", border: "#ef4444", text: "#fca5a5", label: "Fail" },
+  "B": { bg: "#0c4a6e", border: "#38bdf8", text: "#bae6fd", label: "Above Average" },
+  "C": { bg: "#1c1917", border: "#f59e0b", text: "#fcd34d", label: "Average" },
+  "D": { bg: "#2d1515", border: "#f97316", text: "#fdba74", label: "Needs Work" },
+  "F": { bg: "#2d0f0f", border: "#ef4444", text: "#fca5a5", label: "Fail" },
 };
 
 const gradeStyle = (g) => GRADE_COLORS[g] || GRADE_COLORS["C"];
 
 // ── Circular score ring ───────────────────────────────────────────────────────
 function ScoreRing({ score, max, size = 120, grade }) {
-  const pct     = max > 0 ? score / max : 0;
-  const r       = (size - 16) / 2;
-  const circ    = 2 * Math.PI * r;
-  const offset  = circ * (1 - pct);
-  const gs      = gradeStyle(grade);
+  const pct = max > 0 ? score / max : 0;
+  const r = (size - 16) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - pct);
+  const gs = gradeStyle(grade);
 
   return (
     <div style={{ position: "relative", width: size, height: size }}>
       <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
         {/* Track */}
-        <circle cx={size/2} cy={size/2} r={r}
+        <circle cx={size / 2} cy={size / 2} r={r}
           fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={8} />
         {/* Progress */}
         <motion.circle
-          cx={size/2} cy={size/2} r={r}
+          cx={size / 2} cy={size / 2} r={r}
           fill="none" stroke={gs.border} strokeWidth={8}
           strokeLinecap="round"
           strokeDasharray={circ}
@@ -52,8 +52,10 @@ function ScoreRing({ score, max, size = 120, grade }) {
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
       }}>
-        <span style={{ fontSize: 22, fontWeight: 800, color: gs.text,
-          fontFamily: "'Sora', sans-serif" }}>
+        <span style={{
+          fontSize: 22, fontWeight: 800, color: gs.text,
+          fontFamily: "'Sora', sans-serif"
+        }}>
           {score}
         </span>
         <span style={{ fontSize: 11, color: "#475569" }}>/ {max}</span>
@@ -64,21 +66,23 @@ function ScoreRing({ score, max, size = 120, grade }) {
 
 // ── Per-criterion bar ─────────────────────────────────────────────────────────
 function CriterionBar({ criterion, marks_awarded, max_marks, reason, delay = 0 }) {
-  const pct    = max_marks > 0 ? marks_awarded / max_marks : 0;
-  const color  = pct >= 1 ? "#22c55e" : pct >= 0.5 ? "#f59e0b" : "#ef4444";
+  const pct = max_marks > 0 ? marks_awarded / max_marks : 0;
+  const color = pct >= 1 ? "#22c55e" : pct >= 0.5 ? "#f59e0b" : "#ef4444";
 
   return (
     <div style={{ marginBottom: 10 }}>
-      <div style={{ display: "flex", justifyContent: "space-between",
-        alignItems: "baseline", marginBottom: 4 }}>
+      <div style={{
+        display: "flex", justifyContent: "space-between",
+        alignItems: "baseline", marginBottom: 4
+      }}>
         <span style={{ fontSize: 12, color: "#94a3b8", flex: 1, paddingRight: 8 }}>
           {criterion}
         </span>
         <span style={{
           fontSize: 12, fontWeight: 700,
           color: marks_awarded === max_marks ? "#4ade80"
-               : marks_awarded > 0 ? "#fcd34d"
-               : "#f87171",
+            : marks_awarded > 0 ? "#fcd34d"
+              : "#f87171",
           whiteSpace: "nowrap",
         }}>
           {marks_awarded} / {max_marks}
@@ -122,8 +126,8 @@ function ConfidenceBadge({ confidence, needs_review }) {
     </span>
   );
 
-  const pct  = Math.round(confidence * 100);
-  const col  = confidence > 0.75 ? "#4ade80" : confidence > 0.5 ? "#fcd34d" : "#f87171";
+  const pct = Math.round(confidence * 100);
+  const col = confidence > 0.75 ? "#4ade80" : confidence > 0.5 ? "#fcd34d" : "#f87171";
   return (
     <span style={{
       display: "inline-flex", alignItems: "center", gap: 4,
@@ -140,9 +144,9 @@ function ConfidenceBadge({ confidence, needs_review }) {
 function QuestionResultCard({ item, index }) {
   const [expanded, setExpanded] = useState(false);
   const { question, score, max_marks, transcription, feedback,
-          criteria, confidence, needs_review, teacher_override } = item;
+    criteria, confidence, needs_review, teacher_override } = item;
 
-  const pct  = max_marks > 0 ? score / max_marks : 0;
+  const pct = max_marks > 0 ? score / max_marks : 0;
   const barColor = pct >= 0.8 ? "#22c55e" : pct >= 0.5 ? "#f59e0b" : "#ef4444";
 
   return (
@@ -216,8 +220,10 @@ function QuestionResultCard({ item, index }) {
             {score}/{max_marks}
           </span>
           {/* Mini bar */}
-          <div style={{ width: 60, height: 3, borderRadius: 9999,
-            background: "rgba(255,255,255,0.07)" }}>
+          <div style={{
+            width: 60, height: 3, borderRadius: 9999,
+            background: "rgba(255,255,255,0.07)"
+          }}>
             <div style={{
               width: `${pct * 100}%`, height: "100%",
               background: barColor, borderRadius: 9999,
@@ -253,8 +259,10 @@ function QuestionResultCard({ item, index }) {
               {/* Criteria breakdown */}
               {criteria && criteria.length > 0 && (
                 <div style={{ marginBottom: 14 }}>
-                  <div style={{ fontSize: 10, color: "#475569", fontWeight: 700,
-                    textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10 }}>
+                  <div style={{
+                    fontSize: 10, color: "#475569", fontWeight: 700,
+                    textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10
+                  }}>
                     Mark Breakdown
                   </div>
                   {criteria.map((c, i) => (
@@ -278,12 +286,16 @@ function QuestionResultCard({ item, index }) {
                   borderRadius: 10, padding: "10px 14px",
                   marginBottom: 10,
                 }}>
-                  <div style={{ fontSize: 10, color: "#475569", fontWeight: 700,
-                    textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>
+                  <div style={{
+                    fontSize: 10, color: "#475569", fontWeight: 700,
+                    textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6
+                  }}>
                     What AI Read
                   </div>
-                  <div style={{ fontSize: 12, color: "#94a3b8", lineHeight: 1.6,
-                    fontFamily: "monospace" }}>
+                  <div style={{
+                    fontSize: 12, color: "#94a3b8", lineHeight: 1.6,
+                    fontFamily: "monospace"
+                  }}>
                     {transcription}
                   </div>
                 </div>
@@ -296,8 +308,10 @@ function QuestionResultCard({ item, index }) {
                   border: "1px solid rgba(14,165,233,0.15)",
                   borderRadius: 10, padding: "10px 14px",
                 }}>
-                  <div style={{ fontSize: 10, color: "#475569", fontWeight: 700,
-                    textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>
+                  <div style={{
+                    fontSize: 10, color: "#475569", fontWeight: 700,
+                    textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6
+                  }}>
                     Feedback
                   </div>
                   <div style={{ fontSize: 13, color: "#7dd3fc", lineHeight: 1.6 }}>
@@ -341,8 +355,10 @@ export default function SubmissionResult({ result, onClose, subjectColor = "#60a
       }}
     >
       {/* Close */}
-      <div style={{ width: "100%", maxWidth: 640, display: "flex",
-        justifyContent: "flex-end", marginBottom: 8 }}>
+      <div style={{
+        width: "100%", maxWidth: 640, display: "flex",
+        justifyContent: "flex-end", marginBottom: 8
+      }}>
         <button
           onClick={onClose}
           style={{
@@ -410,8 +426,10 @@ export default function SubmissionResult({ result, onClose, subjectColor = "#60a
 
       {/* Question breakdown */}
       <div style={{ width: "100%", maxWidth: 640 }}>
-        <div style={{ fontSize: 12, color: "#475569", fontWeight: 700,
-          textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 14 }}>
+        <div style={{
+          fontSize: 12, color: "#475569", fontWeight: 700,
+          textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 14
+        }}>
           Question Breakdown
         </div>
         {breakdown.map((item, i) => (

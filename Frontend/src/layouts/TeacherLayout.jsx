@@ -9,7 +9,6 @@ import { useState, useEffect, useRef } from "react";
 const NAV_ITEMS = [
   { label: "Dashboard", icon: "⬡", emoji: "🏠", path: "/teacher", badge: null },
   { label: "Assign Task", icon: "✦", emoji: "✏️", path: "/teacher/task", badge: null },
-  { label: "Test", icon: "◈", emoji: "🧪", path: "/teacher/test", badge: null },
   { label: "Kanban", icon: "⊞", emoji: "📌", path: "/teacher/kanban", badge: null },
   { label: "Submissions", icon: "◎", emoji: "📋", path: "/teacher/submissions", badge: "3" },
   { label: "Students", icon: "◉", emoji: "👥", path: "/teacher/students", badge: null },
@@ -19,7 +18,6 @@ const NAV_ITEMS = [
 const BOTTOM_ITEMS = [
   { label: "Notifications", icon: "🔔", path: "/teacher/notifications", badge: null },
   { label: "Profile", icon: "👤", path: "/teacher/profile", badge: null },
-  { label: "Settings", icon: "⚙️", path: "/teacher/settings", badge: null },
 ];
 
 /* ─────────────────────────────────────────

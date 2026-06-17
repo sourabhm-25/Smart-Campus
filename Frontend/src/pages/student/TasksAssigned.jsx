@@ -333,9 +333,9 @@ function SpeakingTask({ task, color, onClose, onSubmitted }) {
             {/* Feedback */}
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {[
-                { label: "💪 Strengths", text: result.feedback.strengths, bg: "rgba(52,211,153,0.06)", border: "rgba(52,211,153,0.2)", col: "#34d399" },
-                { label: "📈 Improvements", text: result.feedback.improvements, bg: "rgba(96,165,250,0.06)", border: "rgba(96,165,250,0.2)", col: "#60a5fa" },
-                { label: "⭐ Encouragement", text: result.feedback.encouragement, bg: "rgba(167,139,250,0.06)", border: "rgba(167,139,250,0.2)", col: "#a78bfa" },
+                { label: "💪 Strengths", text: result.feedback.strengths, bg: "rgba(239, 230, 230, 1)", border: "rgba(52,211,153,0.2)", col: "#34d399" },
+                { label: "📈 Improvements", text: result.feedback.improvements, bg: "rgba(255, 255, 255, 1)", border: "rgba(96,165,250,0.2)", col: "#60a5fa" },
+                { label: "⭐ Encouragement", text: result.feedback.encouragement, bg: "rgba(255, 255, 255, 1)", border: "rgba(167,139,250,0.2)", col: "#a78bfa" },
               ].map(({ label, text, bg, border, col }) => (
                 <div key={label} style={{ background: bg, border: `1px solid ${border}`, borderRadius: 14, padding: "16px 20px" }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: col, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</div>
@@ -1048,7 +1048,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
       }
       return next;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // ← empty deps: stable forever, reads state via refs
 
   // Nuclear fallback — whenever result is set (any submission path), kill camera
@@ -1121,7 +1121,7 @@ function QuizStepper({ task, color, onClose, onSubmitted }) {
         else if (document.msExitFullscreen) document.msExitFullscreen();
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task.task_type, testStarted]); // ← minimal deps: runs once per test session
 
   // Seamlessly re-enter fullscreen on any click if we lost it (e.g. due to file picker)
