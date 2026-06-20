@@ -5,7 +5,7 @@ import axios from "axios";
 import googleIcon from "../assets/google-icon.svg";
 
 const API_BASE = "http://127.0.0.1:8000";
-const GOOGLE_CLIENT_ID = "943401305975-ptt23gauoh47c3lcn22usn3orrmfrnhh.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "your_google_client_id_here";
 
 const AVAILABLE_SUBJECTS = [
   "Mathematics", "Science", "English", "Hindi", "History",

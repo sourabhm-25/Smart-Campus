@@ -9,13 +9,26 @@ venv/
 Backend/venv/
 
 # Environment variables
-
+.env
+.env.*
+!.env.example
 
 # VS Code
 .vscode/
 
 # OS files
 .DS_Store
-Thumbs.dbBackend/security_debug.log
+Thumbs.db
+
+# Logs
 Backend/security_debug.log
-Backend/security_debug.log
+
+# Large AI Models and Data
+yolov8s.pt
+Backend/markdown/
+
+# Package configs and YAML
+package.json
+package-lock.json
+*.yaml
+*.yml

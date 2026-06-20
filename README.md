@@ -1,204 +1,126 @@
-# 🏫 Smart Campus
+# 🏫 Smart Campus: AI-Powered Educational Platform
 
+![Smart Campus Header](public/logo.png) <!-- Update image path if needed -->
 
-The primary aim of the **Smart Campus** project is to design and implement an AI-powered educational platform that enhances academic and administrative efficiency while providing personalized learning experiences. The system focuses on adaptive course recommendations, skill-aligned assessments, productivity enhancement, and real-time analytics to support students, faculty, and administrators in a data-driven and intelligent environment.
+**Smart Campus** is a next-generation, AI-driven educational platform designed to modernize the learning experience. Built as a comprehensive final-year engineering project, it leverages cutting-edge **Retrieval-Augmented Generation (RAG)**, **Vector Databases**, and **Multimodal Large Language Models (LLMs)** to provide dynamic, personalized learning and automated evaluation.
 
----
-Install this before RUNNING your Project
-```bash
-#install in Frontend Folder
-npm install lottie-react
-#install in Backend Folder 
-pip install -U langchain langchain-classic
-pip install -U langchain-huggingface
-pip install -U langchain-chroma
-
-```
----
-
-
-## 🚀 How to Run the Project (CMD Instructions)
-
-### 1️⃣ How to run backend of project :
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-And their environment will be recreated perfectl y.
-
-### 2️⃣ Start the Backend
-
-Run this command from anywhere (as long as you reference the correct path to your `main_backend_hybrid_cloud.py`):
-
-```bash
-uvicorn main:app --reload
-```
-
-The backend will be live at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
+The system serves three primary users—**Students**, **Teachers**, and **Parents**—each with dedicated portals to track progress, assign work, and evaluate performance efficiently.
 
 ---
-## 🧠 AI Answer Evaluation System
-This is a full-stack application designed to automate the grading of handwritten student answers. A teacher can select a question from a database, and a student can upload a photo of their handwritten answer. The system uses a powerful multimodal AI model (Qwen2.5-VL) to read, transcribe, and grade the answer against the correct solution.
 
-This project uniquely runs the expensive AI model locally for free, while the web application can be deployed to any cloud service.
+## 🌟 Key Features & AI Capabilities
 
+### 🧠 Subject-Aware Modular RAG System
+At the heart of the platform is a sophisticated Retrieval-Augmented Generation pipeline. Teachers can generate dynamic homework assignments, tests, and flashcards directly from parsed textbook data.
+- **Vector Search:** Uses **Pinecone** to store and query dense vector embeddings of textbook chapters.
+- **Embeddings:** Employs the `BAAI/bge-base-en-v1.5` model (via SentenceTransformers) to generate high-quality semantic embeddings.
+- **Contextual Generation:** Uses **Google Gemini (Flash)** via **LangChain** to generate curriculum-aligned questions (MCQs, Short Answer, Fill-in-the-blanks) based on the retrieved context.
 
-## How It Works: The Hybrid AI Architecture
-This project uses a hybrid architecture to provide powerful AI evaluation for free, bypassing expensive cloud GPU costs.
+### 📝 Automated Handwritten Answer Evaluation (Multimodal AI)
+Students can snap a photo of their handwritten homework and receive instant, rubric-driven feedback.
+- **Vision-Language Processing:** Uses Gemini's multimodal vision capabilities to transcribe and evaluate handwritten text from images.
+- **Deterministic Rubrics:** The system auto-generates a specific marking rubric for every question.
+- **Subject-Specific Routing:** Evaluates math step-by-step (checking intermediate working), science conceptually (checking for keywords), and english holistically (band-based scoring).
 
-### Frontend (React):
-The user interface (UI) that runs in the browser.
+### 🎤 Speaking & Pronunciation Evaluation
+Integrates audio processing and AI to evaluate student speaking assignments, providing instant feedback on fluency and accuracy.
 
-### Backend (FastAPI):
-A lightweight server (can be deployed on Vercel/Render) that connects to the database and the AI.
+### 👨‍👩‍👧‍👦 Multi-Portal Architecture
+- **Student Portal:** Access assignments, submit handwritten homework, take auto-generated quizzes, and view AI feedback.
+- **Teacher Portal:** Manage classrooms, generate RAG-based quizzes, oversee AI grading, and review student performance analytics.
+- **Parent Portal:** Monitor child's attendance, grades, and overall academic growth.
 
-### AI Model (Ollama + Qwen2.5-VL):
-The "brain" (Qwen2.5-VL) is a large multimodal model that runs on your local computer using Ollama.
+---
 
-### Tunnel (Ngrok/Cloudflared):
-A secure "tunnel" that connects your deployed backend to the AI model running on your local PC.
+## 💻 Tech Stack
 
-### Data Flow:
-React App → FastAPI Backend → Ngrok Tunnel URL → Your Local PC → Ollama/Qwen2.5-VL AI → (Response flows back)
+**Frontend:**
+- React.js (Vite)
+- Tailwind CSS
+- Framer Motion (for smooth micro-interactions & animations)
+- React Router
 
-### 💻 Tech Stack
-Frontend: React, Vite, Axios
+**Backend:**
+- Python 3 & FastAPI (High-performance async API)
+- MongoDB (via PyMongo) for flexible data storage
+- JWT & Google OAuth for secure authentication
 
-Backend: Python 3, FastAPI, Uvicorn
+**AI / ML Pipeline:**
+- **LLM:** Google Gemini (`gemini-flash-latest`)
+- **Orchestration:** LangChain
+- **Vector Database:** Pinecone
+- **Embeddings:** SentenceTransformers (`BAAI/bge-base-en-v1.5`)
+- **Parsing:** Llama Parse (for extracting structured data from textbook PDFs)
 
-Database: MongoDB (using pymongo)
+---
 
-AI Engine (Local): Ollama
+## ⚙️ Local Setup & Installation
 
-AI Model (Local): Qwen2.5-VL (qwen2.5vl:7b)
+### Prerequisites
+- Node.js (v18+)
+- Python (3.9+)
+- MongoDB (Local or Atlas)
+- API Keys: Pinecone, Google Gemini, Llama Parse (optional)
 
-Tunneling: Ngrok (or Cloudflared)
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/smart-campus.git
+cd smart-campus
+```
 
-Async Requests: httpx (Python)
-
-### ⚙️ Project Setup (Prerequisites)
-Before you can run the project, you need to set up the four main components.
-
-1. Backend (Python)
-Navigate to the backend folder:
-
+### 2. Backend Setup
 ```bash
 cd Backend
-```
-2. Install the required Python packages:
-```bash
-pip install "uvicorn[standard]" fastapi pymongo python-dotenv httpx
-```
-3.Local AI (Ollama)
-Install Ollama: Download and install the application from ollama.com.
 
-Run Ollama: Launch the Ollama application. It will run in the background.
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 
-Pull the AI Model: Open your terminal and pull the Qwen2.5-VL model.
-```bash
-ollama pull qwen2.5vl:7b
-```
-(This is a large, one-time download).
+# Install dependencies
+pip install -r requirements.txt
 
-🚀 How to Run (Development Workflow)
-To run this project, you must have 4 services running at the same time. We recommend using four separate terminal windows.
+# Environment Variables
+# Create a .env file in the Backend directory and add your keys:
+# MONGO_URI=...
+# GEMINI_API_KEY=...
+# PINECONE_API_KEY=...
+# SECRET_KEY=...
 
-
-Terminal 1: Start the AI Tunnel (Ngrok)
-This creates a public URL for your local AI server.
-```bash
-ngrok http 11434
-```
-Look at the output and copy the https URL. It will look something like: Forwarding https://9a1b-c3d4-e5f6.ngrok-free.app -> http://localhost:11434
-
-
-Terminal 2: Update & Start the Backend (FastAPI)
-1.Update the URL: Open the Backend/evaluation_service.py file.
-2.Paste your ngrok URL from Terminal 1 into the OLLAMA_URL variable. Remember to add /api/chat at the end.
-
-```Python
-
-# Backend/evaluation_service.py
-
-# ... (other code) ...
-
-# Ollama server is running here (via ngrok Tunnel)
-OLLAMA_URL = "https://9a1b-c3d4-e5f6.ngrok-free.app/api/chat"
-
-# ... (rest of the file) ...
-```
-
-
-3.Save the file and run the backend server:
-```bash
-# Make sure you are in the Backend folder
+# Start the FastAPI server
 uvicorn main:app --reload
 ```
-Terminal 3: Start the Frontend (React)
+The backend API will be running at `http://127.0.0.1:8000`. You can view the interactive Swagger docs at `http://127.0.0.1:8000/docs`.
+
+### 3. Frontend Setup
 ```bash
-# Make sure you are in the Frontend folder
+cd Frontend
+
+# Install dependencies
+npm install
+
+# Environment Variables
+# Create a .env file in the Frontend directory:
+# VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+
+# Start the Vite development server
 npm run dev
 ```
-
-
-Terminal 4: Check the AI Server (Ollama)
-You don't need a terminal for this, just make sure the Ollama application is running in your background (in your menu bar or system tray).
-
-You're all set! Open your browser to the http://localhost:5173 (or similar) URL shown in your frontend terminal to use the app.
-
-### 3️⃣ Start the Frontend
-
-1. Open a **new Command Prompt window**.
-2. Go to your React folder:
-
-   ```bash
-   cd path\to\your\react\folder
-   ```
-3. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-4. Run the app:
-
-   ```bash
-   npm run dev
-   ```
-
-   The frontend will be available at: [http://localhost:5173](http://localhost:5173)
+The frontend application will be running at `http://localhost:5173`.
 
 ---
 
-### 4️⃣ Fix CORS (if needed)
+## 🏗️ System Architecture
 
-If you see a CORS error in your browser, add this to your backend file **after importing FastAPI**:
-
-```python
-from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-```
+1. **Data Ingestion:** Textbook PDFs are processed via Llama Parse, chunked, embedded using `bge-base-en-v1.5`, and stored in Pinecone namespaces categorized by grade and subject.
+2. **Querying:** When a teacher requests a quiz on a specific topic, the FastAPI server embeds the query and retrieves the top-K relevant chunks from Pinecone.
+3. **Prompt Engineering:** A modular prompt builder constructs a strict JSON-output prompt containing the retrieved context, subject rules, and desired question types.
+4. **Grading Pipeline:** Student image submissions are sent to the Gemini Vision API alongside a dynamically generated rubric, returning a deterministic JSON score breakdown.
 
 ---
 
-## 🖥️ Access
-
-- **Frontend:** [http://localhost:5173](http://localhost:5173)
-- **Backend API Docs:** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+## 🤝 Contributing
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/your-username/smart-campus/issues).
 
 ---
 
-## 🙌 Contributing
-
-Pull requests welcome! If you have ideas for improvements, feel free to open an issue or PR.
-
----
+*This project was developed as a Final Year Engineering Project, showcasing modern AI integration, Vector Search (RAG), and full-stack development best practices.*
