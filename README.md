@@ -1,6 +1,5 @@
 # 🏫 Smart Campus: AI-Powered Educational Platform
 
-![Smart Campus Header](public/logo.png) <!-- Update image path if needed -->
 
 **Smart Campus** is a next-generation, AI-driven educational platform designed to modernize the learning experience. Built as a comprehensive final-year engineering project, it leverages cutting-edge **Retrieval-Augmented Generation (RAG)**, **Vector Databases**, and **Multimodal Large Language Models (LLMs)** to provide dynamic, personalized learning and automated evaluation.
 
