@@ -17,6 +17,25 @@ Backend/venv/
 .vscode/
 
 # OS files
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+Backend/venv/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# VS Code
+.vscode/
+
+# OS files
 .DS_Store
 Thumbs.db
 
@@ -25,7 +44,13 @@ Backend/security_debug.log
 
 # Large AI Models and Data
 yolov8s.pt
+Backend/yolov8s.pt
+Backend/bm25_retriever.pkl
+*.pkl
 Backend/markdown/
+
+# Generated Files
+questions_*.json
 
 # Package configs and YAML
 package.json
